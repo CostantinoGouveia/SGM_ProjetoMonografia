@@ -1,0 +1,347 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model usuario {
+  codUsuario   Int                 @id @default(autoincrement())
+  senha        String
+  bi           String              @unique
+  numeroAgente String              @unique
+  telefone     String              @unique
+  codPessoa    Int
+  tipoUsuario  usuario_tipoUsuario
+  pessoa       pessoa              @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "usuario_ibfk_1")
+
+  @@index([codPessoa], map: "codPessoa")
+}
+
+model alertaroubo {
+  codAlertaRoubo   Int           @id @default(autoincrement())
+  codAutomobilista Int
+  codEndereco      Int?            @default(0)
+  codViatura       Int
+  status          String?          @default("Ativo") @db.VarChar(100)
+  dataRoubo        DateTime      @db.Date
+  dataFeita        DateTime      @db.Date @default(dbgenerated("(current_timestamp())")) 
+  codTipoRoubo     Int
+  descRoubo        String        @db.Text
+  endereco          endereco?         @relation(fields: [codEndereco], references: [idEndereco], onUpdate: Restrict, map: "alertaroubo_ibfk_4")
+  automobilista    automobilista @relation(fields: [codAutomobilista], references: [codAutomobilista], onUpdate: Restrict, map: "alertaroubo_ibfk_1")
+  tiporoubo        tiporoubo     @relation(fields: [codTipoRoubo], references: [codTipoRoubo], onUpdate: Restrict, map: "alertaroubo_ibfk_2")
+  viatura          viatura       @relation(fields: [codViatura], references: [codViatura], onUpdate: Restrict, map: "alertaroubo_ibfk_3")
+
+  @@index([codAutomobilista], map: "codAutomobilista")
+  @@index([codTipoRoubo], map: "codTipoRoubo")
+  @@index([codViatura], map: "codViatura")
+  @@index([codEndereco], map: "codEndereco")
+}
+
+model automobilista {
+  codAutomobilista Int           @id @default(autoincrement())
+  codCartaConducao Int
+  codPessoa        Int
+  alertaroubo      alertaroubo[]
+  cartaconducao    cartaconducao @relation(fields: [codCartaConducao], references: [codCartaConducao], onUpdate: Restrict, map: "automobilista_ibfk_1")
+  pessoa           pessoa        @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "automobilista_ibfk_2")
+  multa            multa[]
+
+  @@index([codCartaConducao], map: "codCartaConducao")
+  @@index([codPessoa], map: "codPessoa")
+}
+
+model bi {
+  idBi            Int      @id @default(autoincrement())
+  dataEmicaoBi    DateTime @db.Date
+  dataValidacaoBi DateTime @db.Date
+  numeroBI        String   @db.VarChar(18)
+  codFicheiroBi   Int
+  ficheiro        ficheiro @relation(fields: [codFicheiroBi], references: [idFicheiro], onUpdate: Restrict, map: "bi_ibfk_1")
+  pessoa          pessoa[]
+
+  @@index([codFicheiroBi], map: "codFicheiroBi")
+}
+
+model cartaconducao {
+  codCartaConducao         Int             @id @default(autoincrement())
+  dataEmissao              DateTime        @db.Date
+  dataValidade             DateTime        @db.Date
+  numeroVia                String          @db.VarChar(100)
+  codCategoriaCarta        Int
+  numeroCarta              Int
+  dataPrimeiraEmissao      DateTime        @db.Date
+  localEmissao             Int
+  codFicheiroCartaConducao Int
+  automobilista            automobilista[]
+  categoriacarta           categoriacarta  @relation(fields: [codCategoriaCarta], references: [codCategoriaCarta], onUpdate: Restrict, map: "cartaconducao_ibfk_1")
+  ficheiro                 ficheiro        @relation(fields: [codFicheiroCartaConducao], references: [idFicheiro], onUpdate: Restrict, map: "cartaconducao_ibfk_2")
+
+  @@index([codCategoriaCarta], map: "codCategoriaCarta")
+  @@index([codFicheiroCartaConducao], map: "codFicheiroCartaConducao")
+}
+
+model categoriacarta {
+  codCategoriaCarta  Int             @id @default(autoincrement())
+  descCategoriaCarta String          @db.VarChar(200)
+  sigla              String          @db.VarChar(50)
+  cartaconducao      cartaconducao[]
+}
+
+model contacto {
+  idContacto Int      @id @default(autoincrement())
+  contacto1  String   @db.VarChar(15)
+  contacto2  String?  @db.VarChar(20)
+  email1     String?  @unique(map: "email1") @db.VarChar(50)
+  email2     String?  @unique(map: "email2") @db.VarChar(50)
+  pessoa     pessoa[]
+}
+
+model endereco {
+  idEndereco        Int       @id @default(autoincrement())
+  idMunicipio       Int
+  descricaoEndereco String    @db.VarChar(50)
+  municipio         municipio @relation(fields: [idMunicipio], references: [idMunicipio], onUpdate: Restrict, map: "endereco_ibfk_1")
+  pessoa            pessoa[]
+  alertaroubo       alertaroubo[]
+
+  @@index([idMunicipio], map: "idMunicipio")
+}
+
+model ficheiro {
+  idFicheiro        Int                       @id @default(autoincrement())
+  nomeFicheiro      String                    @db.VarChar(250)
+  dataEntrada       String?                   @default(dbgenerated("(current_timestamp())")) @db.VarChar(20)
+  dataValidacao     String?                   @db.VarChar(20)
+  estadoValidacao   ficheiro_estadoValidacao? @default(Pendente)
+  bi                bi[]
+  cartaconducao     cartaconducao[]
+  funcionario       funcionario[]
+  pagamentomulta    pagamentomulta[]
+  titulopropriedade titulopropriedade[]
+}
+
+model funcionario {
+  codFuncionario          Int      @id @default(autoincrement())
+  codPessoa               Int
+  codficheiroFotoPerfil   Int
+  codficheiroFotoPendente Int?
+  numeroAgente            String?  @unique(map: "numeroAgente") @db.VarChar(50)
+  senha                   Int      @default(1234)
+  ficheiro                ficheiro @relation(fields: [codficheiroFotoPerfil], references: [idFicheiro], onUpdate: Restrict, map: "funcionario_ibfk_1")
+  pessoa                  pessoa   @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "funcionario_ibfk_2")
+  multa                   multa[] @relation()
+  @@index([codPessoa], map: "idColaboradorPessoa")
+  @@index([codficheiroFotoPendente], map: "idficheiroFotoPendente")
+  @@index([codficheiroFotoPerfil], map: "idficheiroFotoPerfil")
+}
+
+model infracao {
+  codInfracao     Int          @id @default(autoincrement())
+  codMulta        Int
+  codTipoInfracao Int
+  multa           multa        @relation(fields: [codMulta], references: [codMulta], onUpdate: Restrict, map: "infracao_ibfk_1")
+  tipoinfracao    tipoinfracao @relation(fields: [codTipoInfracao], references: [codTipoInfracao], onUpdate: Restrict, map: "infracao_ibfk_2")
+
+  @@index([codMulta], map: "codMulta")
+  @@index([codTipoInfracao], map: "codTipoInfracao")
+}
+
+model viatura {
+  codViatura         Int                 @id @default(autoincrement())
+  MedidasPneumaticos String              @db.VarChar(100)
+  cilindrada         String              @db.VarChar(100)
+  codMarca           Int
+  conbustivel        String              @db.VarChar(100)
+  corViatura         String              @db.VarChar(100)
+  distanciaEixo      String              @db.VarChar(100)
+  lotacao            String              @db.VarChar(100)
+  modelo             String              @db.VarChar(200)
+  numeroCilindro     String              @db.VarChar(100)
+  numeroQuadro       String              @db.VarChar(100)
+  peso               String              @db.VarChar(100)
+  tara               String              @db.VarChar(100)
+  tipoCaixa          String              @db.VarChar(100)
+  numeroMatricula    String              @db.VarChar(50)
+  alertaroubo        alertaroubo[]
+  livrete            livrete[]
+  multa              multa[]
+  titulopropriedade  titulopropriedade[]
+  marca              marca               @relation(fields: [codMarca], references: [codMarca], onUpdate: Restrict, map: "livrete_ibfk_1")
+
+  @@index([codMarca], map: "codMarca")
+}
+
+model marca {
+  codMarca  Int       @id @default(autoincrement())
+  descMarca String    @db.VarChar(100)
+  viatura   viatura[]
+}
+
+model multa {
+  codMulta         Int               @id @default(autoincrement())
+  codAutomobilista Int?
+  CodViatura       Int?
+  valorMulta       String            @db.VarChar(100)
+  estadoMulta      multa_estadoMulta
+  data             DateTime          @default(now()) @db.Date
+  dataPagamento    DateTime?    @db.Date
+  descMulta        String            @default("") @db.Text
+  codFuncionario   Int?
+  infracao         infracao[]
+  automobilista    automobilista?    @relation(fields: [codAutomobilista], references: [codAutomobilista], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_1")
+  viatura          viatura?          @relation(fields: [CodViatura], references: [codViatura], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_3")
+  funcionario      funcionario?      @relation(fields: [codFuncionario], references: [codFuncionario], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_2")
+  pagamentomulta   pagamentomulta[]
+
+  @@index([CodViatura], map: "CodViatura")
+  @@index([codAutomobilista], map: "codAutomobilista")
+  @@index([codFuncionario], map: "idx_cod_funcionario")
+}
+
+model municipio {
+  idMunicipio Int        @id @default(autoincrement())
+  idProvincia Int
+  municipio   String     @db.VarChar(50)
+  endereco    endereco[]
+  provincia   provincia  @relation(fields: [idProvincia], references: [idProvincia], onUpdate: Restrict, map: "municipio_ibfk_1")
+
+  @@index([idProvincia], map: "idProvincia")
+}
+
+model pagamentomulta {
+  codPagamentoMulta    Int      @id @default(autoincrement())
+  codMulta             Int
+  dataCriacao        DateTime @default(now())
+  referencia          String    @unique @default("25436355")
+  status              String    @default("Pendente") @db.VarChar(100)
+  valorPago            String   @db.VarChar(100)
+  descCodigoDeposito   String   @db.VarChar(200)
+  codFicheiroPagamento Int?
+  multa                multa    @relation(fields: [codMulta], references: [codMulta], onUpdate: Restrict, map: "pagamentomulta_ibfk_1")
+  ficheiro             ficheiro? @relation(fields: [codFicheiroPagamento], references: [idFicheiro], onUpdate: Restrict, map: "pagamentomulta_ibfk_2")
+
+  @@index([codFicheiroPagamento], map: "codFicheiroPagamento")
+  @@index([codMulta], map: "codMulta")
+}
+
+model pais {
+  idPais Int      @id @default(autoincrement())
+  pais   String   @unique(map: "pais") @db.VarChar(50)
+  pessoa pessoa[]
+}
+
+model pessoa {
+  codPessoa         Int                 @id @default(autoincrement())
+  codEndereco       Int?
+  codNacionalidade  Int?
+  codContacto       Int?                @default(0)
+  nome              String              @db.VarChar(150)
+  genero            pessoa_genero
+  estadoCivil       pessoa_estadoCivil
+  dataCadastro      String?             @default(dbgenerated("(current_timestamp())")) @db.VarChar(20)
+  dataNascimento    String              @db.VarChar(20)
+  codBi             Int
+  senha             String              @db.VarChar(100)
+  automobilista     automobilista[]
+  funcionario       funcionario[]
+  contacto          contacto?           @relation(fields: [codContacto], references: [idContacto], onDelete: Restrict, onUpdate: Restrict, map: "pessoa_ibfk_1")
+  endereco          endereco?           @relation(fields: [codEndereco], references: [idEndereco], onDelete: Restrict, onUpdate: Restrict, map: "pessoa_ibfk_2")
+  pais              pais?               @relation(fields: [codNacionalidade], references: [idPais], onDelete: Restrict, onUpdate: Restrict, map: "pessoa_ibfk_3")
+  bi                bi                  @relation(fields: [codBi], references: [idBi], onUpdate: Restrict, map: "pessoa_ibfk_4")
+  titulopropriedade titulopropriedade[]
+  usuario           usuario[]
+
+  @@index([codNacionalidade], map: "Representa onde a pessoa nasceu")
+  @@index([codEndereco], map: "Representa onde a pessoa vive")
+  @@index([codBi], map: "codBi")
+  @@index([codContacto], map: "codContacto")
+}
+
+model provincia {
+  idProvincia Int         @id @default(autoincrement())
+  provincia   String      @db.VarChar(50)
+  municipio   municipio[]
+}
+
+model serivicoviatura {
+  codServicoViatura Int       @id @default(autoincrement())
+  descServico       String    @db.VarChar(100)
+  livrete           livrete[]
+}
+
+model tipoinfracao {
+  codTipoInfracao  Int        @id @default(autoincrement())
+  descTipoInfracao String     @db.VarChar(200)
+  valorInfracao    String     @db.VarChar(100)
+  infracao         infracao[]
+}
+
+model tiporoubo {
+  codTipoRoubo  Int           @id @default(autoincrement())
+  descTipoRoubo String        @db.VarChar(100)
+  alertaroubo   alertaroubo[]
+}
+
+model titulopropriedade {
+  codTituloPropriedade         Int      @id @default(autoincrement())
+  codPessoa                    Int
+  dataEmissao                  DateTime @db.Date
+  dataPrimeiroRegistro         DateTime @db.Date
+  numeroEmissao                String   @db.VarChar(100)
+  codViatura                   Int
+  codFicheiroTituloPropriedade Int
+  pessoa                       pessoa   @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "titulopropriedade_ibfk_1")
+  viatura                      viatura  @relation(fields: [codViatura], references: [codViatura], onUpdate: Restrict, map: "titulopropriedade_ibfk_2")
+  ficheiro                     ficheiro @relation(fields: [codFicheiroTituloPropriedade], references: [idFicheiro], onUpdate: Restrict, map: "titulopropriedade_ibfk_3")
+
+  @@index([codFicheiroTituloPropriedade], map: "codFicheiroTituloPropriedade")
+  @@index([codPessoa], map: "codPessoa")
+  @@index([codViatura], map: "codViatura")
+}
+
+model livrete {
+  codLivrete           Int             @id @default(autoincrement())
+  codViatura           Int
+  codServico           Int
+  dataEmissao          DateTime        @db.Date
+  dataPrimeiroRegistro DateTime        @db.Date
+  viatura              viatura         @relation(fields: [codViatura], references: [codViatura], onUpdate: Restrict, map: "livrete_ibfk_2")
+  serivicoviatura      serivicoviatura @relation(fields: [codServico], references: [codServicoViatura], onUpdate: Restrict, map: "livrete_ibfk_3")
+
+  @@index([codServico], map: "codServico")
+  @@index([codViatura], map: "codViatura")
+}
+
+enum ficheiro_estadoValidacao {
+  Pendente
+  Validado
+  Invalidado
+}
+
+enum multa_estadoMulta {
+  PAGO
+  NAO_PAGO @map("NAO PAGO")
+  PENDENTE
+}
+
+enum pessoa_genero {
+  Masculino
+  Feminino
+}
+
+enum pessoa_estadoCivil {
+  Solteiro
+  Casado
+  Solteira
+  Casada
+}
+
+enum usuario_tipoUsuario {
+  Transito
+  Automobilista
+  Admin
+}
