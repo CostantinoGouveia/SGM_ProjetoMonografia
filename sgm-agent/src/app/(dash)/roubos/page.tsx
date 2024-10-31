@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { TableBody, TableRow, Table, TableCell, TableHeader, TableHead } from "@/components/ui/table";
 import { GET_ALERTAS_ROUBO } from "@/routes";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, Search } from "lucide-react";
+import { AlertTriangle, Badge, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -27,7 +27,7 @@ export default function RoubosPage() {
 
     useEffect(() => {
         if (items !== "") {
-          const results = data.filter((item) =>
+          const results = data.filter((item: any) =>
             item.viatura.numeroMatricula.toLowerCase().includes(items.toLowerCase())
           );
           setSearch(results);
@@ -53,16 +53,18 @@ export default function RoubosPage() {
                             <TableHead>Cor</TableHead>
                             <TableHead>Marca</TableHead>
                             <TableHead>Modelo</TableHead>                       
+                            <TableHead>Status</TableHead>                       
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-          {Array.isArray(search) && search.length > 0? search.map((alertasroubo:any) => (
+          {Array.isArray(search) && search.length > 0? search.slice().reverse().map((alertasroubo:any) => (
                         <TableRow key={alertasroubo.codAlertaRoubo}>
                             <TableCell><Link href={`/roubos/${alertasroubo.codAlertaRoubo}`}><p>{alertasroubo.viatura.numeroMatricula}</p>  </Link></TableCell>
                             <TableCell><Link href={`/roubos/${alertasroubo.codAlertaRoubo}`}><p>{alertasroubo.viatura.titulopropriedade[0].pessoa.nome}</p></Link></TableCell>
                             <TableCell><Link href={`/roubos/${alertasroubo.codAlertaRoubo}`}><p>{alertasroubo.viatura.corViatura}</p></Link></TableCell>
                             <TableCell><Link href={`/roubos/${alertasroubo.codAlertaRoubo}`}><p>{alertasroubo.viatura.marca.descMarca}</p></Link></TableCell>
                             <TableCell><Link href={`/roubos/${alertasroubo.codAlertaRoubo}`}><p>{alertasroubo.viatura.modelo}</p></Link></TableCell>
+                            <TableCell><span className={`font-semibold rounded-lg p-2 text-white ${alertasroubo.status === "Cancelado" ? "bg-orange-500" : alertasroubo.status === "Ativo" ? "bg-green-500" : "bg-red-500"}`}>{alertasroubo.status}</span></TableCell>
                         </TableRow>
              )):   
              <TableRow>

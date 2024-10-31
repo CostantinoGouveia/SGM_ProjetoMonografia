@@ -1,6 +1,7 @@
 "use client";
 
 import useAuthentication from "@/app/hooks/useAuthtication";
+import HandleDownload from "@/components/pdfMulta";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -18,137 +19,123 @@ import { toast } from "react-toastify";
 export default function Automobilista() {
     const router = useRouter();
     const { verifyToken } = useAuthentication();
-         
 
     const [infracao, setInfracao] = useState<any[]>([])
     const [Total, setTotal] = useState<number>(0)
     const [descricao, setDescricao] = useState<string>('')
-    const {id} =  useParams()
+    const { id } = useParams()
     const [confirmed, setConfirmed] = useState(false);
-  
+
     useEffect(() => {
         verifyToken();
     }, [id]);
-    
+
     const handleAction = () => {
-      // Exibe o toast de confirmação
-      toast.info(
-        <div>
-          <p>Tem certeza que deseja confirmar a ação?</p>
-          <button
-            onClick={confirmAction}
-            className="bg-green-500 text-white px-4 py-2 rounded mr-2"
-          >
-            Sim
-          </button>
-          <button
-            onClick={cancelAction}
-            className="bg-red-500 text-white px-4 py-2 rounded"
-          >
-            Não
-          </button>
-        </div>,
-        { autoClose: false } // Mantém o toast até que uma ação seja tomada
-      );
+        // Exibe o toast de confirmação
+        toast.info(
+            <div>
+                <p>Tem certeza que deseja confirmar a ação?</p>
+                <button
+                    onClick={confirmAction}
+                    className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                >
+                    Sim
+                </button>
+                <button
+                    onClick={cancelAction}
+                    className="bg-red-500 text-white px-4 py-2 rounded"
+                >
+                    Não
+                </button>
+            </div>,
+            { autoClose: false } // Mantém o toast até que uma ação seja tomada
+        );
     };
-  
+
     const confirmAction = () => {
-      setConfirmed(true);
-      submit();
-      toast.dismiss(); // Fecha o toast
+        const data = {
+            codAutomobilista: id,
+            descricao,
+            valorMulta: Total,
+            codFuncionario: dataPessoa.funcionario[0].codFuncionario,
+            infracoes: infracao
+        }
+        setConfirmed(true);
+        createMulta(data)
+        toast.dismiss(); // Fecha o toast
     };
-  
+
     const cancelAction = () => {
-      toast.dismiss(); // Fecha o toast sem tomar ação
-      toast.error("Ação cancelada.");
+        toast.dismiss(); // Fecha o toast sem tomar ação
+        toast.error("Ação cancelada.");
     };
-  
- 
-    const {mutateAsync: createMulta} = useMutation({
+
+
+    const { mutateAsync: createMulta } = useMutation({
         onSuccess(data) {
             toast.success('Multa aplicada com sucesso')
             refetch()
             limpa()
-            
+
         },
         mutationFn: POST_MULTA,
         onError(error) {
             toast.error('Não foi possível aplicar a multa')
             console.log(error)
         }
-        
+
     })
     function limpa() {
         limpaCheck()
         setInfracao([])
         setTotal(0)
         setDescricao('')
-        
+
     }
 
-    const handleDownload = async () => {
-      const response = await fetch('/api/gerar-pdf');
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'exemplo.pdf');
-      document.body.appendChild(link);
-      link.click();
-     // link.parentNode.removeChild(link);
+    function submit() {
+        if (descricao === '' || Total === 0) {
+            toast.error('Preencha todos os campos')
 
-    };
-function submit() {
-    handleDownload()
-    const data = {
-        codAutomobilista: id,
-        descricao,
-        valorMulta: Total,
-        codFuncionario: dataPessoa.funcionario[0].codFuncionario,
-        infracoes: infracao
+        }
+        else {
+            handleAction()
+        }
     }
-    if (descricao === '' || Total === 0) {
-        toast.error('Preencha todos os campos')
-        return
+
+    function limpaCheck() {
+        setChecks([])
     }
-    else {
-        createMulta(data)
+
+    function checkedValue(params: boolean | string, id: string, valor: number) {
+        if (params) {
+            setChecks((state) => [...state, id])
+            infracao.push({ codTipoInfracao: id })
+            setInfracao(infracao)
+            setTotal((Total + (valor * 88)))
+        } else {
+            const newChecks = checks.filter((item) => item !== id)
+            setChecks(newChecks)
+            const newInfracao = infracao.filter((item) => item.codTipoInfracao !== id)
+            setInfracao(newInfracao)
+            setTotal(Total - (valor * 88))
+        }
     }
-}
 
-function limpaCheck() {
-    setChecks([])
-}
+    const [checks, setChecks] = useState<any[]>([])
 
-function checkedValue(params:boolean | string, id: string, valor: number) {
-    if (params) {
-        setChecks((state) => [...state, id])
-        infracao.push({codTipoInfracao: id})
-        setInfracao(infracao)
-        setTotal((Total + (valor * 88)))
-    }else {
-        const newChecks = checks.filter((item) => item !== id)
-        setChecks(newChecks)
-        const newInfracao = infracao.filter((item) => item.codTipoInfracao !== id)
-        setInfracao(newInfracao)
-        setTotal(Total - (valor * 88))
-    }
-}
-
-const[checks, setChecks] = useState<any[]>([])
-
-    const idPessoa =localStorage.getItem('SGM_USER') || '';
-    const {data : dataPessoa, isSuccess: isSuccessPessoa} = useQuery ({
-    queryKey: ['get-pessoa-by-id', idPessoa],
-    queryFn: () =>GET_PESSOA_BY_ID(idPessoa)
+    const idPessoa = localStorage.getItem('SGM_USER') || '';
+    const { data: dataPessoa, isSuccess: isSuccessPessoa } = useQuery({
+        queryKey: ['get-pessoa-by-id', idPessoa],
+        queryFn: () => GET_PESSOA_BY_ID(idPessoa)
     });
 
-    const {data, isSuccess, refetch} = useQuery({
+    const { data, isSuccess, refetch } = useQuery({
         queryKey: ['get-automobilista', id],
         queryFn: () => GET_AUTOMOBILISTA_BY_ID(id)
     })
-    
-    const {data: dataInfraca, isSuccess: isSuccessInfracoes} = useQuery({
+
+    const { data: dataInfraca, isSuccess: isSuccessInfracoes } = useQuery({
         queryKey: ['get-infracoes'],
         queryFn: GET_TIPOSINFRACAO
     })
@@ -157,7 +144,7 @@ const[checks, setChecks] = useState<any[]>([])
         if (data && data.error) {
             router.push('/404')
         }
-     }, [data])
+    }, [data])
 
     return (
         <div className="p-8">
@@ -181,18 +168,18 @@ const[checks, setChecks] = useState<any[]>([])
 
                     {isSuccessInfracoes && dataInfraca.map((tipoinfracao: any, index: number) => (
                         <div key={index} className="flex gap-2 items-center" >
-                            <Checkbox checked={checks.includes(tipoinfracao.codTipoInfracao)}   onCheckedChange={(e) => checkedValue(e, tipoinfracao.codTipoInfracao, Number(tipoinfracao.valorInfracao))} id={`multa-${index}`} />
+                            <Checkbox checked={checks.includes(tipoinfracao.codTipoInfracao)} onCheckedChange={(e) => checkedValue(e, tipoinfracao.codTipoInfracao, Number(tipoinfracao.valorInfracao))} id={`multa-${index}`} />
                             <label htmlFor={`multa-${index}`}>{tipoinfracao.descTipoInfracao}</label>
                         </div>
                     ))}
                 </div>
                 <div className="flex flex-col gap-1 mt-6 mb-4">
                     <p>Descrição:</p>
-                    <Textarea value={descricao} onChange={(e)=>{setDescricao(e.target.value)}} className="w-full" placeholder="Descreve" />
+                    <Textarea value={descricao} onChange={(e) => { setDescricao(e.target.value) }} className="w-full" placeholder="Descreve" />
                 </div>
                 <div className="flex flex-col gap-2">
                     <h1>Total a pagar: {Total},00kz</h1>
-                    <Button onClick={handleAction}>Aplicar</Button>    
+                    <Button onClick={submit}>Aplicar</Button>
                 </div>
             </div>
 
@@ -202,29 +189,39 @@ const[checks, setChecks] = useState<any[]>([])
                     <Table>
                         <TableHeader>
                             <TableRow>
-                            <TableHead>
-                              Data
-                            </TableHead>
-                            <TableHead>
-                              Nº de infracoes
-                            </TableHead>
-                            <TableHead>
-                              Estado da Multa
-                            </TableHead>
-                            <TableHead>
-                              Total
-                            </TableHead>
+                                <TableHead>
+                                    Data
+                                </TableHead>
+                                <TableHead>
+                                    Nº de infracoes
+                                </TableHead>
+                                <TableHead>
+                                    Estado da Multa
+                                </TableHead>
+                                <TableHead>
+                                    Total
+                                </TableHead>
+                                <TableHead>
+                                    Recibo
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {isSuccess && data.multa.map((multa:any, index:number) => (
+                            {isSuccess && data.multa.length > 0 ? data.multa.slice().reverse().map((multa: any, index: number) => (
                                 <TableRow key={index}>
                                     <TableCell>{new Date(multa.data).toISOString().split("T")[0]}</TableCell>
                                     <TableCell>{multa.infracao.length}</TableCell>
-                                    <TableCell className="flex justify-center"> <span className={`p-2 rounded-lg font-semibold text-white ${multa.pagamentomulta[0]?.status  === "PENDENTE"? "bg-orange-500": multa.pagamentomulta[0]?.status  === "PAGO"? "bg-green-500" :"bg-red-500"}`}>{(multa.pagamentomulta[0]?.status  === "NAO_PAGO")? "NÃO PAGO": multa.pagamentomulta[0]?.status}</span></TableCell>
+                                    <TableCell className="flex justify-center"> <span className={`p-2 rounded-lg font-semibold text-white ${multa.pagamentomulta[0]?.status === "PENDENTE" ? "bg-orange-500" : multa.pagamentomulta[0]?.status === "PAGO" ? "bg-green-500" : "bg-red-500"}`}>{(multa.pagamentomulta[0]?.status === "NAO_PAGO") ? "NÃO PAGO" : multa.pagamentomulta[0]?.status}</span></TableCell>
                                     <TableCell >{multa.valorMulta}</TableCell>
+                                    <TableCell ><HandleDownload id={multa.codMulta}></HandleDownload> </TableCell>
                                 </TableRow>
-                            ))}
+                            )) :
+                                <TableRow>
+                                    <TableCell colSpan={5} className="items-center text-center text-red-500">
+                                        Não há multas aplicadas
+                                    </TableCell>
+                                </TableRow>
+                            }
                         </TableBody>
                     </Table>
                 </div>

@@ -26,11 +26,19 @@ export const getPagamentosMultaReferencia = async (req: Request, res: Response):
 export const multaAtulizado = async (req: Request, res: Response): Promise<void> => {
     const { referencia } = req.body;
     try {
-  
       // Simula a confirmação do pagamento
       const pagamentoAtualizado = await prisma.pagamentomulta.update({
         where: { referencia },
-        data: { status: 'PAGO' },
+        data: { status: 'PAGO',
+            multa: {
+                update: {
+                    dataPagamento: new Date,
+                }
+            }
+         },
+        include: {
+            multa: true,
+        }
       });
   
     if (pagamentoAtualizado) {

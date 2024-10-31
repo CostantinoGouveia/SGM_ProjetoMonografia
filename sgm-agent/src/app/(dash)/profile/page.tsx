@@ -20,7 +20,7 @@ export default function ProfilePage() {
         queryKey: ['get-pessoa-by-id', idPessoa],
         queryFn: () =>GET_PESSOA_BY_ID(idPessoa)
     });
-
+console.log(data)   
     return (
         <div className="p-8 flex flex-col gap-2">
             <div className="flex rounded-lg bg-slate-100 shadow-sm p-8 items-center gap-4">

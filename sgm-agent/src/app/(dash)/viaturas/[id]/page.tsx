@@ -18,7 +18,7 @@ export default function Automobilista() {
 
 
     const { id } = useParams()
-     const idValue = Array.isArray(id) ? id[0] : id;
+    const idValue = Array.isArray(id) ? id[0] : id;
     useEffect(() => {
         verifyToken();
     }, [id]);
@@ -32,14 +32,14 @@ export default function Automobilista() {
         if (data && data.error) {
             router.push('/404')
         }
-     }, [data])
+    }, [data])
 
 
- console.log(data);
+    console.log(data);
     return (
         <div className="p-8">
             <div className="flex rounded-lg bg-slate-100 shadow-sm p-8 items-center gap-4">
-                <Image alt="" width={104} height={124} src="/images/avatar.png" />
+                <Image alt="" width={104} height={124} src="/images/9720027.jpg" />
                 <div>
                     {
                         data && !data.error && (
@@ -53,28 +53,32 @@ export default function Automobilista() {
                         )
                     }
                 </div>
-                <div className="">
-                    <Button onClick={()=> {router.replace(`/automobilistas/${data?.titulopropriedade[0]?.pessoa.automobilista[0].codAutomobilista}/${idValue}`)}} className="bg-blue-700">Aplicar multa</Button>
-                </div>
+
+            </div>
+            <div className=" py-3 justify-center">
+                <Button onClick={() => { router.replace(`/automobilistas/${data?.titulopropriedade[0]?.pessoa.automobilista[0].codAutomobilista}/${idValue}`) }} className="bg-blue-700">Aplicar multa</Button>
             </div>
             <h1 className="font-bold text-lg py-4">DADOS DA VIATURA</h1>
             {isSuccess && (
                 <div className="">
                     <div className="grid grid-cols-12 py-3">
 
-                        <div className="col-span-4">
+                        <div className="col-span-6">
                             <div className="font-bold text-2xl text-blue-800">Nº de Matricula</div>
                             <span className="font-semibold">{data.numeroMatricula}</span>
                         </div>
-                        <div className="col-span-2">
+                        <div className="col-span-6">
                             <div className="font-bold text-2xl text-blue-800">Cor</div>
                             <span className="font-semibold">{data.corViatura}</span>
                         </div>
-                        <div className="col-span-3">
+
+                    </div>
+                    <div className="grid grid-cols-12 py-3">
+                        <div className="col-span-6">
                             <div className="font-bold text-2xl text-blue-800">Marca</div>
                             <span className="font-semibold">{data.marca?.descMarca}</span>
                         </div>
-                        <div className="col-span-2">
+                        <div className="col-span-6">
                             <div className="font-bold text-2xl text-blue-800">Modelo</div>
                             <span className="font-semibold">{data.modelo}</span>
                         </div>
@@ -88,25 +92,28 @@ export default function Automobilista() {
                             <div className="font-bold text-2xl text-blue-800">Combustivel</div>
                             <span className="font-semibold">{data.conbustivel}</span>
                         </div>
+
+                    </div>
+                    <div className="grid grid-cols-12 py-3">
                         <div className="col-span-4">
                             <div className="font-bold text-2xl text-blue-800">Nº Cilindro</div>
                             <span className="font-semibold">{data.numeroCilindro}</span>
                         </div>
-                    </div>
-                    <div className="grid grid-cols-12 py-3">
-                        <div className="col-span-5">
+                        <div className="col-span-4">
                             <div className="font-bold text-2xl text-blue-800">Distançia dos Eixos</div>
                             <span className="font-semibold">{data.distanciaEixo}</span>
                         </div>
-                        <div className="col-span-2">
+                        <div className="col-span-4">
                             <div className="font-bold text-2xl text-blue-800">Caixa</div>
                             <span className="font-semibold">{data.tipoCaixa}</span>
                         </div>
-                        <div className="col-span-2">
+                    </div>
+                    <div className="grid grid-cols-12 py-3">
+                        <div className="col-span-6">
                             <div className="font-bold text-2xl text-blue-800">Peso</div>
                             <span className="font-semibold">{data.peso}</span>
                         </div>
-                        <div className="col-span-3">
+                        <div className="col-span-6">
                             <div className="font-bold text-2xl text-blue-800">Cilindarada</div>
                             <span className="font-semibold">{data.cilindrada}</span>
                         </div>

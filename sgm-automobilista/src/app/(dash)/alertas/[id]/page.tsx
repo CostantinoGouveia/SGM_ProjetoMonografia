@@ -33,7 +33,7 @@ export default function Automobilista() {
     return (
         <div className="p-8">
             <div className="flex rounded-lg bg-slate-100 shadow-sm p-8 items-center gap-4">
-                <Image alt="" width={104} height={124} src="/images/avatar.png" />
+                <Image alt="" width={104} height={124} src="/images//9720027.jpg" />
                 <div>
                     {
                         data && !data.error && (

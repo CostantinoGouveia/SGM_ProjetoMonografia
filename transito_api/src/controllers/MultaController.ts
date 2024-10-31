@@ -11,7 +11,7 @@ export const getMultas = async (req: Request, res: Response): Promise<void> => {
                 automobilista: true,
                 viatura: true,
                 pagamentomulta: true,
-                funcionario:  {
+                funcionario: {
                     include: {
                         pessoa: true,
                     },
@@ -21,7 +21,7 @@ export const getMultas = async (req: Request, res: Response): Promise<void> => {
                         tipoinfracao: true
                     }
                 },
-                
+
             },
         });
         res.status(200).json(multas);
@@ -36,7 +36,18 @@ export const getMultaById = async (req: Request, res: Response): Promise<void> =
         const multa = await prisma.multa.findUnique({
             where: { codMulta: Number(id) },
             include: {
-                automobilista: true,
+                automobilista: {
+                    include: {
+                        pessoa: {
+                            include: {
+                                endereco: true,
+                                bi: true,
+                                contacto: true,
+                            },
+                        },
+                        cartaconducao: true,
+                    },
+                },
                 viatura: true,
                 pagamentomulta: true,
                 funcionario: {
@@ -44,8 +55,8 @@ export const getMultaById = async (req: Request, res: Response): Promise<void> =
                         pessoa: true,
                     },
                 },
-                infracao:  {
-                    include:{
+                infracao: {
+                    include: {
                         tipoinfracao: true
                     }
                 },
@@ -61,11 +72,12 @@ export const getMultaById = async (req: Request, res: Response): Promise<void> =
         res.status(500).json({ error: 'Não foi possível buscar a multa' });
     }
 };
+
 // Simular geração de referência de pagamento
 function gerarReferencia() {
     return 'REF-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-  }
-  
+}
+
 export const createMulta = async (req: Request, res: Response): Promise<void> => {
     const {
         codAutomobilista,
@@ -75,36 +87,36 @@ export const createMulta = async (req: Request, res: Response): Promise<void> =>
         codFuncionario,
         infracoes
     } = req.body;
-console.log(req.body);
+    console.log(req.body);
     try {
         const newMulta = await prisma.multa.create({
             data: {
                 codAutomobilista: codAutomobilista ? Number(codAutomobilista) : undefined,
                 CodViatura: codViatura ? Number(codViatura) : undefined,
-                valorMulta : String(valorMulta),
+                valorMulta: String(valorMulta),
                 descMulta: descricao,
                 codFuncionario: codFuncionario ? Number(codFuncionario) : undefined,
-                estadoMulta : "PENDENTE",
+                estadoMulta: "PENDENTE",
                 infracao: {
-                    create: infracoes.map((infra:any) => ({
+                    create: infracoes.map((infra: any) => ({
                         codTipoInfracao: infra.codTipoInfracao
                     }))
                 },
                 pagamentomulta: {
                     create: {
-                            dataCriacao: new Date(),
-                            valorPago: String(valorMulta),
-                            status: "PENDENTE",
-                            referencia: gerarReferencia(),
-                            descCodigoDeposito: "TR-"+gerarReferencia(),
+                        dataCriacao: new Date(),
+                        valorPago: String(valorMulta),
+                        status: "PENDENTE",
+                        referencia: gerarReferencia(),
+                        descCodigoDeposito: "TR-" + gerarReferencia(),
                     }
-                        
+
                 }
             },
             include: {
-                    infracao:  true,
-                    pagamentomulta: true,
-                }
+                infracao: true,
+                pagamentomulta: true,
+            }
         });
         res.status(201).json(newMulta);
     } catch (error) {

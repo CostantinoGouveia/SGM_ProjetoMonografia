@@ -4,15 +4,8 @@ import { ReactNode } from "react";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { GET_PESSOA_BY_ID } from "@/routes";
 export default function Layout({ children }: { children: ReactNode }) {
-    const idPessoa =localStorage.getItem('SGM_USER') || '';
-
-  const { data , isSuccess } = useQuery({
-    queryKey: ["pessoa_id", idPessoa],
-    queryFn: () => GET_PESSOA_BY_ID(idPessoa),
-  })
-  
+     
     return (<main className="flex flex-col h-screen">
         <header className="bg-blue-950 h-16 text-white p-4 flex justify-between items-center">
             <div className="flex gap-2 items-center">

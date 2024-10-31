@@ -58,7 +58,7 @@ export default function ViaturasPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                    {Array.isArray(search) && search.length > 0? search.map((viatura: any) => (
+                    {Array.isArray(search) && search.length > 0? search.slice().reverse().map((viatura: any) => (
                             <TableRow key={viatura.codViatura}>
                                 <TableCell><Link href={`/viaturas/${viatura.codViatura}`}><p>{viatura.numeroMatricula}</p>  </Link></TableCell>
                                 <TableCell><Link href={`/viaturas/${viatura.codViatura}`}><p>{viatura.titulopropriedade[0].pessoa.nome}</p></Link></TableCell>

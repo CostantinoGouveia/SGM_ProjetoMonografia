@@ -6,15 +6,12 @@ import { useEffect } from "react";
 
 export default function useAuthentication() {
   const router = useRouter();
-  const { data, isSuccess } = useQuery({
-    queryKey: ['get-Pais'],
-    queryFn: GET_PAISES,
-  });
+
 
   // Função de verificação do token
   function verifyToken() {
     const token = window.localStorage.getItem('SGM_');
-    if (!token || !isSuccess) {
+    if (!token) {
       router.push('/auth/entrar');
     }
   }

@@ -10,7 +10,12 @@ import useAuthentication from "../hooks/useAuthtication";
 import { useQuery } from "@tanstack/react-query";
 import { GET_PESSOA_BY_ID } from "@/routes";
 export default function Layout({children}: {children:ReactNode}) {
-   
+    const router = useRouter();
+    const { verifyToken } = useAuthentication();
+    
+    useEffect(() => {
+        verifyToken();
+      }, [verifyToken]);
     const idPessoa =localStorage.getItem('SGM_USER') || '';
     const {data, isSuccess} = useQuery ({
         queryKey: ['get-pessoa-by-id', idPessoa],

@@ -4,7 +4,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { TableBody, TableRow, Table, TableCell, TableHeader, TableHead } from "@/components/ui/table";
 import { GET_PESSOA_BY_ID, GET_PROVINCIAS, GET_TIPOSROUBO, GET_VIATURA_BY_ID, POST_ALERTA_ROUBO, PUT_ALERTA_ROUBO } from "@/routes";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { verify } from "crypto";
 import { AlertTriangle, Badge, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,21 +20,22 @@ export default function RoubosPage() {
     const [search, setSearch] = useState<any>();
 
     const { data, isSuccess } = useQuery({
-        queryKey: ['get-viatura-pessoa'],
+        queryKey: ['get-viaturaPessoa'],
         queryFn: () => GET_PESSOA_BY_ID(localStorage.getItem('SGM_USER') || ''),
     });
-    if (isSuccess)
-        console.log(data)
+    console.log(data)
     useEffect(() => {
-        if (items !== "") {
-            const results = data.titulopropriedade.filter((item: any) =>
-                item.viatura.numeroMatricula.toLowerCase().includes(items.toLowerCase())
-            );
-            setSearch(results);
-        } else {
-            setSearch(data?.titulopropriedade); // Mostra todos os resultados se o termo de pesquisa estiver vazio
+        if (isSuccess) {
+            if (items !== "") {
+                const results = data.titulopropriedade.filter((item: any) =>
+                    item.viatura.numeroMatricula.toLowerCase().includes(items.toLowerCase())
+                );
+                setSearch(results);
+            } else {
+                setSearch(data?.titulopropriedade); // Mostra todos os resultados se o termo de pesquisa estiver vazio
+            }
         }
-    }, [items, data]);
+    }, [items, data, isSuccess]);
     return (
         <div className="p-4">
             <h1 className="text-lg font-bold mb-4 flex gap-2 items-center">Viaturas em Alerta <AlertTriangle className="text-red-800" /></h1>
@@ -158,7 +160,7 @@ function VerAlerta({ verAlerta }: { verAlerta: any }) {
                                 />
                             </div>
                             <div className="my-2 col-span-6">
-                                <label htmlFor="status" className="block m-2 font-semibold">Status</label>
+                                <label htmlFor="status" className="block m-2 font-semibold ">Status</label>
                                 <label className={`font-semibold rounded-lg p-2 text-white ${verAlerta.status === "Cancelado" ? "bg-orange-500" : verAlerta.status === "Ativo" ? "bg-green-500" : "bg-red-500"}`}>{verAlerta.status}</label>
                             </div>
                         </div>
@@ -233,7 +235,7 @@ function VerAlerta({ verAlerta }: { verAlerta: any }) {
                                 />
                             </div>
                             <div className="my-2 col-span-6">
-                                <label htmlFor="numeroMatricula" className="block m-2 font-semibold ">ACÇÃO</label>
+                                <label htmlFor="numeroMatricula" className="block m-2 font-semibold ">ACÇÃO </label>
                                 {
                                     (verAlerta.status === "Ativo") ? <ActionWithConfirmation alerta={verAlerta} /> : null
 
@@ -261,7 +263,7 @@ function CriarAlerta({ viatura }: { viatura: any }) {
                 <DialogHeader className="relative">
                     <DialogTitle><span className="text-slate-700">Criar alerta de Roubo</span></DialogTitle>
                 </DialogHeader>
-                <CadastroAlertaRoubo automobilista={viatura}/>
+                <CadastroAlertaRoubo automobilista={viatura} />
             </DialogContent>
         </Dialog>
     )
@@ -270,7 +272,7 @@ function CriarAlerta({ viatura }: { viatura: any }) {
 function ActionWithConfirmation({ alerta }: { alerta: any }) {
     const [confirmed, setConfirmed] = useState(false);
     const [item, setItem] = useState(false);
-
+    const useClient = useQueryClient();
     const handleAction = () => {
         // Exibe o toast de confirmação
         toast.info(
@@ -294,8 +296,13 @@ function ActionWithConfirmation({ alerta }: { alerta: any }) {
     };
 
     const confirmAction = () => {
+
         setConfirmed(true);
         PUT_ALERTA_ROUBO(alerta.codAlertaRoubo, { status: "Cancelado" });
+        useClient.invalidateQueries({
+            queryKey: ["get-viaturaPessoa"], // chave da consulta
+            exact: true, // opcional, dependendo do filtro
+        });
         toast.dismiss(); // Fecha o toast
         toast.success("Ação confirmada com sucesso!");
     };
@@ -319,7 +326,8 @@ function ActionWithConfirmation({ alerta }: { alerta: any }) {
 
 export function CadastroAlertaRoubo({ automobilista }: { automobilista: any }) {
     const router = useRouter();
-    console.log("trtgrtgr",automobilista)
+    const useClient = useQueryClient();
+    console.log("trtgrtgr", automobilista)
     const { data, isSuccess } = useQuery({
         queryKey: ['get-tiporoubo'],
         queryFn: GET_TIPOSROUBO
@@ -329,6 +337,7 @@ export function CadastroAlertaRoubo({ automobilista }: { automobilista: any }) {
         queryFn: GET_PROVINCIAS
     });
 
+    const [control, setControl] = useState(false)
     // Estado para armazenar os dados do formulário
     const [formData, setFormData] = useState({
         dataRoubo: "",
@@ -370,8 +379,12 @@ export function CadastroAlertaRoubo({ automobilista }: { automobilista: any }) {
         console.log("Estado atualizado:", selectMuni);
     }, [selectMuni]);
 
-    const {mutateAsync: createAlert} = useMutation({
+    const { mutateAsync: createAlert } = useMutation({
         onSuccess(data) {
+            useClient.invalidateQueries({
+                queryKey: ["get-viaturaPessoa"], // chave da consulta
+                exact: true, // opcional, dependendo do filtro
+            });
             toast.success('Alerta criado com sucesso')
         },
         mutationFn: POST_ALERTA_ROUBO,
@@ -379,14 +392,13 @@ export function CadastroAlertaRoubo({ automobilista }: { automobilista: any }) {
             toast.error('Não foi possível Criar alerta de roubo')
             console.log(error)
         }
-        
+
     })
 
-    // Função para enviar os dados para a API
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-            const data = {
+    const { mutateAsync: verifyViatura } = useMutation({
+        onSuccess(data) {
+            console.log("viatura", data)
+            const alertaAdd = {
                 codViatura: automobilista.codViatura,
                 codAutomobilista: automobilista.titulopropriedade[0].pessoa?.automobilista[0].codAutomobilista,
                 dataRoubo: formData.dataRoubo,
@@ -395,8 +407,74 @@ export function CadastroAlertaRoubo({ automobilista }: { automobilista: any }) {
                 Dendereco: formData.codEndereco,
                 idMunicipio: Number(formData.idMunicipio)
             }
-            console.log(data)
-            createAlert(data)
+
+            const alertaAtivo = data.alertaroubo.some((item: any) => item.status === "Ativo");
+            if (alertaAtivo) {
+                toast.error('Viatura já tem um alerta de roubo ativo')
+            } else {
+                createAlert(alertaAdd)
+                setFormData({
+                    dataRoubo: "",
+                    codTipoRoubo: "",
+                    descRoubo: "",
+                    codEndereco: "",
+                    idMunicipio: "",
+                    idProvincia: "",
+                })
+            }
+        },
+        mutationFn: GET_VIATURA_BY_ID,
+        onError(error) {
+            toast.error('Não foi possível verificar a viatura')
+            console.log(error)
+        }
+    })
+
+    const handleAction = () => {
+        // Exibe o toast de confirmação
+        toast.info(
+            <div>
+                <p>Tem certeza que deseja confirmar a ação?</p>
+                <button
+                    onClick={confirmAction}
+                    className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                >
+                    Sim
+                </button>
+                <button
+                    onClick={cancelAction}
+                    className="bg-red-500 text-white px-4 py-2 rounded"
+                >
+                    Não
+                </button>
+            </div>,
+            { autoClose: false } // Mantém o toast até que uma ação seja tomada
+        );
+    };
+
+    const confirmAction = () => {
+
+        verifyViatura(automobilista.codViatura)
+        //createAlert(data)
+        setControl(true)
+        toast.dismiss(); // Fecha o toast
+    };
+
+    const cancelAction = () => {
+        setControl(true)
+        toast.dismiss(); // Fecha o toast sem tomar ação
+        toast.error("Ação cancelada.");
+    };
+
+
+
+    // Função para enviar os dados para a API
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!control) {
+            handleAction()
+        }
+        setControl(false)
     }
 
     return (
@@ -499,6 +577,7 @@ export function CadastroAlertaRoubo({ automobilista }: { automobilista: any }) {
             <button type="submit" className="bg-blue-500 text-white p-2 rounded">
                 Cadastrar Alerta de Roubo
             </button>
+            <ToastContainer />
         </form>
     );
 }

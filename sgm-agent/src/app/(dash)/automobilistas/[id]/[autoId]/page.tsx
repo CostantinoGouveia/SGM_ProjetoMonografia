@@ -1,6 +1,7 @@
 "use client";
 
 import useAuthentication from "@/app/hooks/useAuthtication";
+import HandleDownload from "@/components/pdfMulta";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -53,14 +54,22 @@ export default function Automobilista() {
     };
   
     const confirmAction = () => {
-      setConfirmed(true);
-      submit();
-      toast.dismiss(); // Fecha o toast
+        const data = {
+            codAutomobilista: id,
+            codViatura: autoId,
+            descricao,
+            valorMulta: Total,
+            codFuncionario: dataPessoa.funcionario[0].codFuncionario,
+            infracoes: infracao
+        }
+        setConfirmed(true);
+         createMulta(data)
+        toast.dismiss(); // Fecha o toast
     };
-  
+
     const cancelAction = () => {
-      toast.dismiss(); // Fecha o toast sem tomar ação
-      toast.error("Ação cancelada.");
+        toast.dismiss(); // Fecha o toast sem tomar ação
+        toast.error("Ação cancelada.");
     };
   
  
@@ -86,36 +95,15 @@ export default function Automobilista() {
         
     }
 
-    const handleDownload = async () => {
-      const response = await fetch('/api/gerar-pdf');
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'exemplo.pdf');
-      document.body.appendChild(link);
-      link.click();
-     // link.parentNode.removeChild(link);
-
-    };
-function submit() {
-    handleDownload()
-    const data = {
-        codAutomobilista: id,
-        descricao,
-        codViatura: autoId,
-        valorMulta: Total,
-        codFuncionario: dataPessoa.funcionario[0].codFuncionario,
-        infracoes: infracao
+    function submit() {
+        if (descricao === '' || Total === 0) {
+            toast.error('Preencha todos os campos')
+            
+        }
+        else {
+            handleAction()
+        }
     }
-    if (descricao === '' || Total === 0) {
-        toast.error('Preencha todos os campos')
-        return
-    }
-    else {
-        createMulta(data)
-    }
-}
 
 function limpaCheck() {
     setChecks([])
@@ -193,7 +181,7 @@ const[checks, setChecks] = useState<any[]>([])
                 </div>
                 <div className="flex flex-col gap-2">
                     <h1>Total a pagar: {Total},00kz</h1>
-                    <Button onClick={handleAction}>Aplicar</Button>    
+                    <Button onClick={submit}>Aplicar</Button>    
                 </div>
             </div>
 
@@ -215,17 +203,27 @@ const[checks, setChecks] = useState<any[]>([])
                             <TableHead>
                               Total
                             </TableHead>
+                            <TableHead>
+                              Recibo
+                            </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {isSuccess && data.multa.map((multa:any, index:number) => (
+                            {isSuccess && data.multa.length > 0? data.multa.slice().reverse().map((multa:any, index:number) => (
                                 <TableRow key={index}>
                                     <TableCell>{new Date(multa.data).toISOString().split("T")[0]}</TableCell>
                                     <TableCell>{multa.infracao.length}</TableCell>
                                     <TableCell className="flex justify-center"> <span className={`p-2 rounded-lg font-semibold text-white ${multa.pagamentomulta[0]?.status  === "PENDENTE"? "bg-orange-500": multa.pagamentomulta[0]?.status  === "PAGO"? "bg-green-500" :"bg-red-500"}`}>{(multa.pagamentomulta[0]?.status  === "NAO_PAGO")? "NÃO PAGO": multa.pagamentomulta[0]?.status}</span></TableCell>
                                     <TableCell >{multa.valorMulta}</TableCell>
+                                    <TableCell ><HandleDownload id={multa.codMulta}></HandleDownload> </TableCell>
                                 </TableRow>
-                            ))}
+                            )):
+                            <TableRow>
+                            <TableCell colSpan={5} className="items-center text-center text-red-500">
+                                Não há multas aplicadas
+                            </TableCell>
+                        </TableRow>}
+                              
                         </TableBody>
                     </Table>
                 </div>

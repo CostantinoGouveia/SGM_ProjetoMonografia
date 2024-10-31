@@ -28,6 +28,7 @@ model alertaroubo {
   status          String?          @default("Ativo") @db.VarChar(100)
   dataRoubo        DateTime      @db.Date
   dataFeita        DateTime      @db.Date @default(dbgenerated("(current_timestamp())")) 
+  horaFeita        DateTime      @db.Time @default(dbgenerated("(current_timestamp())"))
   codTipoRoubo     Int
   descRoubo        String        @db.Text
   endereco          endereco?         @relation(fields: [codEndereco], references: [idEndereco], onUpdate: Restrict, map: "alertaroubo_ibfk_4")
@@ -188,7 +189,8 @@ model multa {
   valorMulta       String            @db.VarChar(100)
   estadoMulta      multa_estadoMulta
   data             DateTime          @default(now()) @db.Date
-  dataPagamento    DateTime?    @db.Date
+  dataPagamento    DateTime?    @db.DateTime
+  horaFeita        DateTime      @db.Time @default(dbgenerated("(current_timestamp())"))
   descMulta        String            @default("") @db.Text
   codFuncionario   Int?
   infracao         infracao[]

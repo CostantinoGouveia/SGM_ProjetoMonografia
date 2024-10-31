@@ -56,7 +56,7 @@ router.post('/loginA', login_automobilista);
 
 // Rotas para Usuarios
 router.get('/usuarios',  tokenValidate, getUsuarios);
-router.get('/usuario/:id',  tokenValidate, getUsuarioById);
+router.get('/usuario/:id', tokenValidate, getUsuarioById);
 router.post('/usuario',  tokenValidate, createUsuario);
 router.put('/usuario/:id', tokenValidate, updateUsuario);
 router.delete('/usuario/:id', tokenValidate, deleteUsuario);

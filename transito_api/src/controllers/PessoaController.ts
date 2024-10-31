@@ -32,6 +32,7 @@ export const getPessoaById = async (req: Request, res: Response): Promise<void> 
             include: {
                 automobilista: {
                     include: {
+                        cartaconducao: true,
                         multa: {
                             include: {
                                 pagamentomulta: true,
