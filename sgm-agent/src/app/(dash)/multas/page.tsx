@@ -96,7 +96,13 @@ useEffect(() => {
                               Total
                             </TableHead>
                             <TableHead>
+                              Situção
+                            </TableHead>
+                            <TableHead>
                               Estado
+                            </TableHead>
+                            <TableHead>
+                              Acção
                             </TableHead>
                             <TableHead>
                               Recibo
@@ -109,8 +115,9 @@ useEffect(() => {
                                 <TableCell>{multas.automobilista.pessoa.nome}</TableCell>
                                 <TableCell>{new Date(multas.data).toISOString().split("T")[0]}</TableCell>
                                 <TableCell>{multas.infracao.length}</TableCell>
-                                <TableCell>{multas.valorMulta}kz</TableCell>
-                                <TableCell><Badge className={multas.pagamentomulta[0]?.status === "PENDENTE"? "bg-orange-500": multas.pagamentomulta[0]?.status === "PAGO"? "bg-green-500" :"bg-red-500"}>{(multas.pagamentomulta[0]?.status === "NAO_PAGO")? "NÃO PAGO": multas.pagamentomulta[0]?.status}</Badge></TableCell>
+                                <TableCell>{multas.valorMulta} kz</TableCell>
+                                <TableCell>{multas.statusTribunal == true? "R/Tribunal":""}</TableCell>
+                                <TableCell><Badge className={ `${multas.pagamentomulta[0]?.status === "PENDENTE"? "bg-orange-500": multas.pagamentomulta[0]?.status === "PAGO"? "bg-green-500" :"bg-red-500"}`}>{(multas.pagamentomulta[0]?.status === "Nao Pago")? "N/PAGO": multas.pagamentomulta[0]?.status}</Badge></TableCell>
                                 <TableCell><PagamentoMulta idMulta={multas.codMulta} /></TableCell>
                                 <TableCell ><HandleDownload id={multas.codMulta}></HandleDownload> </TableCell>
                             </TableRow>

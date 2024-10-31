@@ -38,7 +38,7 @@ export default function RoubosPage() {
     }, [items, data, isSuccess]);
     return (
         <div className="p-4">
-            <h1 className="text-lg font-bold mb-4 flex gap-2 items-center">Viaturas em Alerta <AlertTriangle className="text-red-800" /></h1>
+            <h1 className="text-lg font-bold mb-4 flex gap-2 items-center">Viaturas<AlertTriangle className="text-red-800" /></h1>
             <form className="flex">
                 <Input placeholder="Procurar viatura" value={items} onChange={(e) => setItems(e.target.value)} className="rounded-r-none" />
                 <Button className="rounded-l-none" disabled variant={"secondary"}><Search /></Button>
@@ -93,7 +93,7 @@ function AlertaRoubo({ viatura }: { viatura: any }) {
             </DialogTrigger>
             <DialogContent id="cont-modal" className="max-h-96 overflow-y-auto">
                 <DialogHeader className="relative">
-                    <DialogTitle><span className="text-slate-700">Alertas de {viatura.numeroMatricula}</span></DialogTitle>
+                    <DialogTitle><span className="text-slate-700">Alertas da viatura {viatura.numeroMatricula}</span></DialogTitle>
                 </DialogHeader>
                 <Table>
                     <TableHeader>

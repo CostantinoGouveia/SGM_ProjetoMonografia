@@ -66,7 +66,7 @@ export default function Aplicar() {
                 Data de vencimento
               </TableHead>
               <TableHead>
-                Nº de infracoes
+                Situação
               </TableHead>
               <TableHead>
                 Total
@@ -87,9 +87,9 @@ export default function Aplicar() {
               <TableRow key={index}>
                 <TableCell>{new Date(multa.data).toISOString().split("T")[0]}</TableCell>
                 <TableCell>{new Date(multa.dataPagamento).toISOString().split("T")[0]}</TableCell>
-                <TableCell>{multa.infracao.length}</TableCell>
+                <TableCell>{multa.statusTribunal == true? "R/Tribunal":""}</TableCell>
                 <TableCell>{multa.valorMulta}kz</TableCell>
-                <TableCell><Badge className={`font-semibold text-white ${multa.pagamentomulta[0]?.status === "PENDENTE" ? "bg-orange-500" : multa.pagamentomulta[0]?.status === "PAGO" ? "bg-green-500" : "bg-red-500"}`}>{(multa.pagamentomulta[0]?.status === "NAO_PAGO") ? "NÃO PAGO" : multa.pagamentomulta[0]?.status}</Badge></TableCell>
+                <TableCell><Badge className={`font-semibold text-white ${multa.pagamentomulta[0]?.status === "PENDENTE" ? "bg-orange-500" : multa.pagamentomulta[0]?.status === "PAGO" ? "bg-green-500" : "bg-red-500"}`}>{(multa.pagamentomulta[0]?.status === "Nao Pago") ? "N/Pago" : multa.pagamentomulta[0]?.status}</Badge></TableCell>
                 <TableCell><PagamentoMulta idMulta={multa.codMulta} /></TableCell>
                 <TableCell ><HandleDownload id={multa.codMulta}></HandleDownload> </TableCell>
               </TableRow>

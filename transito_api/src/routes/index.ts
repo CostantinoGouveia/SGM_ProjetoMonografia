@@ -12,7 +12,7 @@ import { getFuncionarios, getFuncionarioById, createFuncionario, updateFuncionar
 import { getInfracoes, getInfracaoById, createInfracao, updateInfracao, deleteInfracao } from '../controllers/InfracaoController';
 import { getLivretes, getLivreteById, createLivrete, updateLivrete, deleteLivrete } from '../controllers/LivreteController';
 import { getMarcas, getMarcaById, createMarca, updateMarca, deleteMarca } from '../controllers/MarcaController';
-import { getMultas, getMultaById, createMulta, updateMulta, deleteMulta } from '../controllers/MultaController';
+import { getMultas, getMultaById, createMulta, updateMulta, deleteMulta, verificarMultas } from '../controllers/MultaController';
 import { getMunicipios, getMunicipioById, createMunicipio, updateMunicipio, deleteMunicipio } from '../controllers/MunicipioController';
 import { getPagamentosMulta, getPagamentoMultaById, createPagamentoMulta, updatePagamentoMulta, deletePagamentoMulta, getPagamentosMultaReferencia, multaAtulizado } from '../controllers/PagamentoMultaController';
 import { getPaises, getPaisById, createPais, updatePais, deletePais } from '../controllers/PaisController';
@@ -152,6 +152,7 @@ router.get('/multa/:id', tokenValidate, getMultaById);
 router.post('/multa', tokenValidate, createMulta);
 router.put('/multa/:id', tokenValidate, updateMulta);
 router.delete('/multa/:id', tokenValidate, deleteMulta);
+router.post('/verificar-multas', verificarMultas);
 
 // Rotas para Municipio
 router.get('/municipios', tokenValidate, getMunicipios);

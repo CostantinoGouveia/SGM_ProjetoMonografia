@@ -11,6 +11,7 @@ export const getMultas = async (req: Request, res: Response): Promise<void> => {
                 automobilista: true,
                 viatura: true,
                 pagamentomulta: true,
+                reclamacao: true,
                 funcionario: {
                     include: {
                         pessoa: true,
@@ -29,6 +30,52 @@ export const getMultas = async (req: Request, res: Response): Promise<void> => {
         res.status(500).json({ error: 'Não foi possível buscar as multas' });
     }
 };
+
+export const verificarMultas = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const multasVencidas = await prisma.multa.findMany({
+        where: {
+          dataLimite: { lt: new Date() },   // Multas vencidas
+          dataPagamento: null,              // Multas não pagas
+          statusTribunal: false,            // Ainda não enviadas ao tribunal
+        },
+        include: {
+            automobilista: true,
+            viatura: true,
+            pagamentomulta: true,
+            reclamacao: true,
+        },
+      });
+  
+      // Atualiza o statusTribunal para cada multa vencida
+      const atualizacoes = multasVencidas.map(async (multa) => {
+        if (multa.pagamentomulta) { // Verifica se pagamentomulta existe
+            return prisma.multa.update({
+                where: { codMulta: multa.codMulta },
+                data: {
+                    statusTribunal: true,
+                    pagamentomulta: {
+                        update: {
+                            where: { codPagamentoMulta: multa.pagamentomulta[0]?.codPagamentoMulta },
+                            data: { status: 'Nao Pago' },
+                        },
+                    },
+                },
+            });
+        }
+        return null; // Se não houver pagamentomulta, ignora a atualização para essa multa
+    });
+
+    // Remove possíveis valores nulos caso não haja pagamentomulta
+    const resultados = await Promise.all(atualizacoes.filter((update) => update !== null));
+
+  
+      res.status(200).json({ message: 'Multas vencidas verificadas e atualizadas', totalAtualizadas: atualizacoes.length });
+    } catch (error) {
+      console.error('Erro ao verificar multas:', error);
+      res.status(500).json({ error: 'Erro ao verificar multas' });
+    }
+  };
 
 export const getMultaById = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
@@ -49,6 +96,7 @@ export const getMultaById = async (req: Request, res: Response): Promise<void> =
                     },
                 },
                 viatura: true,
+                reclamacao: true,
                 pagamentomulta: true,
                 funcionario: {
                     include: {
@@ -124,6 +172,8 @@ export const createMulta = async (req: Request, res: Response): Promise<void> =>
         res.status(500).json({ error: 'Não foi possível criar a multa' });
     }
 };
+
+
 
 export const updateMulta = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;

@@ -26,14 +26,19 @@ export default function RoubosPage() {
     });
 
     useEffect(() => {
+      if (data && isSuccess) {
+        const viaturasComAlertasAtivos = data.filter((item: any) => item.status === "Ativo");
+
+
         if (items !== "") {
           const results = data.filter((item: any) =>
             item.viatura.numeroMatricula.toLowerCase().includes(items.toLowerCase())
           );
           setSearch(results);
         } else {
-          setSearch(data); // Mostra todos os resultados se o termo de pesquisa estiver vazio
+          setSearch(viaturasComAlertasAtivos); // Mostra todos os resultados se o termo de pesquisa estiver vazio
         }
+      }
       }, [items, data]);
     console.log(search);
     return (

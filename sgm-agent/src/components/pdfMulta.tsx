@@ -31,7 +31,6 @@ export default function HandleDownload({ id }: { id: any }) {
         doc.text("Dados do Automobilista", 5, 20);
         doc.setFontSize(9);
         doc.text(`Nome: ${data.automobilista.pessoa.nome}`, 5, 25);
-        console.log("data", data.pagamentomulta[0].dataCriacao)
         doc.text(`Número da Carta: ${data.automobilista?.cartaconducao.numeroCarta}`, 5, 30);
         doc.text(`Número do BI: ${data.automobilista.pessoa.bi.numeroBI}`, 5, 35);
         doc.text(`Contatos: ${data.automobilista.pessoa.contacto.contacto1} | ${data.automobilista.pessoa.contacto.email1}`, 5, 40);
@@ -44,15 +43,16 @@ export default function HandleDownload({ id }: { id: any }) {
         doc.text(`Aplicado a (Matrícula): ${data.viatura === null ? "Indivíduo" : data.viatura.numeroMatricula}`, 5, 60);
         doc.text(`Quantidade de Infrações: ${data.infracao.length}`, 5, 65);
         
+        console.log("data", data.dataPagamento?.split("T")[0] || "N/A")
         // Pagamentos
         doc.setFontSize(11);
         doc.text("Pagamentos", 5, 80);
         doc.setFontSize(9);
         doc.text(`Referência: ${data.pagamentomulta[0].referencia}`, 5, 85);
         doc.text(`Valor Pago (Kz): ${data.pagamentomulta[0].valorPago}`, 5, 90);
-        doc.text(`Data do Pagamento: ${new Date(data.dataPagamento).toISOString().split("T")[0] || "N/A"}`, 5, 95);
+        doc.text(`Data do Pagamento: ${data.dataPagamento?.split("T")[0] || "N/A"}`, 5, 95);
         doc.text(`Status: ${data.pagamentomulta[0].status}`, 5, 100);
-        doc.text(`Hora do Pagamento: ${new Date(data.dataPagamento).toISOString().split("T")[1].split(".")[0] || "N/A"}`, 5, 105);
+        doc.text(`Hora do Pagamento: ${data.dataPagamento?.split("T")[1].split(".")[0] || "N/A"}`, 5, 105);
         doc.text(`Transação: ${data.pagamentomulta[0].descCodigoDeposito}`, 5, 110);
 
         // Dados do Agente

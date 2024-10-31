@@ -193,7 +193,10 @@ model multa {
   horaFeita        DateTime      @db.Time @default(dbgenerated("(current_timestamp())"))
   descMulta        String            @default("") @db.Text
   codFuncionario   Int?
+  dataLimite         DateTime          @default(dbgenerated("(current_date + interval 15 day)")) // Calcula 15 dias a partir da criação da multa
+  statusTribunal     Boolean           @default(false)
   infracao         infracao[]
+  reclamacao      reclamacao[]
   automobilista    automobilista?    @relation(fields: [codAutomobilista], references: [codAutomobilista], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_1")
   viatura          viatura?          @relation(fields: [CodViatura], references: [codViatura], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_3")
   funcionario      funcionario?      @relation(fields: [codFuncionario], references: [codFuncionario], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_2")
@@ -202,6 +205,20 @@ model multa {
   @@index([CodViatura], map: "CodViatura")
   @@index([codAutomobilista], map: "codAutomobilista")
   @@index([codFuncionario], map: "idx_cod_funcionario")
+}
+
+model reclamacao {
+  codReclamacao    Int      @id @default(autoincrement())
+  codMulta         Int
+  dataReclamacao   DateTime @default(now())
+  motivo           String   @db.VarChar(255) // Descrição do motivo da reclamação
+  status           String   @default("Pendente") @db.VarChar(50) // Status da reclamação, por exemplo: "Pendente", "Analisada", "Concluída"
+  observacao       String?  @db.Text           // Observações adicionais ou resposta da análise
+  
+  // Relacionamento com o modelo `multa`
+  multa            multa    @relation(fields: [codMulta], references: [codMulta], onDelete: Cascade, map: "reclamacao_ibfk_1")
+
+  @@index([codMulta], map: "idx_cod_multa")
 }
 
 model municipio {
