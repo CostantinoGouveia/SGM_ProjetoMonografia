@@ -28,6 +28,7 @@ import { login, login_automobilista, verifyToken } from '../controllers/Autentic
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { db } from "../controllers/AutenticacaoController";
+import { createReclamacao, deleteReclamacao, getReclamacaoById, getReclamacoes, updateReclamacao } from '../controllers/ReclamacaoController';
 const router = Router();
 
 export function tokenValidate(req: Request, res: Response, next: NextFunction) {
@@ -68,6 +69,13 @@ router.get('/alertaroubo/:id',  tokenValidate, getAlertaRouboById);
 router.post('/alertaroubo',  tokenValidate, createAlertaRoubo);
 router.put('/alertaroubo/:id',  tokenValidate, updateAlertaRoubo);
 router.delete('/alertaroubo/:id',  tokenValidate, deleteAlertaRoubo);
+
+// Rotas para reclamcao
+router.get('/reclamacoes',  tokenValidate, getReclamacoes);
+router.get('/reclamacao/:id',  tokenValidate, getReclamacaoById);
+router.post('/reclamacao',  tokenValidate, createReclamacao);
+router.put('/reclamacao/:id',  tokenValidate, updateReclamacao);
+router.delete('/reclamacao/:id',  tokenValidate, deleteReclamacao);
 
 // Rotas para Automobilista
 router.get('/automobilistas', tokenValidate, getAutomobilistas);
