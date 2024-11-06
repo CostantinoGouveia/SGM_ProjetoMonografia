@@ -194,6 +194,27 @@ function PagamentoMulta({ idMulta }: { idMulta: string }) {
               </div>
             </div>
             <div className="grid grid-cols-12">
+              <div className="my-2 col-span-7">
+                <label htmlFor="valor" className="block m-2 font-semibold">Reclamação</label>
+                <div className="flex gap-3">
+                  {data.reclamacao.length > 0 ? (
+                    <>
+                      <Badge className={`font-semibold text-white ${data.reclamacao[0]?.status === "Pendente" ? "bg-orange-500" : data.reclamacao[0]?.status === "Aceite" ? "bg-green-500" : data.reclamacao[0]?.status === "Analise" ? "bg-blue-500" : "bg-red-500"}`}>{data.reclamacao[0]?.status}</Badge>
+                      <VerReclamacao idMulta={idMulta} />
+                    </>
+                  ) : (
+                    data.pagamentomulta[0].status == "PAGO" && data.reclamacao.length > 0 ? (
+                      <>
+                        <Badge className={`font-semibold text-white ${data.reclamacao[0]?.status === "Pendente" ? "bg-orange-500" : data.reclamacao[0]?.status === "Aceite" ? "bg-green-500" : data.reclamacao[0]?.status === "Analise" ? "bg-blue-500" : "bg-red-500"}`}>{data.reclamacao[0]?.status}</Badge>
+                        <VerReclamacao idMulta={idMulta} />
+                      </>
+                    ) : (
+                      <Badge className="font-semibold text-white bg-red-200">Sem Reclamação</Badge>
+                    )
+                  )}</div>
+              </div>
+            </div>
+            <div className="grid grid-cols-12">
               <div className="my-2 col-span-12">
                 <label htmlFor="descricao" className="block m-2 font-semibold">Descrição</label>
                 <textarea
@@ -341,6 +362,77 @@ function InfracaoLista({ tipoInfracao }: { tipoInfracao: any }) {
             ))}
           </TableBody>
         </Table>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function VerReclamacao({ idMulta }: { idMulta: string }) {
+  const { data, isSuccess } = useQuery({
+    queryKey: ["multa_id2", idMulta],
+    queryFn: () => GET_MULTA_BY_ID(idMulta),
+  })
+
+  console.log("ewewd", data);
+  console.log(data?.viatura === null ? "N/A" : "asdasd");
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant={"secondary"} className="flex gap-1">VER</Button>
+      </DialogTrigger>
+      <DialogContent id="cont-modal" className="max-h-96 overflow-y-auto">
+        <DialogHeader className="relative">
+          <DialogTitle><span className="text-slate-700">Reclamação</span></DialogTitle>
+        </DialogHeader>
+        {isSuccess && (
+
+          <div>
+            <h1 className=" font-bold text-1xl text-blue-600">Detalhes da Reclamação</h1>
+            <div className="grid grid-cols-12">
+              <div className="my-2 col-span-6">
+                <label htmlFor="numeroMatricula" className="block m-2 font-semibold ">Data Feita</label>
+                <input
+                  disabled
+                  type="text"
+                  id="numeroMatricula"
+                  name="numeroMatricula"
+                  value={data.reclamacao[0]?.dataReclamacao?.split("T")[0]}
+                />
+              </div>
+
+              <div className="my-2 col-span-6">
+                <label htmlFor="status" className="block m-2 font-semibold">Status</label>
+                <Badge className={`font-semibold text-white ${data.reclamacao[0]?.status === "Pendente" ? "bg-orange-500" : data.reclamacao[0]?.status === "Aceite" ? "bg-green-500" : data.reclamacao[0]?.status === "Analise" ? "bg-blue-500" : "bg-red-500"}`}>{data.reclamacao[0]?.status}</Badge>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-12">
+              <div className="my-2 col-span-12">
+                <label htmlFor="descricao" className="block m-2 font-semibold">Motivo</label>
+                <textarea
+                  disabled
+                  id="motivo"
+                  name="motivo"
+                  value={data.reclamacao[0].motivo}
+                  className="w-full h-36"
+                />
+              </div>
+            </div>
+            <h1 className=" font-bold text-1xl text-blue-600">Resposta a Reclamação</h1>
+            <div className="grid grid-cols-12">
+              <div className="my-2 col-span-12">
+                <label htmlFor="descricao" className="block m-2 font-semibold">Observação</label>
+                <textarea
+                  disabled
+                  id="motivo"
+                  name="motivo"
+                  value={data.reclamacao[0]?.observacao ? data.reclamacao[0]?.observacao : "Sem Observação"}
+                  className="w-full h-36"
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   )

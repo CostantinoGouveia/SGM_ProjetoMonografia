@@ -3,7 +3,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { Input } from "@/components/ui/input";
 import { GET_PESSOA_BY_ID } from "@/routes";
 import { useQuery } from "@tanstack/react-query";
-import { AlertTriangle, LucideNotebook, Notebook, NotebookIcon, NotebookPen } from "lucide-react";
+import { AlertTriangle, NotebookPen } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
@@ -21,8 +21,8 @@ export default function HomePage() {
   const [re, setRe] = useState<any[]>([]);
   useEffect(() => {
             if (data && data.titulopropriedade && data.titulopropriedade.length > 0) {
-        const results = data?.titulopropriedade[0].viatura.alertaroubo.filter((item: any) =>
-            (item.status === ("Ativo"))
+        const results = data?.titulopropriedade.filter((item: any) =>
+            (item.viatura.alertaroubo.some((item: any) => item.status === ("Ativo")))
         );
         setRe(results);
     }

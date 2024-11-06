@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { GET_MULTA_BY_ID, GET_PESSOA_BY_ID } from "@/routes";
-import { useQuery } from "@tanstack/react-query";
+import { GET_MULTA_BY_ID, GET_PESSOA_BY_ID, GET_RECLAMACAO_BY_ID, POST_RECLAMACAO } from "@/routes";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PlusCircle } from "lucide-react";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function Aplicar() {
@@ -87,7 +90,7 @@ export default function Aplicar() {
               <TableRow key={index}>
                 <TableCell>{new Date(multa.data).toISOString().split("T")[0]}</TableCell>
                 <TableCell>{new Date(multa.dataPagamento).toISOString().split("T")[0]}</TableCell>
-                <TableCell>{multa.statusTribunal == true? "R/Tribunal":""}</TableCell>
+                <TableCell>{multa.statusTribunal == true ? "R/Tribunal" : ""}</TableCell>
                 <TableCell>{multa.valorMulta}kz</TableCell>
                 <TableCell><Badge className={`font-semibold text-white ${multa.pagamentomulta[0]?.status === "PENDENTE" ? "bg-orange-500" : multa.pagamentomulta[0]?.status === "PAGO" ? "bg-green-500" : "bg-red-500"}`}>{(multa.pagamentomulta[0]?.status === "Nao Pago") ? "N/Pago" : multa.pagamentomulta[0]?.status}</Badge></TableCell>
                 <TableCell><PagamentoMulta idMulta={multa.codMulta} /></TableCell>
@@ -103,6 +106,7 @@ export default function Aplicar() {
           </TableBody>
         </Table>
       </div>
+
     </div>
   )
 }
@@ -155,6 +159,7 @@ function PagamentoMulta({ idMulta }: { idMulta: string }) {
                 </div>
               </div>
 
+
               <div className="my-2 col-span-6">
                 <label htmlFor="dataEmissao" className="block m-2 font-semibold">Data de Emissão</label>
                 <input
@@ -165,6 +170,30 @@ function PagamentoMulta({ idMulta }: { idMulta: string }) {
                   value={data.dataPagamento?.split("T")[0]}
 
                 />
+              </div>
+            </div>
+            <div className="grid grid-cols-12">
+              <div className="my-2 col-span-7">
+                <label htmlFor="valor" className="block m-2 font-semibold">Reclamação</label>
+                <div className="flex gap-3">
+                  {data.reclamacao.length > 0 ? (
+                    <>
+                      <Badge className={`font-semibold text-white ${data.reclamacao[0]?.status === "Pendente" ? "bg-orange-500" : data.reclamacao[0]?.status === "Aceite" ? "bg-green-500" : data.reclamacao[0]?.status === "Analise" ? "bg-blue-500" : "bg-red-500"}`}>{data.reclamacao[0]?.status}</Badge>
+                      <VerReclamacao idMulta={idMulta} />
+                    </>
+                  ) : (
+                    data.pagamentomulta[0].status == "PAGO" && data.reclamacao.length > 0 ? (
+                      <>
+                        <Badge className={`font-semibold text-white ${data.reclamacao[0]?.status === "Pendente" ? "bg-orange-500" : data.reclamacao[0]?.status === "Aceite" ? "bg-green-500" : data.reclamacao[0]?.status === "Analise" ? "bg-blue-500" : "bg-red-500"}`}>{data.reclamacao[0]?.status}</Badge>
+                        <VerReclamacao idMulta={idMulta} />
+                      </>
+                    ) : data.pagamentomulta[0].status != "PAGO" && data.reclamacao.length == 0 ? (
+                      (
+                        <CriarReclama multa={data}/>)
+                    ) : (
+                      <Badge className="font-semibold text-white bg-red-200">Sem Reclamação</Badge>
+                    )
+                  )}</div>
               </div>
             </div>
             <div className="grid grid-cols-12">
@@ -319,4 +348,223 @@ function InfracaoLista({ tipoInfracao }: { tipoInfracao: any }) {
       </DialogContent>
     </Dialog>
   )
+}
+
+function VerReclamacao({ idMulta }: { idMulta: string }) {
+  const { data, isSuccess } = useQuery({
+    queryKey: ["multa_id2", idMulta],
+    queryFn: () => GET_MULTA_BY_ID(idMulta),
+  })
+
+  console.log("ewewd", data);
+  console.log(data?.viatura === null ? "N/A" : "asdasd");
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant={"secondary"} className="flex gap-1">VER</Button>
+      </DialogTrigger>
+      <DialogContent id="cont-modal" className="max-h-96 overflow-y-auto">
+        <DialogHeader className="relative">
+          <DialogTitle><span className="text-slate-700">Reclamação</span></DialogTitle>
+        </DialogHeader>
+        {isSuccess && (
+
+          <div>
+            <h1 className=" font-bold text-1xl text-blue-600">Detalhes da Reclamação</h1>
+            <div className="grid grid-cols-12">
+              <div className="my-2 col-span-6">
+                <label htmlFor="numeroMatricula" className="block m-2 font-semibold ">Data Feita</label>
+                <input
+                  disabled
+                  type="text"
+                  id="numeroMatricula"
+                  name="numeroMatricula"
+                  value={data.reclamacao[0]?.dataReclamacao?.split("T")[0]}
+                />
+              </div>
+
+              <div className="my-2 col-span-6">
+                <label htmlFor="status" className="block m-2 font-semibold">Status</label>
+                <Badge className={`font-semibold text-white ${data.reclamacao[0]?.status === "Pendente" ? "bg-orange-500" : data.reclamacao[0]?.status === "Aceite" ? "bg-green-500" : data.reclamacao[0]?.status === "Analise" ? "bg-blue-500" : "bg-red-500"}`}>{data.reclamacao[0]?.status}</Badge>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-12">
+              <div className="my-2 col-span-12">
+                <label htmlFor="descricao" className="block m-2 font-semibold">Motivo</label>
+                <textarea
+                  disabled
+                  id="motivo"
+                  name="motivo"
+                  value={data.reclamacao[0].motivo}
+                  className="w-full h-36"
+                />
+              </div>
+            </div>
+            <h1 className=" font-bold text-1xl text-blue-600">Resposta a Reclamação</h1>
+            <div className="grid grid-cols-12">
+              <div className="my-2 col-span-12">
+                <label htmlFor="descricao" className="block m-2 font-semibold">Observação</label>
+                <textarea
+                  disabled
+                  id="motivo"
+                  name="motivo"
+                  value={data.reclamacao[0]?.observacao ? data.reclamacao[0]?.observacao : "Sem Observação"}
+                  className="w-full h-36"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function CriarReclama({ multa }: { multa: any }) {
+  console.log(multa);
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant={"outline"} className="bg-blue-600 text-white flex gap-1">Fazer Reclamação</Button>
+      </DialogTrigger>
+      <DialogContent id="cont-modal" className="max-h-96 overflow-y-auto">
+        <DialogHeader className="relative">
+          <DialogTitle><span className="text-slate-700">Fazer Reclamação</span></DialogTitle>
+        </DialogHeader>
+        <CadastroReclamacao multa={multa} />
+      </DialogContent>
+    </Dialog>
+  )
+}
+export function CadastroReclamacao({ multa }: { multa: any }) {
+
+  const useClient = useQueryClient();
+  console.log("trtgrtgr", multa)
+
+  const [control, setControl] = useState(false)
+  // Estado para armazenar os dados do formulário
+  const [formData, setFormData] = useState({
+    motivo: "",
+  });
+
+  // Função para atualizar o estado do formulário
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const { mutateAsync: createReclama } = useMutation({
+    onSuccess(data) {
+      useClient.invalidateQueries({
+        queryKey: ["multa_id"], // chave da consulta
+        exact: true, // opcional, dependendo do filtro
+      });
+      toast.success('Reclamacao feita com sucesso')
+    },
+    mutationFn: POST_RECLAMACAO,
+    onError(error) {
+      toast.error('Não foi possível fazer reclamacao')
+      console.log(error)
+    }
+
+  })
+
+  const { mutateAsync: verifyReclam } = useMutation({
+    onSuccess(data) {
+      console.log("reclamacao", data)
+      const reclam = {
+        codMulta: multa.codMulta,
+        motivo: formData.motivo,
+      }
+
+      const reclamacaoAtivo = data?.reclamacao.some((item: any) => item.codMulta === multa.codMulta);
+      if (reclamacaoAtivo) {
+        toast.error('já tem uma reclamacao em andamento')
+      } else {
+        createReclama(reclam)
+        setFormData({
+          motivo: "",
+        })
+      }
+    },
+    mutationFn: GET_MULTA_BY_ID,
+    onError(error) {
+      toast.error('Não foi possível verificar a reclamacao')
+      console.log(error)
+    }
+  })
+
+  const handleAction = () => {
+    // Exibe o toast de confirmação
+    toast.info(
+      <div>
+        <p>Tem certeza que deseja confirmar a ação?</p>
+        <button
+          onClick={confirmAction}
+          className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+        >
+          Sim
+        </button>
+        <button
+          onClick={cancelAction}
+          className="bg-red-500 text-white px-4 py-2 rounded"
+        >
+          Não
+        </button>
+      </div>,
+      { autoClose: false } // Mantém o toast até que uma ação seja tomada
+    );
+  };
+
+  const confirmAction = () => {
+
+    verifyReclam(multa.codMulta)
+    //createAlert(data)
+    setControl(true)
+    toast.dismiss(); // Fecha o toast
+  };
+
+  const cancelAction = () => {
+    setControl(true)
+    toast.dismiss(); // Fecha o toast sem tomar ação
+    toast.error("Ação cancelada.");
+  };
+
+
+
+  // Função para enviar os dados para a API
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!control) {
+      handleAction()
+    }
+    setControl(false)
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-12">
+        <div className="col-span-12">
+          <label htmlFor="motivo">Motivo / Descriçao</label>
+          <textarea
+            id="motivo"
+            name="motivo"
+            value={formData.motivo}
+            onChange={(e) => handleChange(e)}
+            required
+            className="border p-2 w-full"
+          ></textarea>
+        </div>
+      </div>
+
+      <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+        Enviar Reclamação
+      </button>
+      < ToastContainer/>
+    </form>
+  );
 }

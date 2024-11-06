@@ -212,7 +212,7 @@ model reclamacao {
   codMulta         Int
   dataReclamacao   DateTime @default(now())
   motivo           String   @db.VarChar(255) // Descrição do motivo da reclamação
-  status           String   @default("Pendente") @db.VarChar(50) // Status da reclamação, por exemplo: "Pendente", "Analisada", "Concluída"
+  status           String   @default("Pendente") @db.VarChar(50) // Status da reclamação, por exemplo: "Pendente", "Analise", "Aceite", "Rejeitada"
   observacao       String?  @db.Text           // Observações adicionais ou resposta da análise
   
   // Relacionamento com o modelo `multa`

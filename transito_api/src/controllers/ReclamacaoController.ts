@@ -94,14 +94,13 @@ export const getReclamacaoById = async (req: Request, res: Response): Promise<vo
 };
 
 export const createReclamacao = async (req: Request, res: Response): Promise<void> => {
-    const { codMulta, motivo, observacao } = req.body;
+    const { codMulta, motivo} = req.body;
 
     try {
         const newReclamacao = await prisma.reclamacao.create({
             data: {
                 codMulta: Number(codMulta),
                 motivo,
-                observacao,
             },
         });
         res.status(201).json(newReclamacao);

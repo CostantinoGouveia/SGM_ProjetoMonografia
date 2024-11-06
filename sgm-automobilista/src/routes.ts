@@ -182,6 +182,72 @@ export const DELETE_ALERTA_ROUBO = async (id:string) => {
   return await response.json();
 };
 
+// Funções correspondentes para Alertaroubo
+export const GET_RECLAMACOES = async () => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/reclamacoes`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+  });
+  return await response.json();
+};
+
+
+
+export const GET_RECLAMACAO_BY_ID = async (id:string) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/reclamacao/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+  });
+  return await response.json();
+};
+
+// Função para criar uma nova reclamacao
+export const POST_RECLAMACAO = async (data: Alertaroubo) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/reclamacao`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return await response.json();
+};
+
+export const PUT_RECLAMACAO = async (id:string, data:any) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/reclamcao/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return await response.json();
+};
+
+export const DELETE_RECLAMACAO = async (id:string) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/reclamacao/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+  });
+  return await response.json();
+};
+
 // Função para obter todas as viaturas
 export const GET_VIATURAS = async () => {
     const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
