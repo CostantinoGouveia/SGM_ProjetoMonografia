@@ -14,7 +14,7 @@ export default function HomePage() {
     const { verifyToken } = useAuthentication();
     useEffect(() => {
         verifyToken();
-    }, []);
+    }, [verifyToken]);
     const idPessoa = localStorage.getItem('SGM_USER') || '';
 
     const { data, isSuccess } = useQuery({

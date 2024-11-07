@@ -1,8 +1,12 @@
+"use client"
 import ChartMultas from "@/components/ChartMultas";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { GET_PESSOA_BY_ID } from "@/routes";
+import { useQuery } from "@tanstack/react-query";
 import { DollarSign } from "lucide-react";
 
 export default function Home() {
+
     return (
         <div className="p-4">
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

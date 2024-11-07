@@ -1,13 +1,23 @@
+"use client"
 import { Bell, Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import SheetMobile from "./SheetMobile";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSubTrigger, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
+import { GET_PESSOA_BY_ID } from "@/routes";
 interface ISideBar {
   toogleSideBar: () => void,
 }
 export default function Header({ toogleSideBar }: ISideBar) {
+  const idPessoa = localStorage.getItem('SGM_USER') || '';
+
+  const { data, isSuccess } = useQuery({
+      queryKey: ['get-pessoa-by-id', idPessoa],
+      queryFn: () => GET_PESSOA_BY_ID(idPessoa)
+  });
+  console.log(data)
   return (
     <header className="sticky z-50 shadow-sm top-0 left-0 bg-white w-full p-1 flex justify-between pr-4 h-20 items-center">
       <Button onClick={toogleSideBar} className="p-2 max-md:hidden" variant={"ghost"}><Menu className="w-8 h-8" /></Button>

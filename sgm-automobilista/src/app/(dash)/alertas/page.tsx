@@ -1,4 +1,5 @@
 "use client"
+import useAuthentication from "@/app/hooks/useAuthtication";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -15,7 +16,11 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 export default function RoubosPage() {
-
+    const { verifyToken } = useAuthentication();
+    
+    useEffect(() => {
+        verifyToken();
+      }, [verifyToken]);
     const [items, setItems] = useState<string>('');
     const [search, setSearch] = useState<any>();
 

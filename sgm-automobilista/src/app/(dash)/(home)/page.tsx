@@ -1,4 +1,5 @@
 "use client"
+import useAuthentication from "@/app/hooks/useAuthtication";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { GET_PESSOA_BY_ID } from "@/routes";
@@ -8,6 +9,11 @@ import { useEffect, useState } from "react";
 
 export default function HomePage() {
     const idPessoa = localStorage.getItem('SGM_USER') || '';
+    const { verifyToken } = useAuthentication();
+    
+    useEffect(() => {
+        verifyToken();
+      }, [verifyToken]);
 
     const {data, isSuccess} = useQuery ({
       queryKey: ['get-pessoa-by-id', idPessoa],

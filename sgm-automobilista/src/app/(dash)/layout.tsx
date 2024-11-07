@@ -1,11 +1,16 @@
 "use client"
 import Link from "next/link";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
+import useAuthentication from "../hooks/useAuthtication";
 export default function Layout({ children }: { children: ReactNode }) {
-     
+    const { verifyToken } = useAuthentication();
+    
+    useEffect(() => {
+        verifyToken();
+      }, [verifyToken]);
     return (<main className="flex flex-col h-screen">
         <header className="bg-blue-950 h-16 text-white p-4 flex justify-between items-center">
             <div className="flex gap-2 items-center">

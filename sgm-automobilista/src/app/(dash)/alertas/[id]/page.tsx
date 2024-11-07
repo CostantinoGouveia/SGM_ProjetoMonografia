@@ -1,4 +1,5 @@
 "use client";
+import useAuthentication from "@/app/hooks/useAuthtication";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -12,6 +13,11 @@ import { use, useEffect, useState } from "react";
 
 export default function Automobilista() {
     const router = useRouter();
+    const { verifyToken } = useAuthentication();
+    
+    useEffect(() => {
+        verifyToken();
+      }, [verifyToken]);
 
 
     const { id } = useParams()

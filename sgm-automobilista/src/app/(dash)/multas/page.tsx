@@ -1,4 +1,5 @@
 "use client"
+import useAuthentication from "@/app/hooks/useAuthtication";
 import HandleDownload from "@/components/pdfMulta";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,12 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function Aplicar() {
   const idPessoa = localStorage.getItem('SGM_USER') || '';
+
+  const { verifyToken } = useAuthentication();
+    
+  useEffect(() => {
+      verifyToken();
+    }, [verifyToken]);
 
   const { data, isSuccess } = useQuery({
     queryKey: ["pessoa_id", idPessoa],

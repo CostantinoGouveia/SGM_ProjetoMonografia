@@ -182,7 +182,6 @@ export const DELETE_ALERTA_ROUBO = async (id:string) => {
   return await response.json();
 };
 
-
 // Funções correspondentes para Alertaroubo
 export const GET_RECLAMACOES = async () => {
   const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
@@ -248,7 +247,6 @@ export const DELETE_RECLAMACAO = async (id:string) => {
   });
   return await response.json();
 };
-
 
 // Função para obter todas as viaturas
 export const GET_VIATURAS = async () => {
