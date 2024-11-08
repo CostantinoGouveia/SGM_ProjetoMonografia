@@ -2,8 +2,7 @@
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
-import { GET_PESSOA_BY_ID } from "@/routes";
-import { useQuery } from "@tanstack/react-query";
+import UseQueryProvider from "@/components/UseQueryProvedor";
 import { ReactNode, useState } from "react";
 
 export default function LayoutDashboard({ children }: { children: ReactNode }) {
@@ -13,6 +12,7 @@ export default function LayoutDashboard({ children }: { children: ReactNode }) {
     }
   
     return (
+        <UseQueryProvider>
         <div className="bg-zinc-100 flex items-start">
             <Sidebar isSideBarOpen={isSideBarOpen} />
             <main className="w-full">
@@ -21,5 +21,6 @@ export default function LayoutDashboard({ children }: { children: ReactNode }) {
             </main>
             <Toaster/>
         </div>
+        </UseQueryProvider>
     )
 }

@@ -5,22 +5,25 @@ import { TableCell, TableRow } from "../ui/table";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSubContent, ContextMenuTrigger } from "../ui/context-menu";
 import { Button } from "../ui/button";
 import AlertDelete from "../AlertDelete";
-import AutomobilistaForm, { AutomobilistaType } from "./AutomobilistaForm";
+import AutomobilistaForm from "./AutomobilistaForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import ViewDataAutomobilista from "./ViewDataAutomobilista";
+import ViewDataAutomobilista, { IAutomobilista } from "./ViewDataAutomobilista";
+import { Automobilista } from "@/entities/interfaces";
+import ViewDataAutomobilistaLista from "./ViewDataAutomobilistaLista";
 
-export default function RowAutomo({ automobilista }: { automobilista: AutomobilistaType}) {
+export default function RowAutomo({ automobilista }: { automobilista: Automobilista}) {
 async function handleDeleteAutomobilista() {
     
 }
 function hancleClickViewAutomobilista() {
     
 }
+console.log(" fewfe", automobilista)
    return (
-                <TableRow key={automobilista.name}>       
+                <TableRow key={automobilista.codAutomobilista}>       
                     <TableCell className="font-medium">
                         <ContextMenu>
-                            <ContextMenuTrigger> {automobilista.name}</ContextMenuTrigger>
+                            <ContextMenuTrigger> {automobilista.pessoa.nome}</ContextMenuTrigger>
                             <ContextMenuContent>
                                 <ContextMenuItem>
                                     <Button variant={"ghost"}>Visualizar</Button>
@@ -37,7 +40,7 @@ function hancleClickViewAutomobilista() {
                     
                     <TableCell>
                     <ContextMenu>
-                            <ContextMenuTrigger>{automobilista.email}</ContextMenuTrigger>
+                            <ContextMenuTrigger>{automobilista.pessoa.contacto?.email1}</ContextMenuTrigger>
                             <ContextMenuContent>
                                 <ContextMenuItem>
                                     <Button variant={"ghost"}>Visualizar</Button>
@@ -51,18 +54,18 @@ function hancleClickViewAutomobilista() {
                             </ContextMenuContent>
                         </ContextMenu>
                         </TableCell>
-                        <TableCell>{automobilista.telemovel}</TableCell>
-                        <TableCell >{automobilista.bi}</TableCell>
+                        <TableCell>{automobilista.cartaconducao.numeroCarta}</TableCell>
+                        <TableCell >{automobilista.pessoa.bi.numeroBI}</TableCell>
                         <TableCell className="flex gap-1">
                             <ButtonView automobilista={automobilista} handleClick={()=>console.log("")}> <Button variant={"outline"} className=" hover:bg-muted"><Eye className="w-5 h-5 " /></Button></ButtonView>
                             <ButtonEdit><Button variant={"outline"} className=" hover:bg-muted"><Pencil className="w-5 h-5 " /></Button></ButtonEdit>
-                            <AlertDelete handleClick={handleDeleteAutomobilista}><Button variant={"outline"} className=" hover:bg-muted"><Trash2 className="w-5 h-5 text-red-700" /></Button></AlertDelete>
+                            <AlertDelete id={automobilista.codAutomobilista} handleClick={handleDeleteAutomobilista}><Button variant={"outline"} className=" hover:bg-muted"><Trash2 className="w-5 h-5 text-red-700" /></Button></AlertDelete>
                         </TableCell>
                     </TableRow>
     )
 }
 
-function ButtonView({automobilista, handleClick,children}: {children:ReactNode,automobilista: AutomobilistaType, handleClick: () => void}) 
+function ButtonView({automobilista, handleClick,children}: {children:ReactNode,automobilista: Automobilista, handleClick: () => void}) 
 {
     return(
      <Dialog>
@@ -70,7 +73,7 @@ function ButtonView({automobilista, handleClick,children}: {children:ReactNode,a
            {children}
         </DialogTrigger>
         <DialogContent>
-            <ViewDataAutomobilista data={automobilista} handleClick={handleClick}/>
+            <ViewDataAutomobilistaLista data={automobilista} handleClick={handleClick}/>
         </DialogContent>
     </Dialog>
     )

@@ -261,8 +261,8 @@ model pessoa {
   nome              String              @db.VarChar(150)
   genero            pessoa_genero
   estadoCivil       pessoa_estadoCivil
-  dataCadastro      String?             @default(dbgenerated("(current_timestamp())")) @db.VarChar(20)
-  dataNascimento    String              @db.VarChar(20)
+  dataCadastro      DateTime?             @default(dbgenerated("(current_timestamp())")) @db.DateTime()
+  dataNascimento    DateTime             @db.Date()
   codBi             Int
   senha             String              @db.VarChar(100)
   automobilista     automobilista[]

@@ -1,11 +1,12 @@
+"use client"
 import AutomobilistaForm, { AutomobilistaType } from "@/components/automobilstas/AutomobilistaForm";
 import RowAutomo from "@/components/automobilstas/RowAutomo";
-
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogHeader, DialogTrigger, DialogContent, DialogTitle} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow, Table } from "@/components/ui/table";
- 
+import { GET_AUTOMOBILISTAS } from "@/routes";
+import { useQuery } from "@tanstack/react-query";
 
 import {  PlusCircle, Search } from "lucide-react";
 const auto:AutomobilistaType[] = [
@@ -34,6 +35,12 @@ const auto:AutomobilistaType[] = [
     }
 ]
 export default function Automobilista() {
+
+    const { data, isSuccess } = useQuery({
+        queryKey: ['get-automobilista'],
+        queryFn: () => GET_AUTOMOBILISTAS()
+    });
+    console.log(data)
     return(
         <div className="p-4">
             <h1 className="text-lg text-slate-700 font-bold mb-4">Automobilistas</h1>
@@ -72,8 +79,9 @@ export default function Automobilista() {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {auto.map((automobilista) => (
-                        <RowAutomo key={automobilista.telemovel} automobilista={automobilista}/>
+
+                    {isSuccess && data.map((automobilista : any) => (
+                        <RowAutomo key={automobilista.email} automobilista={automobilista}/>
                     ))}
                 </TableBody>
                 <TableFooter>

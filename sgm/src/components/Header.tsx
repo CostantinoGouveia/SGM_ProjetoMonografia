@@ -35,7 +35,7 @@ export default function Header({ toogleSideBar }: ISideBar) {
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Button variant={"ghost"} className="flex gap-1 py-4">
-              <small>Gouveia</small>
+              <small>{data?.nome.split(" ")[0]} {data?.nome.split(" ")[data?.nome.split(" ").length - 1]}</small>
               <Avatar>
                 <AvatarImage src="https://github.com/CostantinoGouveia.png" alt="@shadcn" />
                 <AvatarFallback>CN</AvatarFallback>
@@ -44,7 +44,7 @@ export default function Header({ toogleSideBar }: ISideBar) {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem><Link className="px-2" href={"/"}>Definicoes</Link></DropdownMenuItem>
-            <DropdownMenuItem><Link className="px-2" href={"/"}>Sair</Link></DropdownMenuItem>
+            <DropdownMenuItem><Link className="px-2" href={"/auth/iniciar-sessao"}>Sair</Link></DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 

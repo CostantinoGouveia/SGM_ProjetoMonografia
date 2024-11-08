@@ -12,7 +12,15 @@ export const getAutomobilistas = async (req: Request, res: Response): Promise<vo
             pessoa: {
                 include: {
                     contacto: true,
-                    endereco: true,
+                    endereco: {
+                        include: {
+                            municipio: {
+                                include: {
+                                    provincia: true
+                                },
+                            },
+                        },
+                    },
                     pais: true,
                     bi: true,
                     titulopropriedade: true

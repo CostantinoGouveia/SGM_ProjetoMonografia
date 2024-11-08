@@ -8,10 +8,11 @@ import { IStep } from "./FirstForm"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale/pt-BR"
 import { DialogClose } from "../ui/dialog"
+import { Automobilista } from "@/entities/interfaces"
 
 interface IViewDataAutomobilista {
     handleClick: () => void,
-    data?: IAutomobilista,
+    data?: Automobilista,
     handleClickCancel?: () => void
 }
 export interface IAutomobilista {
@@ -38,92 +39,91 @@ export interface IAutomobilista {
     categoria: string,
     sexo: string
 }
-export default function ViewDataAutomobilista({ data, handleClick, handleClickCancel }: IViewDataAutomobilista) {
+export default function ViewDataAutomobilistaLista({ data, handleClick, handleClickCancel }: IViewDataAutomobilista) {
     const form = useFormContext<AutomobilistaType>()
     return (
         <div>
             <Table className="bg-white mt-8  rounded-md">
                 <TableRow>
                     <TableHead>Nome</TableHead>
-                    <TableCell>{data?.name?? ""}</TableCell>
+                    <TableCell>{data?.pessoa.nome?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Nacionalidade</TableHead>
-                    <TableCell>{data?.pais?? ""}</TableCell>
+                    <TableCell>{data?.pessoa.pais?.pais?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Data de Nascimento</TableHead>
-                    <TableCell>{format(data?.data_nascimento?? "", "PPP", { locale: ptBR })}</TableCell>
+                    <TableCell>{format(data?.pessoa.dataNascimento?? "", "PPP", { locale: ptBR })}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>BI</TableHead>
-                    <TableCell >{data?.bi?? ""}</TableCell>
+                    <TableCell >{data?.pessoa.bi.numeroBI?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Data de emissâo do bi</TableHead>
-                    <TableCell >{format(data?.data_emissao_bi?? "", "PPP", { locale: ptBR })}</TableCell>
+                    <TableCell >{format(data?.pessoa.bi.dataEmicaoBi?? "", "PPP", { locale: ptBR })}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Data de validade do bi</TableHead>
-                    <TableCell >{format(data?.data_validade_bi?? "", "PPP", { locale: ptBR })}</TableCell>
+                    <TableCell >{format(data?.pessoa.bi.dataValidacaoBi?? "", "PPP", { locale: ptBR })}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Email</TableHead>
-                    <TableCell >{data?.email?? ""}</TableCell>
+                    <TableCell >{data?.pessoa.contacto?.email1?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Email alternativo</TableHead>
-                    <TableCell >{data?.email_alternativo?? ""}</TableCell>
+                    <TableCell >{data?.pessoa.contacto?.email2?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Telefone</TableHead>
-                    <TableCell >{data?.telemovel?? ""}</TableCell>
+                    <TableCell >{data?.pessoa.contacto?.contacto1?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Telefone alternativo</TableHead>
-                    <TableCell >{data?.telemovel_alternativo?? ""}</TableCell>
+                    <TableCell >{data?.pessoa.contacto?.contacto2?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Provincia</TableHead>
-                    <TableCell >{data?.province?? ""}</TableCell>
+                    <TableCell >{data?.pessoa.endereco?.municipio?.provincia?.provincia?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Municipio</TableHead>
-                    <TableCell >{data?.municipio?? ""}</TableCell>
+                    <TableCell >{data?.pessoa.endereco?.municipio?.municipio?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Endereco</TableHead>
-                    <TableCell >{data?.endereco?? ""}</TableCell>
+                    <TableCell >{data?.pessoa.endereco?.descricaoEndereco?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>N da carta</TableHead>
-                    <TableCell >{data?.numero_carta?? ""}</TableCell>
+                    <TableCell >{data?.cartaconducao?.numeroCarta?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>N da via</TableHead>
-                    <TableCell >{data?.numero_via?? ""}</TableCell>
+                    <TableCell >{data?.cartaconducao?.numeroVia?? ""}</TableCell>
                 </TableRow>
 
                 <TableRow>
                     <TableHead>Local de emissâo</TableHead>
-                    <TableCell >{data?.local_emissao?? ""}</TableCell>
+                    <TableCell >{data?.cartaconducao?.localEmissao?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>data de emissâo</TableHead>
-                    <TableCell >{format(data?.data_emissao_carta_conducao?? "", "PPP", { locale: ptBR })}</TableCell>
+                    <TableCell >{format(data?.cartaconducao?.dataEmissao?? "", "PPP", { locale: ptBR })}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>data de validade</TableHead>
-                    <TableCell >{format(data?.data_validade_carta?? "", "PPP", { locale: ptBR })}</TableCell>
+                    <TableCell >{format(data?.cartaconducao?.dataValidade?? "", "PPP", { locale: ptBR })}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Categoria</TableHead>
-                    <TableCell >{data?.categoria?? ""}</TableCell>
+                    <TableCell >{data?.cartaconducao.categoriacarta?.descCategoriaCarta?? ""} ({data?.cartaconducao.categoriacarta?.sigla?? ""})</TableCell>
                 </TableRow>
             </Table>
 
-                {handleClickCancel && <div className="flex justify-between mt-4"> <Button onClick={()=>handleClickCancel()} variant={"outline"}>Cancelar</Button>
-                    <DialogClose><Button onClick={() => handleClick()} className="bg-green-800 font-bold">Salvar</Button></DialogClose></div>
+                {<div className="flex justify-between mt-4"><DialogClose><Button className="bg-zinc-600 font-bold">Fechar</Button></DialogClose></div>
                 }
        
         </div>
