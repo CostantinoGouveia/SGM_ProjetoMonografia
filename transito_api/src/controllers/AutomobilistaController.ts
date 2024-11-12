@@ -8,7 +8,11 @@ export const getAutomobilistas = async (req: Request, res: Response): Promise<vo
     const automobilistas = await prisma.automobilista.findMany({
         include: {
             alertaroubo: true,
-            cartaconducao: true,
+            cartaconducao: {
+                include: {
+                    categoriacarta: true,
+                },
+            },
             pessoa: {
                 include: {
                     contacto: true,
@@ -47,7 +51,11 @@ export const getAutomobilistaById = async (req: Request, res: Response): Promise
         where: { codAutomobilista: Number(req.params.id) },
         include: {
             alertaroubo: true,
-            cartaconducao: true,
+            cartaconducao: {
+                include: {
+                    categoriacarta: true,
+                },
+            },
             pessoa: {
                 include: {
                     contacto: true,
