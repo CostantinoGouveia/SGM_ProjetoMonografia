@@ -1,4 +1,4 @@
-import { PrismaClient} from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 
 const prisma = new PrismaClient();
@@ -9,7 +9,7 @@ export const getViaturas = async (req: Request, res: Response): Promise<void> =>
     const viaturas = await prisma.viatura.findMany({
       include: {
         marca: true,
-        livrete:  {
+        livrete: {
           include: {
             serivicoviatura: true,
           },
@@ -18,12 +18,12 @@ export const getViaturas = async (req: Request, res: Response): Promise<void> =>
         multa: true,
         titulopropriedade: {
           include: {
-                pessoa: {
-                  include: {
-                    contacto: true,
-                    endereco: true,
-                    pais: true,
-                    bi: true,
+            pessoa: {
+              include: {
+                contacto: true,
+                endereco: true,
+                pais: true,
+                bi: true,
               },
             },
           },
@@ -53,18 +53,18 @@ export const getViaturaById = async (req: Request, res: Response): Promise<void>
         multa: true,
         titulopropriedade: {
           include: {
-                pessoa: {
+            pessoa: {
+              include: {
+                contacto: true,
+                endereco: true,
+                pais: true,
+                bi: true,
+                automobilista: {
                   include: {
-                    contacto: true,
-                    endereco: true,
-                    pais: true,
-                    bi: true,
-                    automobilista: {
-                      include: {
-                        cartaconducao: true
-                      },
+                    cartaconducao: true
+                  },
+                },
               },
-             },
             },
           },
         },

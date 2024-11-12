@@ -3,19 +3,19 @@ import { ReactNode } from "react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog";
 import { useToast } from "./ui/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { DELETE_AUTOMOBILISTA } from "@/routes";
-interface DeleteAutomobilistaProps {
+import { DELETE_AUTOMOBILISTA, DELETE_VIATURA } from "@/routes";
+interface DeleteViaturaProps {
     handleClick: () => void,
     children: ReactNode,
     id: string
 }
 
-export default function AlertDelete({ children, handleClick, id }: DeleteAutomobilistaProps) {
+export default function AlertDeleteViatura({ children, handleClick, id }: DeleteViaturaProps) {
     const atualisa = useQueryClient()
-    const { mutateAsync: deleteAutomo } = useMutation({
-        mutationFn: DELETE_AUTOMOBILISTA,
+    const { mutateAsync: deleteViatura } = useMutation({
+        mutationFn: DELETE_VIATURA,
         onSuccess: () => {
-            atualisa.invalidateQueries(["get-automobilista"])
+            atualisa.invalidateQueries(["get-viaturas"])
             toast({description:"Eliminado com sucesso"})
         }
     });
@@ -35,7 +35,7 @@ export default function AlertDelete({ children, handleClick, id }: DeleteAutomob
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction className="bg-red-700 hover:bg-red-900" onClick={()=>deleteAutomo(id)}>Eliminar</AlertDialogAction>
+                    <AlertDialogAction className="bg-red-700 hover:bg-red-900" onClick={()=>deleteViatura(id)}>Eliminar</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

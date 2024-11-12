@@ -16,7 +16,7 @@ export default function Sidebar({isSideBarOpen} : {isSideBarOpen:boolean}) {
                         <Link href="/viaturas" className=" p-2 text-slate-700 hover:bg-foreground/90 transition-all hover:text-muted rounded-md"><li className="flex items-center gap-1 "><Caravan className="w-4 h-4"/>Viaturas</li></Link>
                         <Link href="/multas" className=" p-2 text-slate-700 hover:bg-foreground/90 transition-all hover:text-muted rounded-md"><li className="flex items-center gap-1 "><BookText className="w-4 h-4"/>Gerir multa</li></Link>
                         <Link href="/alertas" className=" p-2 text-slate-700 hover:bg-foreground/90 transition-all hover:text-muted rounded-md"><li className="flex items-center gap-1 "><TriangleAlert className="w-4 h-4"/>Alertas</li></Link>
-                        <Link href="/funcionarios" className=" p-2 text-slate-700 hover:bg-foreground/90 transition-all hover:text-muted rounded-md"><li className="flex items-center gap-1 "><UserPlus className="w-4 h-4"/>Agentes</li></Link>
+                        <Link href="/agentes" className=" p-2 text-slate-700 hover:bg-foreground/90 transition-all hover:text-muted rounded-md"><li className="flex items-center gap-1 "><UserPlus className="w-4 h-4"/>Agentes</li></Link>
                     </ul>
                 </div>
             </div>

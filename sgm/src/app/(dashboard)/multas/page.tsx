@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import RowViatura from "@/components/viaturas/RowViatura";
 import ViaturaForm, { viaturaType } from "@/components/viaturas/ViaruraForm";
 import { Viatura } from "@/entities/interfaces";
-import { GET_VIATURAS } from "@/routes";
+import { GET_MULTAS, GET_VIATURAS } from "@/routes";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { PlusCircle, Search } from "lucide-react";
@@ -78,14 +78,14 @@ const viaturas:viaturaType[] = [
 export default function Viaturas() {
 
   const { data, isSuccess } = useQuery({
-    queryKey: ['get-viaturas'],
-    queryFn: () => GET_VIATURAS()
+    queryKey: ['get-MULTAS'],
+    queryFn: () => GET_MULTAS()
   });
   console.log(data)
 
   return (
     <div className="p-4">
-      <h1 className="text-lg text-slate-700 font-bold mb-4">Viaturas</h1>
+      <h1 className="text-lg text-slate-700 font-bold mb-4">Multas</h1>
       <div className="flex justify-between items-start md:items-center">
         <div className="flex gap-1 flex-col md:flex-row">
           <div className="flex flex-col md:flex-row gap-1">

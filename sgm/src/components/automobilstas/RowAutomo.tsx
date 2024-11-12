@@ -59,7 +59,7 @@ console.log(" fewfe", automobilista)
                         <TableCell className="flex gap-1">
                             <ButtonView automobilista={automobilista} handleClick={()=>console.log("")}> <Button variant={"outline"} className=" hover:bg-muted"><Eye className="w-5 h-5 " /></Button></ButtonView>
                             <ButtonEdit><Button variant={"outline"} className=" hover:bg-muted"><Pencil className="w-5 h-5 " /></Button></ButtonEdit>
-                            <AlertDelete id={automobilista.codAutomobilista} handleClick={handleDeleteAutomobilista}><Button variant={"outline"} className=" hover:bg-muted"><Trash2 className="w-5 h-5 text-red-700" /></Button></AlertDelete>
+                            <AlertDelete id={automobilista.codAutomobilista.toString()} handleClick={handleDeleteAutomobilista}><Button variant={"outline"} className=" hover:bg-muted"><Trash2 className="w-5 h-5 text-red-700" /></Button></AlertDelete>
                         </TableCell>
                     </TableRow>
     )
