@@ -11,6 +11,8 @@ import ThreeForm from "./ThreeForm"
 import { Progress } from "../ui/progress"
 import ViewDataAutomobilista from "./ViewDataAutomobilista"
 import { useToast } from "../ui/use-toast"
+import { useMutation } from "@tanstack/react-query"
+import { POST_AUTOMOBILISTA } from "@/routes"
 
 
 const scheemaAutomobilista = z.object({
@@ -65,7 +67,18 @@ export default function AutomobilistaForm() {
             return 0
         })
     }
+    const {mutateAsync: createAuto} = useMutation({
+        mutationFn:POST_AUTOMOBILISTA,
+        onSuccess: (data) => {
+            console.log(data)
+        },
+        onError: (error) => {
+            console.log(error)
+        }
+    })
     function handleSaveAutomobilista() {
+        console.log(form.getValues())
+        createAuto(form.getValues())
         toast({
             description: "Automobista salvo com sucesso",
         })

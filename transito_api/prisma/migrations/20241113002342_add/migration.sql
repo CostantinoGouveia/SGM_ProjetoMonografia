@@ -1,16 +1,37 @@
 -- CreateTable
+CREATE TABLE `usuario` (
+    `codUsuario` INTEGER NOT NULL AUTO_INCREMENT,
+    `senha` VARCHAR(191) NOT NULL,
+    `bi` VARCHAR(191) NOT NULL,
+    `numeroAgente` VARCHAR(191) NOT NULL,
+    `telefone` VARCHAR(191) NOT NULL,
+    `codPessoa` INTEGER NOT NULL,
+    `tipoUsuario` ENUM('Transito', 'Automobilista', 'Admin') NOT NULL,
+
+    UNIQUE INDEX `usuario_bi_key`(`bi`),
+    UNIQUE INDEX `usuario_numeroAgente_key`(`numeroAgente`),
+    UNIQUE INDEX `usuario_telefone_key`(`telefone`),
+    INDEX `codPessoa`(`codPessoa`),
+    PRIMARY KEY (`codUsuario`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `alertaroubo` (
     `codAlertaRoubo` INTEGER NOT NULL AUTO_INCREMENT,
     `codAutomobilista` INTEGER NOT NULL,
+    `codEndereco` INTEGER NULL DEFAULT 0,
     `codViatura` INTEGER NOT NULL,
+    `status` VARCHAR(100) NULL DEFAULT 'Ativo',
     `dataRoubo` DATE NOT NULL,
-    `enderecoRoubo` VARCHAR(300) NOT NULL,
+    `dataFeita` DATE NOT NULL DEFAULT (current_timestamp()),
+    `horaFeita` TIME NOT NULL DEFAULT (current_timestamp()),
     `codTipoRoubo` INTEGER NOT NULL,
     `descRoubo` TEXT NOT NULL,
 
     INDEX `codAutomobilista`(`codAutomobilista`),
     INDEX `codTipoRoubo`(`codTipoRoubo`),
     INDEX `codViatura`(`codViatura`),
+    INDEX `codEndereco`(`codEndereco`),
     PRIMARY KEY (`codAlertaRoubo`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -40,12 +61,12 @@ CREATE TABLE `bi` (
 -- CreateTable
 CREATE TABLE `cartaconducao` (
     `codCartaConducao` INTEGER NOT NULL AUTO_INCREMENT,
-    `dataEmissao` DATE NOT NULL,
-    `dataValidade` DATE NOT NULL,
+    `dataEmissao` DATE NULL,
+    `dataValidade` DATE NULL,
     `numeroVia` VARCHAR(100) NOT NULL,
     `codCategoriaCarta` INTEGER NOT NULL,
     `numeroCarta` INTEGER NOT NULL,
-    `dataPrimeiraEmissao` DATE NOT NULL,
+    `dataPrimeiraEmissao` DATE NULL,
     `localEmissao` INTEGER NOT NULL,
     `codFicheiroCartaConducao` INTEGER NOT NULL,
 
@@ -90,7 +111,7 @@ CREATE TABLE `endereco` (
 CREATE TABLE `ficheiro` (
     `idFicheiro` INTEGER NOT NULL AUTO_INCREMENT,
     `nomeFicheiro` VARCHAR(250) NOT NULL,
-    `dataEntrada` VARCHAR(20) NULL DEFAULT (current_timestamp()),
+    `dataEntrada` VARCHAR(20) NULL,
     `dataValidacao` VARCHAR(20) NULL,
     `estadoValidacao` ENUM('Pendente', 'Validado', 'Invalidado') NULL DEFAULT 'Pendente',
 
@@ -125,30 +146,25 @@ CREATE TABLE `infracao` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `livrete` (
-    `codLivrete` INTEGER NOT NULL AUTO_INCREMENT,
-    `codViatura` INTEGER NOT NULL,
-    `numeroQuadro` VARCHAR(100) NOT NULL,
-    `corViatura` VARCHAR(100) NOT NULL,
+CREATE TABLE `viatura` (
+    `codViatura` INTEGER NOT NULL AUTO_INCREMENT,
     `MedidasPneumaticos` VARCHAR(100) NOT NULL,
-    `codServico` INTEGER NOT NULL,
-    `dataEmissao` DATE NOT NULL,
-    `dataPrimeiroRegistro` DATE NOT NULL,
-    `lotacao` VARCHAR(100) NOT NULL,
     `cilindrada` VARCHAR(100) NOT NULL,
-    `numeroCilindro` VARCHAR(100) NOT NULL,
+    `codMarca` INTEGER NOT NULL,
     `conbustivel` VARCHAR(100) NOT NULL,
+    `corViatura` VARCHAR(100) NOT NULL,
+    `distanciaEixo` VARCHAR(100) NOT NULL,
+    `lotacao` VARCHAR(100) NOT NULL,
+    `modelo` VARCHAR(200) NOT NULL,
+    `numeroCilindro` VARCHAR(100) NOT NULL,
+    `numeroQuadro` VARCHAR(100) NOT NULL,
     `peso` VARCHAR(100) NOT NULL,
     `tara` VARCHAR(100) NOT NULL,
     `tipoCaixa` VARCHAR(100) NOT NULL,
-    `distanciaEixo` VARCHAR(100) NOT NULL,
-    `modelo` VARCHAR(200) NOT NULL,
-    `codMarca` INTEGER NOT NULL,
+    `numeroMatricula` VARCHAR(50) NOT NULL,
 
     INDEX `codMarca`(`codMarca`),
-    INDEX `codServico`(`codServico`),
-    INDEX `codViatura`(`codViatura`),
-    PRIMARY KEY (`codLivrete`)
+    PRIMARY KEY (`codViatura`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -164,14 +180,33 @@ CREATE TABLE `multa` (
     `codMulta` INTEGER NOT NULL AUTO_INCREMENT,
     `codAutomobilista` INTEGER NULL,
     `CodViatura` INTEGER NULL,
-    `codInfracao` INTEGER NOT NULL,
     `valorMulta` VARCHAR(100) NOT NULL,
-    `estadoMulta` ENUM('PAGO', 'NÃO PAGO', 'PENDENTE') NOT NULL,
+    `estadoMulta` ENUM('PAGO', 'NAO PAGO', 'PENDENTE') NOT NULL,
+    `data` DATE NULL,
+    `dataPagamento` DATETIME NULL,
+    `horaFeita` TIME NOT NULL DEFAULT (current_timestamp()),
+    `descMulta` TEXT NULL,
+    `codFuncionario` INTEGER NULL,
+    `dataLimite` DATETIME(3)  NULL DEFAULT (current_date + interval 15 day),
+    `statusTribunal` BOOLEAN  NULL DEFAULT false,
 
     INDEX `CodViatura`(`CodViatura`),
     INDEX `codAutomobilista`(`codAutomobilista`),
-    INDEX `codInfracao`(`codInfracao`),
+    INDEX `idx_cod_funcionario`(`codFuncionario`),
     PRIMARY KEY (`codMulta`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `reclamacao` (
+    `codReclamacao` INTEGER NOT NULL AUTO_INCREMENT,
+    `codMulta` INTEGER NOT NULL,
+    `dataReclamacao` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `motivo` VARCHAR(255) NOT NULL,
+    `status` VARCHAR(50) NOT NULL DEFAULT 'Pendente',
+    `observacao` TEXT NULL,
+
+    INDEX `idx_cod_multa`(`codMulta`),
+    PRIMARY KEY (`codReclamacao`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -188,11 +223,14 @@ CREATE TABLE `municipio` (
 CREATE TABLE `pagamentomulta` (
     `codPagamentoMulta` INTEGER NOT NULL AUTO_INCREMENT,
     `codMulta` INTEGER NOT NULL,
-    `dataPagamento` DATE NOT NULL,
+    `dataCriacao` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `referencia` VARCHAR(191) NOT NULL DEFAULT '25436355',
+    `status` VARCHAR(100) NOT NULL DEFAULT 'Pendente',
     `valorPago` VARCHAR(100) NOT NULL,
     `descCodigoDeposito` VARCHAR(200) NOT NULL,
-    `codFicheiroPagamento` INTEGER NOT NULL,
+    `codFicheiroPagamento` INTEGER NULL,
 
+    UNIQUE INDEX `pagamentomulta_referencia_key`(`referencia`),
     INDEX `codFicheiroPagamento`(`codFicheiroPagamento`),
     INDEX `codMulta`(`codMulta`),
     PRIMARY KEY (`codPagamentoMulta`)
@@ -216,8 +254,8 @@ CREATE TABLE `pessoa` (
     `nome` VARCHAR(150) NOT NULL,
     `genero` ENUM('Masculino', 'Feminino') NOT NULL,
     `estadoCivil` ENUM('Solteiro', 'Casado', 'Solteira', 'Casada') NOT NULL,
-    `dataCadastro` VARCHAR(20) NULL DEFAULT (current_timestamp()),
-    `dataNascimento` VARCHAR(20) NOT NULL,
+    `dataCadastro` DATETIME NULL DEFAULT (current_timestamp()),
+    `dataNascimento` DATE NOT NULL,
     `codBi` INTEGER NOT NULL,
     `senha` VARCHAR(100) NOT NULL,
 
@@ -278,12 +316,23 @@ CREATE TABLE `titulopropriedade` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `viatura` (
-    `codViatura` INTEGER NOT NULL AUTO_INCREMENT,
-    `numeroMatricula` VARCHAR(50) NOT NULL,
+CREATE TABLE `livrete` (
+    `codLivrete` INTEGER NOT NULL AUTO_INCREMENT,
+    `codViatura` INTEGER NOT NULL,
+    `codServico` INTEGER NOT NULL,
+    `dataEmissao` DATE NOT NULL,
+    `dataPrimeiroRegistro` DATE NOT NULL,
 
-    PRIMARY KEY (`codViatura`)
+    INDEX `codServico`(`codServico`),
+    INDEX `codViatura`(`codViatura`),
+    PRIMARY KEY (`codLivrete`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `usuario` ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`codPessoa`) REFERENCES `pessoa`(`codPessoa`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+-- AddForeignKey
+ALTER TABLE `alertaroubo` ADD CONSTRAINT `alertaroubo_ibfk_4` FOREIGN KEY (`codEndereco`) REFERENCES `endereco`(`idEndereco`) ON DELETE SET NULL ON UPDATE RESTRICT;
 
 -- AddForeignKey
 ALTER TABLE `alertaroubo` ADD CONSTRAINT `alertaroubo_ibfk_1` FOREIGN KEY (`codAutomobilista`) REFERENCES `automobilista`(`codAutomobilista`) ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -325,22 +374,19 @@ ALTER TABLE `infracao` ADD CONSTRAINT `infracao_ibfk_1` FOREIGN KEY (`codMulta`)
 ALTER TABLE `infracao` ADD CONSTRAINT `infracao_ibfk_2` FOREIGN KEY (`codTipoInfracao`) REFERENCES `tipoinfracao`(`codTipoInfracao`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `livrete` ADD CONSTRAINT `livrete_ibfk_1` FOREIGN KEY (`codMarca`) REFERENCES `marca`(`codMarca`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
--- AddForeignKey
-ALTER TABLE `livrete` ADD CONSTRAINT `livrete_ibfk_2` FOREIGN KEY (`codViatura`) REFERENCES `viatura`(`codViatura`) ON DELETE RESTRICT ON UPDATE RESTRICT;
-
--- AddForeignKey
-ALTER TABLE `livrete` ADD CONSTRAINT `livrete_ibfk_3` FOREIGN KEY (`codServico`) REFERENCES `serivicoviatura`(`codServicoViatura`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `viatura` ADD CONSTRAINT `livrete_ibfk_1` FOREIGN KEY (`codMarca`) REFERENCES `marca`(`codMarca`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
 ALTER TABLE `multa` ADD CONSTRAINT `multa_ibfk_1` FOREIGN KEY (`codAutomobilista`) REFERENCES `automobilista`(`codAutomobilista`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `multa` ADD CONSTRAINT `multa_ibfk_2` FOREIGN KEY (`codInfracao`) REFERENCES `infracao`(`codInfracao`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `multa` ADD CONSTRAINT `multa_ibfk_3` FOREIGN KEY (`CodViatura`) REFERENCES `viatura`(`codViatura`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `multa` ADD CONSTRAINT `multa_ibfk_3` FOREIGN KEY (`CodViatura`) REFERENCES `viatura`(`codViatura`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `multa` ADD CONSTRAINT `multa_ibfk_2` FOREIGN KEY (`codFuncionario`) REFERENCES `funcionario`(`codFuncionario`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+-- AddForeignKey
+ALTER TABLE `reclamacao` ADD CONSTRAINT `reclamacao_ibfk_1` FOREIGN KEY (`codMulta`) REFERENCES `multa`(`codMulta`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `municipio` ADD CONSTRAINT `municipio_ibfk_1` FOREIGN KEY (`idProvincia`) REFERENCES `provincia`(`idProvincia`) ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -349,7 +395,7 @@ ALTER TABLE `municipio` ADD CONSTRAINT `municipio_ibfk_1` FOREIGN KEY (`idProvin
 ALTER TABLE `pagamentomulta` ADD CONSTRAINT `pagamentomulta_ibfk_1` FOREIGN KEY (`codMulta`) REFERENCES `multa`(`codMulta`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `pagamentomulta` ADD CONSTRAINT `pagamentomulta_ibfk_2` FOREIGN KEY (`codFicheiroPagamento`) REFERENCES `ficheiro`(`idFicheiro`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `pagamentomulta` ADD CONSTRAINT `pagamentomulta_ibfk_2` FOREIGN KEY (`codFicheiroPagamento`) REFERENCES `ficheiro`(`idFicheiro`) ON DELETE SET NULL ON UPDATE RESTRICT;
 
 -- AddForeignKey
 ALTER TABLE `pessoa` ADD CONSTRAINT `pessoa_ibfk_1` FOREIGN KEY (`codContacto`) REFERENCES `contacto`(`idContacto`) ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -371,3 +417,9 @@ ALTER TABLE `titulopropriedade` ADD CONSTRAINT `titulopropriedade_ibfk_2` FOREIG
 
 -- AddForeignKey
 ALTER TABLE `titulopropriedade` ADD CONSTRAINT `titulopropriedade_ibfk_3` FOREIGN KEY (`codFicheiroTituloPropriedade`) REFERENCES `ficheiro`(`idFicheiro`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+-- AddForeignKey
+ALTER TABLE `livrete` ADD CONSTRAINT `livrete_ibfk_2` FOREIGN KEY (`codViatura`) REFERENCES `viatura`(`codViatura`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+-- AddForeignKey
+ALTER TABLE `livrete` ADD CONSTRAINT `livrete_ibfk_3` FOREIGN KEY (`codServico`) REFERENCES `serivicoviatura`(`codServicoViatura`) ON DELETE RESTRICT ON UPDATE RESTRICT;
