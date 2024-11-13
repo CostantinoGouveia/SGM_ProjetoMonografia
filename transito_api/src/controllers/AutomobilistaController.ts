@@ -33,7 +33,7 @@ export const getAutomobilistas = async (req: Request, res: Response): Promise<vo
             multa: {
                 include: {
                     infracao: {
-                        include:{
+                        include: {
                             tipoinfracao: true
                         }
                     },
@@ -68,7 +68,7 @@ export const getAutomobilistaById = async (req: Request, res: Response): Promise
             multa: {
                 include: {
                     infracao: {
-                        include:{
+                        include: {
                             tipoinfracao: true
                         }
                     },
@@ -87,16 +87,59 @@ export const getAutomobilistaById = async (req: Request, res: Response): Promise
 };
 
 export const createAutomobilista = async (req: Request, res: Response): Promise<void> => {
-    const { codCartaConducao, codPessoa, alertaroubo, cartaconducao, pessoa, multa } = req.body;
+    const dados = req.body;
+    console.log(dados);
+    const newBi = await prisma.bi.create({
+        data: {
+                dataEmicaoBi: dados.data_emissao_bi,
+                dataValidacaoBi: dados.data_validade_bi,
+                numeroBI: dados.bi,
+                codFicheiroBi: 1
+        }
+    })
+    const newContacto = await prisma.contacto.create({
+        data: {
+            contacto1: dados.telemovel,
+            contacto2: dados.telemovel_alternativo,
+            email1: dados.email,
+            email2: dados.email_alternativo
+        }
+    })
+    const newEndereco = await prisma.endereco.create({
+        data: {
+            descricaoEndereco: dados.endereco,
+            idMunicipio: 1
+        }
+    })
     const newAutomobilista = await prisma.automobilista.create({
         data: {
-            codCartaConducao,
-            codPessoa,
-            alertaroubo: { create: alertaroubo },
-            cartaconducao: { create: cartaconducao },
-            pessoa: { create: pessoa },
-            multa: { create: multa }
+            cartaconducao: {
+                create: {
+                    dataEmissao: dados.data_emissao_carta_conducao,
+                    dataValidade: dados.data_validade_carta,
+                    codCategoriaCarta: 1,
+                    numeroCarta: dados.numero_carta,
+                    numeroVia: dados.numero_via,
+                    localEmissao: dados.local_emissao,
+                    dataPrimeiraEmissao: dados.data_primeira_emissao_carta,
+                    codFicheiroCartaConducao: 1,
+                }
+            },
+            pessoa: {
+                create: {
+                    codNacionalidade: 1,
+                    nome: dados.name,
+                    dataNascimento: dados.data_nascimento,
+                    genero: dados.sexo,
+                    estadoCivil: "Casado",
+                    senha: "1",
+                   codBi: newBi.idBi,
+                    codEndereco: newEndereco.idEndereco,
+                    codContacto:   newContacto.idContacto,
+                }
+            },
         }
+
     });
     res.status(201).json(newAutomobilista);
 };

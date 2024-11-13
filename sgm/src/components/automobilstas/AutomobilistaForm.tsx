@@ -77,7 +77,7 @@ export default function AutomobilistaForm() {
         }
     })
     function handleSaveAutomobilista() {
-        console.log(form.getValues())
+        console.log({...form.getValues(), idMunicipio : 1})
         createAuto(form.getValues())
         toast({
             description: "Automobista salvo com sucesso",

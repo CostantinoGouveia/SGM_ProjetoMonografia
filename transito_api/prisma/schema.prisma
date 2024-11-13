@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:promaga@localhost/transito"
+  url      = env("DATABASE_URL")
 }
 
 model usuario {
@@ -135,6 +135,7 @@ model funcionario {
   ficheiro                ficheiro @relation(fields: [codficheiroFotoPerfil], references: [idFicheiro], onUpdate: Restrict, map: "funcionario_ibfk_1")
   pessoa                  pessoa   @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "funcionario_ibfk_2")
   multa                   multa[] @relation()
+  reclamacao      reclamacao[]
   @@index([codPessoa], map: "idColaboradorPessoa")
   @@index([codficheiroFotoPendente], map: "idficheiroFotoPendente")
   @@index([codficheiroFotoPerfil], map: "idficheiroFotoPerfil")
@@ -210,6 +211,7 @@ model multa {
 model reclamacao {
   codReclamacao    Int      @id @default(autoincrement())
   codMulta         Int
+  codFuncionario   Int?    // Funcionário que analisou a reclamação
   dataReclamacao   DateTime @default(now())
   motivo           String   @db.VarChar(255) // Descrição do motivo da reclamação
   status           String   @default("Pendente") @db.VarChar(50) // Status da reclamação, por exemplo: "Pendente", "Analise", "Aceite", "Rejeitada"
@@ -217,8 +219,10 @@ model reclamacao {
   
   // Relacionamento com o modelo `multa`
   multa            multa    @relation(fields: [codMulta], references: [codMulta], onDelete: Cascade, map: "reclamacao_ibfk_1")
+  funcionario      funcionario?   @relation(fields: [codFuncionario], references: [codFuncionario], onDelete: Cascade, map: "reclamacao_ibfk_2")
 
   @@index([codMulta], map: "idx_cod_multa")
+  @@index([codFuncionario], map: "idx_cod_funcionario")
 }
 
 model municipio {

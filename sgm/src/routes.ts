@@ -472,6 +472,7 @@ export const GET_VIATURAS = async () => {
     
     // Função para criar uma nova viatura
     export const POST_AUTOMOBILISTA = async (data: Automobilista) => {
+      console.log(data)
       const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
       const response = await fetch(`${BASE_URL}/automobilista`, {
         method: "POST",
