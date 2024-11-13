@@ -93,7 +93,7 @@ export default function Aplicar() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Array.isArray(search) && search.length > 0 ? search.map((multa: any, index: number) => (
+            {Array.isArray(search) && search.length > 0 ? search.slice().reverse().map((multa: any, index: number) => (
               <TableRow key={index}>
                 <TableCell>{new Date(multa.data).toISOString().split("T")[0]}</TableCell>
                 <TableCell>{new Date(multa.dataPagamento).toISOString().split("T")[0]}</TableCell>
@@ -467,7 +467,7 @@ export function CadastroReclamacao({ multa }: { multa: any }) {
   const { mutateAsync: createReclama } = useMutation({
     onSuccess(data) {
       useClient.invalidateQueries({
-        queryKey: ["multa_id"], // chave da consulta
+        queryKey: ["pessoa_id"], // chave da consulta
         exact: true, // opcional, dependendo do filtro
       });
       toast.success('Reclamacao feita com sucesso')

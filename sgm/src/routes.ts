@@ -223,9 +223,9 @@ export const POST_RECLAMACAO = async (data: Alertaroubo) => {
   return await response.json();
 };
 
-export const PUT_RECLAMACAO = async (id:string, data:any) => {
+export const PUT_RECLAMACAO = async ({ id, data }: { id: string; data: any }) => {
   const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
-  const response = await fetch(`${BASE_URL}/reclamcao/${id}`, {
+  const response = await fetch(`${BASE_URL}/reclamacao/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

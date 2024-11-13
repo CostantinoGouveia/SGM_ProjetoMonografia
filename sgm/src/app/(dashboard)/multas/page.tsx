@@ -5,13 +5,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import RowMulta from "@/components/viaturas/RowMulta";
 import RowViatura from "@/components/viaturas/RowViatura";
 import ViaturaForm, { viaturaType } from "@/components/viaturas/ViaruraForm";
-import { Viatura } from "@/entities/interfaces";
+import { Multa, Viatura } from "@/entities/interfaces";
 import { GET_MULTAS, GET_VIATURAS } from "@/routes";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { PlusCircle, Search } from "lucide-react";
+import { ToastContainer } from "react-toastify";
 import { z } from "zod";
 
 const viaturas:viaturaType[] = [
@@ -113,17 +115,18 @@ export default function Viaturas() {
         <Table className="bg-white mt-8  rounded-md">
           <TableHeader>
             <TableRow>
-              <TableHead>Matricula</TableHead>
-              <TableHead className="w-[200px]">Marca</TableHead>
-              <TableHead>Modelo</TableHead>
-              <TableHead>Combustivel</TableHead>
+              <TableHead>Nome</TableHead>
+              <TableHead className="w-[200px]">Data</TableHead>
+              <TableHead>Nº de Infrações</TableHead>
+              <TableHead>situação</TableHead>
+              <TableHead>Estado</TableHead>
               <TableHead className="text-right"></TableHead>
               <TableHead className="text-right"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isSuccess && data.map((viatura:Viatura) => (
-              <RowViatura key={viatura.codViatura} viatura={viatura} />
+            {isSuccess && data.map((Multa:Multa) => (
+              <RowMulta key={Multa.codMulta} Multa={Multa} />
             ))}
           </TableBody>
           <TableFooter>
@@ -133,6 +136,7 @@ export default function Viaturas() {
             </TableRow>
           </TableFooter>
         </Table>
+      
       </div>
     </div>
   )

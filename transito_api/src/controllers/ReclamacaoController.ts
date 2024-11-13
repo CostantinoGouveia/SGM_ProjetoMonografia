@@ -111,8 +111,9 @@ export const createReclamacao = async (req: Request, res: Response): Promise<voi
 
 export const updateReclamacao = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
+    console.log("id: " + id);
     const { codMulta, motivo, status, observacao } = req.body;
-
+    console.log( req.body);
     try {
         const updatedReclamacao = await prisma.reclamacao.update({
             where: { codReclamacao: Number(id) },
@@ -127,6 +128,7 @@ export const updateReclamacao = async (req: Request, res: Response): Promise<voi
             },
         });
         res.status(200).json(updatedReclamacao);
+        console.log(updatedReclamacao);
     } catch (error) {
         res.status(500).json({ error: 'Não foi possível atualizar a reclamação' });
     }

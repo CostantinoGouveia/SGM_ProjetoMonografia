@@ -8,7 +8,18 @@ export const getMultas = async (req: Request, res: Response): Promise<void> => {
     try {
         const multas = await prisma.multa.findMany({
             include: {
-                automobilista: true,
+                automobilista: {
+                    include: {
+                        pessoa: {
+                            include: {
+                                endereco: true,
+                                bi: true,
+                                contacto: true,
+                            },
+                        },
+                        cartaconducao: true,
+                    },
+                },
                 viatura: true,
                 pagamentomulta: true,
                 reclamacao: true,
