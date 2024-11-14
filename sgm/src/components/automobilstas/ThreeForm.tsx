@@ -98,7 +98,7 @@ export default function ThreeForm({setNextStep,setPreviusStep}: IStep) {
                                                 </Button>
                                             </PopoverTrigger>
                                             <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar  mode="single" onSelect={ (e) => field.onChange(String(e)) } disabled={(date) => {  return date < new Date("1900-01-01")}} initialFocus />
+                                            <Calendar  mode="single" onSelect={ (e) => field.onChange(e) } disabled={(date) => {  return date < new Date("1900-01-01")}} initialFocus />
                                         </PopoverContent>
                                     </Popover>
                                     </FormControl>
@@ -120,7 +120,7 @@ export default function ThreeForm({setNextStep,setPreviusStep}: IStep) {
                                                 </Button>
                                             </PopoverTrigger>
                                             <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar  mode="single" onSelect={ (e) => field.onChange(String(e)) } disabled={(date) => {  return date < new Date("1900-01-01")}} initialFocus />
+                                            <Calendar  mode="single" onSelect={ (e) => field.onChange(e) } disabled={(date) => {  return date < new Date("1900-01-01")}} initialFocus />
                                         </PopoverContent>
                                     </Popover>
                                     </FormControl>
@@ -145,7 +145,7 @@ export default function ThreeForm({setNextStep,setPreviusStep}: IStep) {
                                                     </Button>
                                                 </PopoverTrigger>
                                                 <PopoverContent className="w-auto p-0" align="start">
-                                                <Calendar  mode="single" onSelect={ (e) => field.onChange(String(e)) } disabled={(date) => {  return date < new Date("1900-01-01")}} initialFocus />
+                                                <Calendar  mode="single" onSelect={ (e) => field.onChange(e) } disabled={(date) => {  return date < new Date("1900-01-01")}} initialFocus />
                                             </PopoverContent>
                                         </Popover>
                                         </FormControl>

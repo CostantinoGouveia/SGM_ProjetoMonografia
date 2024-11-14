@@ -37,6 +37,7 @@ const scheemaAutomobilista = z.object({
     municipio: z.string(),
     province: z.string(),
     sexo: z.string({required_error:"Campo sexo é obrigatório"}),
+    estado: z.string({required_error:"Campo estado civil é obrigatório"}),
 })
 export type AutomobilistaType = z.infer<typeof scheemaAutomobilista>
 

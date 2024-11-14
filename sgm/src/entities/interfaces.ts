@@ -54,7 +54,7 @@ export interface Cartaconducao {
   dataValidade: Date;
   numeroVia: string;
   codCategoriaCarta: number;
-  numeroCarta: number;
+  numeroCarta: string;
   dataPrimeiraEmissao: Date;
   localEmissao: number;
   codFicheiroCartaConducao: number;

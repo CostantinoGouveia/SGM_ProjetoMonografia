@@ -73,9 +73,9 @@ model cartaconducao {
   dataValidade             DateTime        @db.Date
   numeroVia                String          @db.VarChar(100)
   codCategoriaCarta        Int
-  numeroCarta              Int
+  numeroCarta              String          @db.VarChar(100)
   dataPrimeiraEmissao      DateTime        @db.Date
-  localEmissao             Int
+  localEmissao             String          @db.VarChar(200)
   codFicheiroCartaConducao Int
   automobilista            automobilista[]
   categoriacarta           categoriacarta  @relation(fields: [codCategoriaCarta], references: [codCategoriaCarta], onUpdate: Restrict, map: "cartaconducao_ibfk_1")
@@ -96,8 +96,8 @@ model contacto {
   idContacto Int      @id @default(autoincrement())
   contacto1  String   @db.VarChar(15)
   contacto2  String?  @db.VarChar(20)
-  email1     String?  @unique(map: "email1") @db.VarChar(50)
-  email2     String?  @unique(map: "email2") @db.VarChar(50)
+  email1     String?  @db.VarChar(50)
+  email2     String?  @db.VarChar(50)
   pessoa     pessoa[]
 }
 
