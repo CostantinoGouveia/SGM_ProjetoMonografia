@@ -16,6 +16,8 @@ import { useEffect, useState } from "react"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command"
 import { CATE, cn } from "@/lib/utils"
 import { Button } from "../ui/button"
+import { useQuery } from "@tanstack/react-query"
+import { GET_CATEGORIASCARTA } from "@/routes"
 
 export default function ThreeForm({setNextStep,setPreviusStep}: IStep) {
     async function getCountrys() {
@@ -23,6 +25,11 @@ export default function ThreeForm({setNextStep,setPreviusStep}: IStep) {
         const json = await response.json() as ICountry[]
         setCountry(json.reverse())
     }
+
+    const { data:dataCategoriaCarta, isSuccess:isSuccessCategCarta } = useQuery({
+        queryKey: ['get-caterias-carta'],
+        queryFn: () => GET_CATEGORIASCARTA()
+    });
     const [countrys, setCountry] = useState<ICountry[]>()
     useEffect(()=>{
         getCountrys()
@@ -167,7 +174,7 @@ export default function ThreeForm({setNextStep,setPreviusStep}: IStep) {
                                                         role="combobox"
                                                         aria-expanded={openCartaCategoria}
                                                         className="w-fu justify-between">
-                                                        {field.value || "Selecione a categoria"}
+                                                        {isSuccessCategCarta && field.value? dataCategoriaCarta.find((country: any) => country.codCategoriaCarta === Number(field.value))?.descCategoriaCarta : "Selecione a categoria"}
                                                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                                     </Button>
                                                 </PopoverTrigger>
@@ -178,10 +185,10 @@ export default function ThreeForm({setNextStep,setPreviusStep}: IStep) {
                                                 <CommandList>
                                                     <CommandEmpty>categoria nao encontrada</CommandEmpty>
                                                     <CommandGroup>
-                                                    {CATE && CATE.map((categoria) => (
+                                                    {isSuccessCategCarta && dataCategoriaCarta.map((categoria:any) => (
                                                         <CommandItem
-                                                        key={categoria.name}
-                                                        value={categoria.name}
+                                                        key={categoria.codCategoriaCarta}
+                                                        value={String(categoria.codCategoriaCarta)}
                                                         onSelect={(currentValue) => {
                                                             form.setValue("categoria",currentValue)
                                                             setCartaCategoria(false)
@@ -190,10 +197,10 @@ export default function ThreeForm({setNextStep,setPreviusStep}: IStep) {
                                                         <Check
                                                             className={cn(
                                                             "mr-2 h-4 w-4",
-                                                            field.value === categoria.name ? "opacity-100" : "opacity-0"
+                                                            field.value === categoria.descCategoriaCarta ? "opacity-100" : "opacity-0"
                                                             )}
                                                         />
-                                                        {categoria.name}
+                                                        {categoria.descCategoriaCarta}
                                                         </CommandItem>
                                                     ))}
                                                     </CommandGroup>

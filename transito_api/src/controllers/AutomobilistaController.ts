@@ -3,7 +3,12 @@ import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+enum pessoa_genero {
+    Masculino = "Masculino",
+    Feminino = "Feminino",
+  }
 
+  
 export const getAutomobilistas = async (req: Request, res: Response): Promise<void> => {
     const automobilistas = await prisma.automobilista.findMany({
         include: {
@@ -116,7 +121,7 @@ export const createAutomobilista = async (req: Request, res: Response): Promise<
             prisma.endereco.create({
                 data: {
                     descricaoEndereco: dados.endereco,
-                    idMunicipio: dados.municipio
+                    idMunicipio: Number(dados.municipio)
                 }
             }),
 
@@ -139,7 +144,7 @@ export const createAutomobilista = async (req: Request, res: Response): Promise<
                     create: {
                         dataEmissao: dados.data_emissao_carta_conducao,
                         dataValidade: dados.data_validade_carta,
-                        codCategoriaCarta: 1,
+                        codCategoriaCarta: Number(dados.categoria),
                         numeroCarta: dados.numero_carta,
                         numeroVia: dados.numero_via,
                         localEmissao: dados.local_emissao,
@@ -149,10 +154,10 @@ export const createAutomobilista = async (req: Request, res: Response): Promise<
                 },
                 pessoa: {
                     create: {
-                        codNacionalidade: 1,
+                        codNacionalidade: Number(dados.pais),
                         nome: dados.name,
                         dataNascimento: dados.data_nascimento,
-                        genero: dados.sexo,
+                        genero: dados.sexo as pessoa_genero,
                         estadoCivil: dados.estado,
                         senha: "1",
                         codBi: newBi.idBi, // Será atualizado abaixo
@@ -169,11 +174,7 @@ export const createAutomobilista = async (req: Request, res: Response): Promise<
                         bi: true
                     }
                 },
-                cartaconducao: {
-                    include: {
-                        categoriacarta: true
-                    }
-                }
+                cartaconducao: true
             },
         })
 

@@ -101,7 +101,7 @@ export default function FirstForm({ setNextStep, setPreviusStep }: IStep) {
                                         </FormControl>
                                         <SelectContent >
                                             <SelectItem value="Masculino">Masculino</SelectItem>
-                                            <SelectItem value="Femenino">Femenino</SelectItem>
+                                            <SelectItem value="Feminino">Feminino</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormDescription className="text-red-600">{errors.sexo && errors.sexo.message}</FormDescription>
