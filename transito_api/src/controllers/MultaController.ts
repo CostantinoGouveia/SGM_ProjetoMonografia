@@ -49,6 +49,7 @@ export const verificarMultas = async (req: Request, res: Response): Promise<void
           dataLimite: { lt: new Date() },   // Multas vencidas
           dataPagamento: null,              // Multas não pagas
           statusTribunal: false,            // Ainda não enviadas ao tribunal
+         
         },
         include: {
             automobilista: true,
@@ -57,10 +58,10 @@ export const verificarMultas = async (req: Request, res: Response): Promise<void
             reclamacao: true,
         },
       });
-  
+      
       // Atualiza o statusTribunal para cada multa vencida
       const atualizacoes = multasVencidas.map(async (multa) => {
-        if (multa.pagamentomulta) { // Verifica se pagamentomulta existe
+        if (multa.pagamentomulta && multa.reclamacao.length == 0) { // Verifica se pagamentomulta existe
             return prisma.multa.update({
                 where: { codMulta: multa.codMulta },
                 data: {

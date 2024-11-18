@@ -23,7 +23,7 @@ import { getTiposInfracao, getTipoInfracaoById, createTipoInfracao, updateTipoIn
 import { getTiposRoubo, getTipoRouboById, createTipoRoubo, updateTipoRoubo, deleteTipoRoubo } from '../controllers/TiporouboController';
 import { getTitulosPropriedade, getTituloPropriedadeById, createTituloPropriedade, updateTituloPropriedade, deleteTituloPropriedade } from '../controllers/TitulopropriedadeController';
 import { getViaturas, getViaturaById, createViatura, updateViatura, deleteViatura } from '../controllers/ViaturaController';
-import { getUsuarios, getUsuarioById, createUsuario, updateUsuario, deleteUsuario } from '../controllers/UsuarioController';
+import { getUsuarios, getUsuarioById, createUsuario, updateUsuario, deleteUsuario, getUsuarioByPessoaId } from '../controllers/UsuarioController';
 import { login, login_automobilista, verifyToken } from '../controllers/AutenticacaoController';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
@@ -58,6 +58,7 @@ router.post('/loginA', login_automobilista);
 // Rotas para Usuarios
 router.get('/usuarios',  tokenValidate, getUsuarios);
 router.get('/usuario/:id', tokenValidate, getUsuarioById);
+router.get('/usuarioPessoa/:id', tokenValidate, getUsuarioByPessoaId);
 router.post('/usuario',  tokenValidate, createUsuario);
 router.put('/usuario/:id', tokenValidate, updateUsuario);
 router.delete('/usuario/:id', tokenValidate, deleteUsuario);

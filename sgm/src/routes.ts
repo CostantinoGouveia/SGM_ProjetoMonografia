@@ -327,6 +327,18 @@ export const GET_VIATURAS = async () => {
     return await response.json();
   };
   
+  export const VERIFY_MULTAS = async () => {
+    const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+    const response = await fetch(`${BASE_URL}/verificar-multas`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${AUTH_TOKEN}`,
+      },
+    });
+    return await response.json();
+  };
+
      // Função para criar uma nova viatura
      export const GET_MULTA_BY_ID = async (id:string) => {
        const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);

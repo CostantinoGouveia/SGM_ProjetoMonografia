@@ -1,6 +1,7 @@
 // src/controllers/AutomobilistaController.ts
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { gerarHashSenha } from './AutenticacaoController';
 
 const prisma = new PrismaClient();
 enum pessoa_genero {
@@ -177,7 +178,20 @@ export const createAutomobilista = async (req: Request, res: Response): Promise<
                 cartaconducao: true
             },
         })
+            const senha1 = await gerarHashSenha(newAutomobilista.pessoa.bi.numeroBI);
 
+        const newUsuario = await prisma.usuario.create({
+
+            data: {
+                senha : senha1,
+                bi: newAutomobilista.pessoa.bi.numeroBI,
+                telefone: newAutomobilista.pessoa.contacto!.contacto1,
+                numeroAgente: "",
+                numeroCarta: newAutomobilista.cartaconducao.numeroCarta,
+                codPessoa: Number(newAutomobilista.pessoa.codPessoa),
+                tipoUsuario: "Automobilista",
+            }
+        });
 
         res.status(201).json({
             newAutomobilista,

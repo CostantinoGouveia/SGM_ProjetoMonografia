@@ -6,12 +6,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSubTrigger, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { GET_PESSOA_BY_ID } from "@/routes";
+import { GET_PESSOA_BY_ID, VERIFY_MULTAS } from "@/routes";
 interface ISideBar {
   toogleSideBar: () => void,
 }
 export default function Header({ toogleSideBar }: ISideBar) {
   const idPessoa = localStorage.getItem('SGM_USER') || '';
+
+  const { data: ver, isSuccess: isSuccessVer } = useQuery({
+    queryKey: ['verify-multas'],
+    queryFn: VERIFY_MULTAS,
+});
 
   const { data, isSuccess } = useQuery({
       queryKey: ['get-pessoa-by-id', idPessoa],

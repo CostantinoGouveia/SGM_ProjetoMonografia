@@ -10,6 +10,7 @@ import { use, useEffect, useState } from "react"
 import { Progress } from "../ui/progress"
 import { useToast } from "../ui/use-toast"
 import FirstFormViatura from "./FirstFormViatura"
+import SecondFormViatura from "./SecondFormViatura"
 
 const schema = z.object({
     MedidasPneumaticos: z.string().max(100, "O campo MedidasPneumaticos deve ter no máximo 100 caracteres"),
@@ -72,7 +73,7 @@ export default function ViaturaForm() {
 
             <form onSubmit={form.handleSubmit(handleSubmitAutomobilista)}>
                 {step == 1 && <FirstFormViatura setNextStep={setNextStep} setPreviusStep={setPreviusStep} />}
-                {step == 2 && <SecondForm setNextStep={setNextStep} setPreviusStep={setPreviusStep} />}
+                {step == 2 && <SecondFormViatura setNextStep={setNextStep} setPreviusStep={setPreviusStep} />}
                 {step == 3 && <ThreeForm setNextStep={setNextStep} setPreviusStep={setPreviusStep} />}
                 {step == 4 && <ViewDataAutomobilista handleClick={handleSaveAutomobilista} data={form.getValues()} handleClickCancel={setPreviusStep} />}
             </form>

@@ -10,9 +10,11 @@ datasource db {
 model usuario {
   codUsuario   Int                 @id @default(autoincrement())
   senha        String
-  bi           String              @unique
-  numeroAgente String              @unique
-  telefone     String              @unique
+  bi           String              @db.VarChar(150)
+  numeroCarta   String?              @db.VarChar(150)
+  numeroAgente String?              @db.VarChar(150)
+  telefone     String              @db.VarChar(150)
+  primeiroLogin Boolean             @default(true)
   codPessoa    Int
   tipoUsuario  usuario_tipoUsuario
   pessoa       pessoa              @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "usuario_ibfk_1")

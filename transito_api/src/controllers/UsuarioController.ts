@@ -41,6 +41,27 @@ export const getUsuarioById = async (req: Request, res: Response): Promise<void>
     }
 };
 
+// Retorna um usuário pelo ID da pessoa
+export const getUsuarioByPessoaId = async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params; // O ID da pessoa deve ser passado como parâmetro
+    try {
+        const usuario = await prisma.usuario.findFirst({
+            where: { codPessoa: Number(id) },
+            include: {
+                pessoa: true, // Inclui os dados da pessoa relacionados
+            },
+        });
+
+        if (usuario) {
+            res.status(200).json(usuario);
+        } else {
+            res.status(404).json({ message: 'Usuário não encontrado' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Não foi possível buscar o usuário' });
+    }
+};
+
 // Cria um novo usuário
 export const createUsuario = async (req: Request, res: Response): Promise<void> => {
     const {
@@ -78,22 +99,16 @@ export const createUsuario = async (req: Request, res: Response): Promise<void> 
 export const updateUsuario = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const {
-        bi,
-        numeroAgente,
-        telefone,
-        codPessoa,
-        tipoUsuario,
+        senha,
+        primeiroLogin
     } = req.body;
-
+    console.log(req.body)
     try {
         const updatedUsuario = await prisma.usuario.update({
             where: { codUsuario: Number(id) },
             data: {
-                bi,
-                numeroAgente,
-                telefone,
-                codPessoa: Number(codPessoa),
-                tipoUsuario,
+                senha: senha ? await bcrypt.hash(senha, 3) : undefined,
+                primeiroLogin: false,
             },
             include: {
                 pessoa: true,

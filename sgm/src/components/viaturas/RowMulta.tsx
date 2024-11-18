@@ -168,7 +168,7 @@ const queryClient = useQueryClient();
                                     disabled
                                     id="motivo"
                                     name="motivo"
-                                    value={data.reclamacao[0].motivo}
+                                    value={data.reclamacao[0]?.motivo}
                                     className="w-full h-36"
                                 />
                             </div>

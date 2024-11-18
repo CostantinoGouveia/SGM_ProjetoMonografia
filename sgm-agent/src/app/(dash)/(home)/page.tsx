@@ -3,7 +3,7 @@
 import useAuthentication from "@/app/hooks/useAuthtication";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { GET_ALERTAS_ROUBO, GET_PESSOA_BY_ID } from "@/routes";
+import { GET_ALERTAS_ROUBO, GET_PESSOA_BY_ID, VERIFY_MULTAS } from "@/routes";
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle, LucideNotebook, Notebook, NotebookIcon, NotebookPen } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,11 @@ export default function HomePage() {
         verifyToken();
     }, [verifyToken]);
     const idPessoa = localStorage.getItem('SGM_USER') || '';
+
+    const { data: ver, isSuccess: isSuccessVer } = useQuery({
+        queryKey: ['verify-multas'],
+        queryFn: VERIFY_MULTAS,
+    });
 
     const { data, isSuccess } = useQuery({
         queryKey: ['get-pessoa-by-id', idPessoa],
