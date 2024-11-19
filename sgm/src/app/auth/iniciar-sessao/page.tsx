@@ -57,7 +57,7 @@ export default function SignIn() {
                         <Input value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Password" type="password" />
                     </div>
                     <div className="w-full flex justify-end">
-                        <RadioGroup defaultValue="1" onValueChange={(value) =>setDec(value)}>
+                        <RadioGroup defaultValue="2" onValueChange={(value) =>setDec(value)}>
                             <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="1" id="option-one" />
                                 <Label htmlFor="option-one">BI</Label>

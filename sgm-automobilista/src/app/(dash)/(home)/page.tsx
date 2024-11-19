@@ -18,7 +18,7 @@ export default function HomePage() {
     useEffect(() => {
         verifyToken();
     }, [verifyToken]);
-
+    
     const { data: dataUsuario, isSuccess: isSuccessUsuario } = useQuery({
         queryKey: ['get-usuario-by-pessoa-id', idPessoa],
         queryFn: () => GET_USUARIO_BY_PESSOA_ID(idPessoa),
