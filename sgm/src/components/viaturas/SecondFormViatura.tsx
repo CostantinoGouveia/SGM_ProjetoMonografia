@@ -27,16 +27,15 @@ export default function SecondFormViatura({ setNextStep, setPreviusStep }: IStep
         queryFn: GET_AUTOMOBILISTAS
 
     });
-
-    isSuccessAutomo && (console.log(dataAutomo)
-    )
     async function handleClickNext() {
+        const erros = await form.trigger(["codPessoa", "dataEmissao", "dataPrimeiroRegistro", "numeroEmissao"])
         console.log("etapa 2",form.getValues())
-        
+        if (erros)
+            setNextStep()        
     }
     return (
         <div className="flex flex-col gap-3">
-            <h1>Passo 1</h1>
+            <h1 className="text-blue-600 bold">Passo 2 - Dados referente ao Titular</h1>
             <div className="gap-4 flex flex-col">
                 <div className="flex flex-col gap-1">
                     <FormField
@@ -44,25 +43,25 @@ export default function SecondFormViatura({ setNextStep, setPreviusStep }: IStep
                         name="codPessoa"
                         render={({ field }) => (
                             <FormItem className="flex flex-col gap-1">
-                                <Label>Informe o Proprietario da viatura</Label>
+                                <Label>Informe o Titular da viatura</Label>
                                 <Popover open={openPessoa} onOpenChange={setOpenPessoa}>
                                     <FormControl>
-                                        <PopoverTrigger asChild className={`${errors.marca && !field.value && "focus-visible:ring-red-600 border-red-600"}`}>
+                                        <PopoverTrigger asChild className={`${errors.codPessoa && !field.value && "focus-visible:ring-red-600 border-red-600"}`}>
                                             <Button
                                                 variant="outline"
                                                 role="combobox"
                                                 aria-expanded={openPessoa}
                                                 className="w-fu justify-between">
-                                                {isSuccessAutomo && field.value ? dataAutomo.find((country: any) => country.pessoa.codPessoa === Number(field.value))?.pessoa.nome : "Selecione a categoria"}
+                                                {isSuccessAutomo && field.value ? dataAutomo.find((country: any) => country.pessoa.codPessoa === Number(field.value))?.pessoa.nome : "Selecione o Titular"}
                                                 <ChevronsUpDown className="ml-2 h-4 w-8 shrink-0 opacity-50" />
                                             </Button>
                                         </PopoverTrigger>
                                     </FormControl>
                                     <PopoverContent className="w-[500px] p-0">
                                         <Command>
-                                            <CommandInput placeholder="Procurar categoria da carta de conducao.." />
+                                            <CommandInput placeholder="Procurar Titular pelo nome, BI ou nº da carta.." />
                                             <CommandList>
-                                                <CommandEmpty>marca nao encontrada</CommandEmpty>
+                                                <CommandEmpty>Titular nao encontrado</CommandEmpty>
                                                 <CommandGroup>
                                                     {isSuccessAutomo && dataAutomo.map((automobilista: any) => (
                                                         <CommandItem
@@ -89,7 +88,7 @@ export default function SecondFormViatura({ setNextStep, setPreviusStep }: IStep
                                         </Command>
                                     </PopoverContent>
                                 </Popover>
-                                <FormDescription className="text-red-600">{errors.marca && !field.value && errors.marca.message}</FormDescription>
+                                <FormDescription className="text-red-600">{errors.codPessoa && !field.value && errors.codPessoa.message}</FormDescription>
                             </FormItem>
                         )}
                     />
@@ -126,7 +125,7 @@ export default function SecondFormViatura({ setNextStep, setPreviusStep }: IStep
                             name="dataPrimeiroRegistro"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
-                                    <Label className="text-slate-700">Informe a data de nascimemto</Label>
+                                    <Label className="text-slate-700">Informe a data do primeiro registro</Label>
                                     <FormControl>
                                         <Popover>
                                             <PopoverTrigger asChild>
@@ -149,46 +148,17 @@ export default function SecondFormViatura({ setNextStep, setPreviusStep }: IStep
                 </div>
 
                 <div className="flex flex-col gap-2">
-
-                    <div className="grid grid-cols-2 w-full gap-2 max-sm:grid-cols-1">
-                        <FormField
-                            control={form.control}
-                            name="numeroCilindro"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <Label className="text-slate-700">Informe o numero de cilindro da viatura</Label>
-                                    <FormControl>
-                                        <Input className={`${errors.numeroCilindro && "focus-visible:ring-red-600 border-red-600"}`} {...field} placeholder="Numero de cilindro da viatura" />
-                                    </FormControl>
-                                    <FormDescription className="text-red-600">{errors.numeroCilindro && errors.numeroCilindro.message}</FormDescription>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="tara"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <Label className="text-slate-700">Informe a tara da viatura</Label>
-                                    <FormControl>
-                                        <Input className={`${errors.tara && "focus-visible:ring-red-600 border-red-600"}`} {...field} placeholder="Tara da viatura" />
-                                    </FormControl>
-                                    <FormDescription className="text-red-600">{errors.tara && errors.tara.message}</FormDescription>
-                                </FormItem>
-                            )}
-                        />
-                    </div>
                     <div className="flex flex-col gap-1">
                         <FormField
                             control={form.control}
-                            name="distanciaEixo"
+                            name="numeroEmissao"
                             render={({ fieldState, field }) => (
                                 <FormItem>
-                                    <Label className="text-slate-700">Distancia de eixo</Label>
+                                    <Label className="text-slate-700">Número de Emissão</Label>
                                     <FormControl>
-                                        <Input className={`${errors.numeroQuadro && "focus-visible:ring-red-600 border-red-600"}`} {...field} placeholder="Distancia de eixo" />
+                                        <Input className={`${errors.numeroEmissao && "focus-visible:ring-red-600 border-red-600"}`} {...field} placeholder="Nº de Emissão" />
                                     </FormControl>
-                                    <FormDescription className="text-red-600">{errors.numeroQuadro && errors.numeroQuadro.message}</FormDescription>
+                                    <FormDescription className="text-red-600">{errors.numeroEmissao && errors.numeroEmissao.message}</FormDescription>
                                 </FormItem>
                             )
                             }
@@ -196,14 +166,13 @@ export default function SecondFormViatura({ setNextStep, setPreviusStep }: IStep
                     </div>
                 </div>
 
-            </div>
+            </div>  
 
-            <div className="flex justify-between mt-4">
+
                 <div className="flex justify-between mt-4">
                     <Button onClick={() => setPreviusStep()} variant={"outline"}>Anterior</Button>
-                    <Button onClick={() => handleClickNext()} className="bg-blue-600">Proximo</Button>
+                    <Button onClick={() => handleClickNext()} className="bg-blue-600">Finalizar</Button>
                 </div>
-            </div>
         </div>
     )
 }

@@ -135,7 +135,7 @@ const queryClient = useQueryClient();
                 <DialogHeader className="relative">
                     <DialogTitle><span className="text-slate-700">Reclamação</span></DialogTitle>
                 </DialogHeader>
-                {isSuccess && (
+                {isSuccess && data.reclamacao.length > 0 && (
 
                     <div>
                         <h1 className=" font-bold text-1xl text-blue-600">Detalhes da Reclamação</h1>
@@ -188,6 +188,7 @@ const queryClient = useQueryClient();
                         </div>
                     </div>
                 )}
+                <div className=""><span className="text-red-400">Sem reclamacao feita</span></div>
                 <ToastContainer />
             </DialogContent>
         </Dialog>

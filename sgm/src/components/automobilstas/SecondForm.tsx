@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ICountry, IStep } from "./FirstForm";
-import { FormControl, FormField, FormItem } from "../ui/form";
+import { FormControl, FormDescription, FormField, FormItem } from "../ui/form";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { cn, MUNICIPIOS, PROVINCES } from "@/lib/utils";
 import { GET_MUNICIPIOS, GET_PROVINCIAS } from "@/routes";
@@ -20,7 +20,8 @@ export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
         setCountry(json.reverse())
     }
     const { register } = useFormContext<AutomobilistaType>()
-    const form = useFormContext<AutomobilistaType>()
+    const { formState: { errors }, ...form } = useFormContext<AutomobilistaType>()
+   // const form = useFormContext<AutomobilistaType>()
 
     const [openProvince, setOpenProvince] = useState(false)
     const [open, setOpen] = useState(false)
@@ -52,27 +53,81 @@ export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
         getCountrys()
     }, [])
     //console.log(countrys)
+
+    async function handleClickNext() {
+        const erros = await form.trigger(["telemovel", "email", "province", "municipio", "endereco"])
+        console.log(form.trigger(["telemovel", "email", "province", "municipio", "endereco"]));
+        console.log(erros);
+        if(erros)
+            setNextStep()
+    }
     return (
         <div className="flex flex-col gap-4">
-            <h1>Passo 2</h1>
+            <h1>Passo 2 - Contactos</h1>
             <div className="grid grid-cols-2 items-center gap-2">
                 <div className="flex flex-col gap-2">
-                    <Label className="text-slate-700">Informe o contacto</Label>
-                    <Input type="tel" {...register("telemovel")} placeholder="Numero de telemovel" />
+                <FormField
+                    control={form.control}
+                        name="telemovel"
+                        render={({fieldState,field}) => (
+                            <FormItem className="flex flex-col gap-1">
+                                <Label>Informe o contacto</Label>
+                                <FormControl>
+                                    <Input  className={`${errors.telemovel && "focus-visible:ring-red-600 border-red-600"}`} {...field} placeholder="Numero de telemovel"/>
+                                </FormControl>
+                                <FormDescription className="text-red-600">{errors.telemovel && errors.telemovel.message}</FormDescription>
+                            </FormItem>
+                        )     
+                        }
+                    />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <Label className="text-slate-700">Informe o contacto alternativo</Label>
-                    <Input type="tel" {...register("telemovel_alternativo")} placeholder="Numero de telemovel alternativo" />
+                <FormField
+                    control={form.control}
+                        name="telemovel_alternativo"
+                        render={({fieldState,field}) => (
+                            <FormItem className="flex flex-col gap-1">
+                                <Label>Informe o contacto alternativo</Label>
+                                <FormControl>
+                                    <Input {...field} placeholder="Numero de telemovel alternativo"/>
+                                </FormControl>
+                             </FormItem>
+                        )     
+                        }
+                    />
                 </div>
             </div>
 
             <div className="flex flex-col gap-2">
-                <Label className="text-slate-700">Informe o email</Label>
-                <Input {...register("email")} placeholder="Endereço de email" />
+            <FormField
+                    control={form.control}
+                        name="email"
+                        render={({fieldState,field}) => (
+                            <FormItem className="flex flex-col gap-1">
+                                <Label>Informe o email</Label>
+                                <FormControl>
+                                    <Input  className={`${errors.email && "focus-visible:ring-red-600 border-red-600"}`} {...field} placeholder="Endereço de email"/>
+                                </FormControl>
+                                <FormDescription className="text-red-600">{errors.email && errors.email.message}</FormDescription>
+                            </FormItem>
+                        )     
+                        }
+                    />
             </div>
             <div className="flex flex-col gap-2">
-                <Label className="text-slate-700">Informe o email alternativo</Label>
-                <Input {...register("email_alternativo")} placeholder="Endereço de email alternativo" />
+            <FormField
+                    control={form.control}
+                        name="email_alternativo"
+                        render={({fieldState,field}) => (
+                            <FormItem className="flex flex-col gap-1">
+                                <Label>Informe o email alternativo</Label>
+                                <FormControl>
+                                    <Input  {...field} placeholder="Endereço de email alternativo"/>
+                                </FormControl>
+                            </FormItem>
+                        )     
+                        }
+                    />
             </div>
 
             <div className="grid grid-cols-2 gap-2 max-sm:grid-cols-1">
@@ -84,14 +139,14 @@ export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
                             <Label>Informe a provincia</Label>
                             <Popover open={openProvince} onOpenChange={setOpenProvince}>
                                 <FormControl>
-                                    <PopoverTrigger asChild>
+                                    <PopoverTrigger asChild className={`${errors.province && !field.value && "focus-visible:ring-red-600 border-red-600"}`}>
                                         <Button
                                             variant="outline"
                                             role="combobox"
                                             aria-expanded={open}
                                             className="w-fu justify-between"
                                         >
-                                            {field.value || "Selecione a provincia"}
+                                            {isSuccessProv && field.value? dataProv.find((country: any) => country.idProvincia === Number(field.value))?.provincia : "Selecione a provincia"}
                                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                         </Button>
                                     </PopoverTrigger>
@@ -105,9 +160,9 @@ export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
                                                 {isSuccessProv && dataProv.map((province: any) => (
                                                     <CommandItem
                                                         key={province.idProvincia}
-                                                        value={province.idProvincia}
+                                                        value={province.provincia}
                                                         onSelect={(currentValue) => {
-                                                            form.setValue("province", currentValue)
+                                                            form.setValue("province", String(province.idProvincia))
                                                             filtrar(province.idProvincia)
                                                             setOpenProvince(false)
                                                         }}
@@ -137,7 +192,7 @@ export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
                             <Label>Informe o municipio</Label>
                             <Popover open={openMunicipe} onOpenChange={setOpenMunicipe}>
                                 <FormControl>
-                                    <PopoverTrigger asChild>
+                                    <PopoverTrigger asChild className={`${errors.municipio && !field.value && "focus-visible:ring-red-600 border-red-600"}`}>
                                         <Button
                                             variant="outline"
                                             role="combobox"
@@ -158,9 +213,9 @@ export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
                                                 {selectMuni.map((municipio: any) => (
                                                     <CommandItem
                                                         key={municipio.idMunicipio}
-                                                        value={String(municipio.idMunicipio)}
+                                                        value={String(municipio.municipio)}
                                                         onSelect={(currentValue) => {
-                                                            form.setValue("municipio", currentValue)
+                                                            form.setValue("municipio", String(municipio.idMunicipio))
                                                             console.log(form.getValues())
                                                             setOpenMunicipe(false)
                                                         }}
@@ -184,12 +239,24 @@ export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
                 />
             </div>
             <div>
-                <Label>Endereço</Label>
-                <Input {...form.register("endereco")} placeholder="Endereço" />
+            <FormField
+                    control={form.control}
+                        name="endereco"
+                        render={({fieldState,field}) => (
+                            <FormItem className="flex flex-col gap-1">
+                                <Label>Informe o Endereço</Label>
+                                <FormControl>
+                                    <Input  className={`${errors.endereco && "focus-visible:ring-red-600 border-red-600"}`} {...field} placeholder="Endereço"/>
+                                </FormControl>
+                                <FormDescription className="text-red-600">{errors.endereco && errors.endereco.message}</FormDescription>
+                            </FormItem>
+                        )     
+                        }
+                    />
             </div>
             <div className="flex justify-between mt-4">
                 <Button onClick={() => setPreviusStep()} variant={"outline"}>Anterior</Button>
-                <Button onClick={() => setNextStep()} className="bg-blue-600">Proximo</Button>
+                <Button onClick={() => handleClickNext()} className="bg-blue-600">Proximo</Button>
             </div>
         </div>
     )

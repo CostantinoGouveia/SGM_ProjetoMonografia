@@ -61,18 +61,20 @@ export default function FirstForm({ setNextStep, setPreviusStep }: IStep) {
 
     async function handleClickNext() {
         const erros = await form.trigger(["name", "pais", "sexo", "estado", "bi", "data_emissao_bi", "data_validade_bi", "data_nascimento"])
+        console.log(form.trigger(["name", "pais", "sexo", "estado", "bi", "data_emissao_bi", "data_validade_bi", "data_nascimento"]));
+        console.log(erros);
         if (erros)
             setNextStep()
     }
     return (
         <div className="flex flex-col gap-3">
-            <h1>Passo 1</h1>
+            <h1>Passo 1 - Dados Pessoais</h1>
             <div className="gap-4 flex flex-col">
                 <div className="flex flex-col gap-1">
                     <FormField
                         control={form.control}
                         name="name"
-                        render={({ fieldState, field }) => (
+                        render={({ field }) => (
                             <FormItem>
                                 <Label className="text-slate-700">Informe o nome completo do automoblista</Label>
                                 <FormControl>
@@ -122,7 +124,7 @@ export default function FirstForm({ setNextStep, setPreviusStep }: IStep) {
                                                     variant="outline"
                                                     role="combobox"
                                                     aria-expanded={open}
-                                                    className={`${errors.sexo && "focus-visible:ring-red-600 border-red-600"}  justify-between`}
+                                                    className={`${errors.pais && !field.value && "focus-visible:ring-red-600 border-red-600"}  justify-between`}
                                                 >
                                                     {isSuccessPais && field.value? dataPais.find((country: any) => country.idPais === Number(field.value))?.pais : "Selecione a nacionalidade"}
                                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -138,9 +140,9 @@ export default function FirstForm({ setNextStep, setPreviusStep }: IStep) {
                                                         {isSuccessPais && dataPais.map((country: any) => (
                                                             <CommandItem
                                                                 key={country.idPais}
-                                                                value={String(country.idPais)}
+                                                                value={country.pais}
                                                                 onSelect={(currentValue) => {
-                                                                    field.onChange(currentValue)
+                                                                    field.onChange(String(country.idPais))
                                                                     setOpen(false)
                                                                 }}
                                                                 

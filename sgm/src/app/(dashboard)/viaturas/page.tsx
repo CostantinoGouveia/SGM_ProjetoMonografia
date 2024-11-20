@@ -12,68 +12,6 @@ import { GET_VIATURAS } from "@/routes";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { PlusCircle, Search } from "lucide-react";
-import { z } from "zod";
-
-const viaturas:viaturaType[] = [
-  {
-    MedidasPneumaticos: "205/55 R16",
-    lotacao: "5 lugares",
-    cilindrada: "1598 cc",
-    numeroCilindro: "4 cilindros",
-    conbustivel: "Gasolina",
-    peso: "1300 kg",
-    tara: "1100 kg",
-    tipoCaixa: "Manual",
-    distanciaEixo: "2600 mm",
-    modelo: "Toyota Corolla 2022",
-    numeroMatricula: "ABC-1234",
-    marca: "Toyota",
-    codLivrete: 1,
-    codViatura: 1001,
-    codServico: 501,
-    dataEmissao: new Date("2023-05-12"),
-    dataPrimeiroRegistro: new Date("2023-01-15")
-  },
-  {
-    MedidasPneumaticos: "225/45 R17",
-    lotacao: "7 lugares",
-    cilindrada: "1998 cc",
-    numeroCilindro: "6 cilindros",
-    conbustivel: "Diesel",
-    peso: "1500 kg",
-    tara: "1200 kg",
-    tipoCaixa: "Automática",
-    distanciaEixo: "2800 mm",
-    modelo: "Ford Explorer 2021",
-    numeroMatricula: "DEF-5678",
-    marca: "Ford",
-    codLivrete: 2,
-    codViatura: 1002,
-    codServico: 502,
-    dataEmissao: new Date("2022-11-30"),
-    dataPrimeiroRegistro: new Date("2022-03-20")
-  },
-  {
-    MedidasPneumaticos: "195/65 R15",
-    lotacao: "5 lugares",
-    cilindrada: "1496 cc",
-    numeroCilindro: "4 cilindros",
-    conbustivel: "Flex",
-    peso: "1200 kg",
-    tara: "1000 kg",
-    tipoCaixa: "Manual",
-    distanciaEixo: "2550 mm",
-    modelo: "Honda Civic 2020",
-    numeroMatricula: "GHI-9012",
-    marca: "Honda",
-    codLivrete: 3,
-    codViatura: 1003,
-    codServico: 503,
-    dataEmissao: new Date("2021-08-15"),
-    dataPrimeiroRegistro: new Date("2021-02-10")
-  }
-];
-
 
 export default function Viaturas() {
 

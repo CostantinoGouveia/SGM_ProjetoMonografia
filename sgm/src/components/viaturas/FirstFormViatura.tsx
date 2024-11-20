@@ -37,7 +37,7 @@ export default function FirstFormViatura({ setNextStep, setPreviusStep }: IStep)
     }
     return (
         <div className="flex flex-col gap-3">
-            <h1>Passo 1</h1>
+            <h1 className="text-blue-600">Passo 1 - Dados refente a Viatura</h1>
             <div className="gap-4 flex flex-col">
                 <div className="grid grid-cols-2 gap-2 items-center max-sm:grid-cols-1">
                     <div className="flex flex-col gap-1">
@@ -71,9 +71,9 @@ export default function FirstFormViatura({ setNextStep, setPreviusStep }: IStep)
                                                         {isSuccessMarca && dataMarca.map((categoria: any) => (
                                                             <CommandItem
                                                                 key={categoria.codMarca}
-                                                                value={String(categoria.codMarca)}
+                                                                value={String(categoria.descMarca)}
                                                                 onSelect={(currentValue) => {
-                                                                    form.setValue("marca", currentValue)
+                                                                    form.setValue("marca", String(categoria.codMarca))
                                                                     setOpenMarca(false)
                                                                 }}
                                                             >

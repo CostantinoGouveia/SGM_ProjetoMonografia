@@ -9,31 +9,7 @@ import { GET_AUTOMOBILISTAS } from "@/routes";
 import { useQuery } from "@tanstack/react-query";
 
 import {  PlusCircle, Search } from "lucide-react";
-const auto:AutomobilistaType[] = [
-    {
-      name: "Gustavo Junior",
-      email: "gustavo@gmail.com",
-      telemovel: "9213123130",
-      bi: "007021321LA23",
-      categoria:"Profissional",
-      data_emissao_bi: new Date(),
-      data_emissao_carta_conducao: new Date(),
-      data_nascimento: new Date(),
-      data_primeira_emissao_carta: new Date(),
-      data_validade_bi: new Date(),
-      data_validade_carta: new Date(),
-      email_alternativo: "fernan@gmail.com",
-      endereco: "Gamek",
-      local_emissao: "Luanda",
-      municipio: "Talatona",
-      numero_carta: "1231",
-      numero_via: "1421414",
-      pais: "Angola",
-      province: "Luanda",
-      sexo:"Masculino",
-      telemovel_alternativo:"9324214"
-    }
-]
+
 export default function Automobilista() {
 
     const { data, isSuccess } = useQuery({
