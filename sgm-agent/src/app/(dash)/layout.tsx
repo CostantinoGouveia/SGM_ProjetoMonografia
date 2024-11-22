@@ -9,36 +9,41 @@ import { useRouter } from "next/navigation";
 import useAuthentication from "../hooks/useAuthtication";
 import { useQuery } from "@tanstack/react-query";
 import { GET_PESSOA_BY_ID } from "@/routes";
-export default function Layout({children}: {children:ReactNode}) {
+export default function Layout({ children }: { children: ReactNode }) {
     const router = useRouter();
     const { verifyToken } = useAuthentication();
-    
+
     useEffect(() => {
         verifyToken();
-      }, [verifyToken]);
-    const idPessoa =localStorage.getItem('SGM_USER') || '';
-    const {data, isSuccess} = useQuery ({
+    }, [verifyToken]);
+    const idPessoa = localStorage.getItem('SGM_USER') || '';
+    const { data, isSuccess } = useQuery({
         queryKey: ['get-pessoa-by-id', idPessoa],
-        queryFn: () =>GET_PESSOA_BY_ID(idPessoa)
+        queryFn: () => GET_PESSOA_BY_ID(idPessoa)
     });
 
     return (<AuthProvider>
         <main className="flex flex-col h-screen">
             <header className="bg-blue-950 h-16 text-white p-4 flex justify-between items-center">
                 <span className="font-medium text-sm">Seja Bem vindo Agente {isSuccess && (data.nome)}</span>
-                <Link href="/auth/entrar"><Button variant={"ghost"} className="hover:bg-black/10 hover:text-muted"><LogOut/></Button></Link>
+                <Link href="/auth/entrar"><Button variant={"ghost"} className="hover:bg-black/10 hover:text-muted"><LogOut /></Button></Link>
             </header>
             <div className="flex-1 overflow-y-auto">
-            {children}
+                {children}
             </div>
             <div className="h-20 bg-blue-500 flex gap-4 items-center justify-between px-4 text-muted">
-                <Link href="/" className="flex  bg-transparent flex-col items-center "><HomeIcon className="h-6 w-6"/> <span className="max-sm:hidden">Inicio</span></Link>
-                <Link href="/profile" className="flex  bg-transparent flex-col items-center "><IdCard className="h-6 w-6"/> <span className="max-sm:hidden">Perfil</span></Link>
-                <Link href="/multas" className="flex  bg-transparent flex-col items-center "><NotebookPen className="h-6 w-6"/> <span className="max-sm:hidden">Multas</span></Link>
-                <Link href="/automobilistas" className="flex  bg-transparent flex-col items-center "><User2 className="h-6 w-6"/> <span className="max-sm:hidden">Automobista</span></Link>
-                <Link href="/viaturas" className="flex  bg-transparent flex-col items-center "><CarFront className="h-6 w-6"/> <span className="max-sm:hidden">Viarura</span></Link>
-                <Link href="/roubos" className="flex  bg-transparent flex-col items-center "><Bell className="h-6 w-6"/><span className="max-sm:hidden">Roubos</span></Link>
+                <Link href="/" className="flex  bg-transparent flex-col items-center "><HomeIcon className="h-6 w-6" /> <span className="max-sm:hidden">Inicio</span></Link>
+                <Link href="/profile" className="flex  bg-transparent flex-col items-center "><IdCard className="h-6 w-6" /> <span className="max-sm:hidden">Perfil</span></Link>
+                <Link href="/multas" className="flex  bg-transparent flex-col items-center "><NotebookPen className="h-6 w-6" /> <span className="max-sm:hidden">Multas</span></Link>
+                <Link href="/automobilistas" className="flex  bg-transparent flex-col items-center "><User2 className="h-6 w-6" /> <span className="max-sm:hidden">Automobista</span></Link>
+                <Link href="/viaturas" className="flex  bg-transparent flex-col items-center "><CarFront className="h-6 w-6" /> <span className="max-sm:hidden">Viarura</span></Link>
+                <Link href="/roubos" className="flex  bg-transparent flex-col items-center "><div className="relative">
+                    <Bell className="w-5 h-5" />
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        3
+                    </span>
+                </div><span className="max-sm:hidden">Roubos</span></Link>
             </div>
         </main>
-        </AuthProvider>)
+    </AuthProvider>)
 }

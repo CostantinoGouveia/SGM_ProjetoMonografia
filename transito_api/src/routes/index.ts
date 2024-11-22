@@ -25,10 +25,19 @@ import { getTitulosPropriedade, getTituloPropriedadeById, createTituloPropriedad
 import { getViaturas, getViaturaById, createViatura, updateViatura, deleteViatura } from '../controllers/ViaturaController';
 import { getUsuarios, getUsuarioById, createUsuario, updateUsuario, deleteUsuario, getUsuarioByPessoaId } from '../controllers/UsuarioController';
 import { login, login_automobilista, verifyToken } from '../controllers/AutenticacaoController';
+import {
+    createNotificacaoMulta,
+    getNotificacoesMulta,
+    getNotificacaoMultaById,
+    updateNotificacaoMulta,
+    deleteNotificacaoMulta,
+    getNotificacaoMultaAutomo,
+  } from "../controllers/NotificacaomultaController";
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { db } from "../controllers/AutenticacaoController";
 import { createReclamacao, deleteReclamacao, getReclamacaoById, getReclamacoes, updateReclamacao } from '../controllers/ReclamacaoController';
+import { createNotificacaoReclamacao, deleteNotificacaoReclamacao, getNotificacaoReclamacaoById, getNotificacaoReclamacaoMulta, getNotificacoesReclamacao, updateNotificacaoReclamacao } from '../controllers/NotificacaoreclamacaoController';
 const router = Router();
 
 export function tokenValidate(req: Request, res: Response, next: NextFunction) {
@@ -70,6 +79,21 @@ router.get('/alertaroubo/:id',  tokenValidate, getAlertaRouboById);
 router.post('/alertaroubo',  tokenValidate, createAlertaRoubo);
 router.put('/alertaroubo/:id',  tokenValidate, updateAlertaRoubo);
 router.delete('/alertaroubo/:id',  tokenValidate, deleteAlertaRoubo);
+
+// Rotas para notificacao de multa
+router.get("/notificacoes",tokenValidate, getNotificacoesMulta); // Obter todas as notificações
+router.get("/notificacao/:id",tokenValidate, getNotificacaoMultaById); // Obter notificação por ID
+router.get("/notificacaoAutomo/:id",tokenValidate, getNotificacaoMultaAutomo); // Obter notificação por ID
+router.post("/notificacao",tokenValidate, createNotificacaoMulta); // Criar notificação
+router.put("/notificacao/:id",tokenValidate, updateNotificacaoMulta); // Atualizar notificação
+router.delete("/notificacao/:id",tokenValidate, deleteNotificacaoMulta); // Excluir notificação
+// rotas notificao de reclamacao
+router.get("/notificacoesRecl",tokenValidate, getNotificacoesReclamacao); // Obter todas as notificações
+router.get("/notificacaoRecl/:id",tokenValidate, getNotificacaoReclamacaoById); // Obter notificação por ID
+router.get("/notificacaoReclamacao/:id",tokenValidate, getNotificacaoReclamacaoMulta); // Obter notificação por ID
+router.post("/notificacaoRecl",tokenValidate, createNotificacaoReclamacao); // Criar notificação
+router.put("/notificacaoRecl/:id",tokenValidate, updateNotificacaoReclamacao); // Atualizar notificação
+router.delete("/notificacaoRecl/:id",tokenValidate, deleteNotificacaoReclamacao); // Excluir notificação
 
 // Rotas para reclamcao
 router.get('/reclamacoes',  tokenValidate, getReclamacoes);

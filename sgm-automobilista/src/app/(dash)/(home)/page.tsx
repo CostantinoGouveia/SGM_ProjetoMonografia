@@ -176,7 +176,7 @@ function UpdateSenha({ usuario }: { usuario: any }) {
     return (
         <Dialog open={isDialogOpen}>
             <DialogTrigger asChild>
-                <Button ref={buttonRef} variant={"outline"} className="bg-blue-600 text-white flex gap-1 hidden">CRIAR ALERTA</Button>
+                <Button ref={buttonRef} variant={"outline"} className="bg-blue-600 text-white flex gap-1 hidden">Alterar Senha</Button>
             </DialogTrigger>
             <DialogContent id="cont-modal" className="max-h-96 overflow-y-auto">
                 <DialogHeader className="relative">

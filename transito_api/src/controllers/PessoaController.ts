@@ -36,6 +36,7 @@ export const getPessoaById = async (req: Request, res: Response): Promise<void> 
                         multa: {
                             include: {
                                 pagamentomulta: true,
+                                notificacaomulta: true,
                                 infracao: {
                                     include: {
                                         tipoinfracao: true,
@@ -43,6 +44,7 @@ export const getPessoaById = async (req: Request, res: Response): Promise<void> 
                                 },
                             },
                         },
+                        notificacaomulta: true,
                     },
                 },
                 funcionario: {

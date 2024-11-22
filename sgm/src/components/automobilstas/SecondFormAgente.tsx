@@ -12,15 +12,16 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { cn, MUNICIPIOS, PROVINCES } from "@/lib/utils";
 import { GET_MUNICIPIOS, GET_PROVINCIAS } from "@/routes";
 import { useQuery } from "@tanstack/react-query";
+import { AgenteType } from "./AgenteForm";
 
-export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
+export default function SecondFormAgente({ setNextStep, setPreviusStep }: IStep) {
     async function getCountrys() {
         const response = await fetch("https://restcountries.com/v3.1/all?fields=name,flag")
         const json = await response.json() as ICountry[]
         setCountry(json.reverse())
     }
-    const { register } = useFormContext<AutomobilistaType>()
-    const { formState: { errors }, ...form } = useFormContext<AutomobilistaType>()
+    const { register } = useFormContext<AgenteType>()
+    const { formState: { errors }, ...form } = useFormContext<AgenteType>()
    // const form = useFormContext<AutomobilistaType>()
 
     const [openProvince, setOpenProvince] = useState(false)
@@ -63,7 +64,7 @@ export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
     }
     return (
         <div className="flex flex-col gap-4">
-            <h1>Passo 2 - Contactos / Endereço</h1>
+            <h1>Passo 2 - Contactos / Endereco</h1>
             <span className="text-blue-600">Dados de contactos</span>
             <div className="grid grid-cols-2 items-center gap-2">
                 <div className="flex flex-col gap-2">

@@ -23,6 +23,7 @@ export const getMultas = async (req: Request, res: Response): Promise<void> => {
                 viatura: true,
                 pagamentomulta: true,
                 reclamacao: true,
+                notificacaomulta: true,
                 funcionario: {
                     include: {
                         pessoa: true,
@@ -55,6 +56,7 @@ export const verificarMultas = async (req: Request, res: Response): Promise<void
             automobilista: true,
             viatura: true,
             pagamentomulta: true,
+            notificacaomulta: true,
             reclamacao: true,
         },
       });
@@ -108,8 +110,13 @@ export const getMultaById = async (req: Request, res: Response): Promise<void> =
                     },
                 },
                 viatura: true,
-                reclamacao: true,
+                reclamacao: {
+                    include: {
+                        notificacaoreclamacao: true,
+                    },
+                },
                 pagamentomulta: true,
+                notificacaomulta: true,
                 funcionario: {
                     include: {
                         pessoa: true,
@@ -171,11 +178,18 @@ export const createMulta = async (req: Request, res: Response): Promise<void> =>
                         descCodigoDeposito: "TR-" + gerarReferencia(),
                     }
 
+                },
+                notificacaomulta: {
+                    create: {
+                        codAutomobilista: Number(codAutomobilista),
+                        mensagem: "Nova multa aplicada",
+                    }
                 }
             },
             include: {
                 infracao: true,
                 pagamentomulta: true,
+                notificacaomulta: true,
             }
         });
         res.status(201).json(newMulta);

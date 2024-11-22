@@ -75,6 +75,19 @@ export const GET_USUARIO_BY_ID = async (id:string) => {
   return await response.json();
 };
 
+// Função para obter um usuário por ID
+export const GET_USUARIO_BY_PESSOA_ID = async (id:string) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/usuarioPessoa/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+  });
+  return await response.json();
+};
+
 // Função para criar um novo usuário
 export const POST_USUARIO = async (data:string) => {
   const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
@@ -90,15 +103,15 @@ export const POST_USUARIO = async (data:string) => {
 };
 
 // Função para atualizar um usuário existente
-export const PUT_USUARIO = async (id:string, data:any) => {
+export const PUT_USUARIO = async (dados:{id:string, data:any}) => {
   const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
-  const response = await fetch(`${BASE_URL}/usuario/${id}`, {
+  const response = await fetch(`${BASE_URL}/usuario/${dados.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${AUTH_TOKEN}`,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(dados.data),
   });
   return await response.json();
 };

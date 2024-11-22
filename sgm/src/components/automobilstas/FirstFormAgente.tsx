@@ -17,6 +17,7 @@ import { FormControl, FormDescription, FormField, FormItem } from "../ui/form";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { GET_PAISES } from "@/routes";
+import { AgenteType } from "./AgenteForm";
 
 
 export interface IStep {
@@ -38,7 +39,7 @@ export interface ICountry {
 }
 
 
-export default function FirstForm({ setNextStep, setPreviusStep }: IStep) {
+export default function FirstFormAgente({ setNextStep, setPreviusStep }: IStep) {
 
     async function getCountrys() {
         const response = await fetch("https://restcountries.com/v3.1/all?fields=name,flag")
@@ -51,7 +52,7 @@ export default function FirstForm({ setNextStep, setPreviusStep }: IStep) {
         queryFn: () => GET_PAISES()
     });
 
-    const { formState: { errors }, ...form } = useFormContext<AutomobilistaType>()
+    const { formState: { errors }, ...form } = useFormContext<AgenteType>()
     const [open, setOpen] = useState(false)
     const [countrys, setCountry] = useState<ICountry[]>()
     useEffect(() => {
@@ -76,7 +77,7 @@ export default function FirstForm({ setNextStep, setPreviusStep }: IStep) {
                         name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <Label className="text-slate-700">Informe o nome completo do automoblista</Label>
+                                <Label className="text-slate-700">Informe o nome completo do Agente</Label>
                                 <FormControl>
                                     <Input className={`${errors.name && "focus-visible:ring-red-600 border-red-600"}`} {...field} placeholder="Nome completo" />
                                 </FormControl>
@@ -94,7 +95,7 @@ export default function FirstForm({ setNextStep, setPreviusStep }: IStep) {
                             name="sexo"
                             render={({ field }) => (
                                 <FormItem className="flex flex-col gap-1">
-                                    <Label>Informe o sexo do automobilista</Label>
+                                    <Label>Informe o sexo do Agente</Label>
                                     <Select onValueChange={(e) => field.onChange(e)}>
                                         <FormControl>
                                             <SelectTrigger className={`${errors.sexo && "focus-visible:ring-red-600 border-red-600"}`}>

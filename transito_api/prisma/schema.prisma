@@ -52,6 +52,7 @@ model automobilista {
   cartaconducao    cartaconducao @relation(fields: [codCartaConducao], references: [codCartaConducao], onUpdate: Restrict, map: "automobilista_ibfk_1")
   pessoa           pessoa        @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "automobilista_ibfk_2")
   multa            multa[]
+  notificacaomulta            notificacaomulta[]
 
   @@index([codCartaConducao], map: "codCartaConducao")
   @@index([codPessoa], map: "codPessoa")
@@ -138,7 +139,7 @@ model funcionario {
   pessoa                  pessoa   @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "funcionario_ibfk_2")
   multa                   multa[] @relation()
   reclamacao      reclamacao[]
-  @@index([codPessoa], map: "idColaboradorPessoa")
+  @@index([codPessoa], map: "codPessoa")
   @@index([codficheiroFotoPendente], map: "idficheiroFotoPendente")
   @@index([codficheiroFotoPerfil], map: "idficheiroFotoPerfil")
 }
@@ -200,6 +201,7 @@ model multa {
   statusTribunal     Boolean           @default(false)
   infracao         infracao[]
   reclamacao      reclamacao[]
+  notificacaomulta      notificacaomulta[]
   automobilista    automobilista?    @relation(fields: [codAutomobilista], references: [codAutomobilista], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_1")
   viatura          viatura?          @relation(fields: [CodViatura], references: [codViatura], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_3")
   funcionario      funcionario?      @relation(fields: [codFuncionario], references: [codFuncionario], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_2")
@@ -218,7 +220,7 @@ model reclamacao {
   motivo           String   @db.VarChar(255) // Descrição do motivo da reclamação
   status           String   @default("Pendente") @db.VarChar(50) // Status da reclamação, por exemplo: "Pendente", "Analise", "Aceite", "Rejeitada"
   observacao       String?  @db.Text           // Observações adicionais ou resposta da análise
-  
+   notificacaoreclamacao      notificacaoreclamacao[]
   // Relacionamento com o modelo `multa`
   multa            multa    @relation(fields: [codMulta], references: [codMulta], onDelete: Cascade, map: "reclamacao_ibfk_1")
   funcionario      funcionario?   @relation(fields: [codFuncionario], references: [codFuncionario], onDelete: Cascade, map: "reclamacao_ibfk_2")
@@ -341,6 +343,36 @@ model livrete {
   @@index([codViatura], map: "codViatura")
 }
 
+model notificacaomulta {
+  codNotificacao      Int       @id @default(autoincrement())
+  codAutomobilista   Int       // Chave estrangeira para o modelo automobilista
+  codMulta           Int       // Chave estrangeira para o modelo multa
+  dataNotificacao    DateTime  @default(dbgenerated("(current_timestamp())")) @db.DateTime() // Data em que a notificação foi gerada
+  status             String    @default("pendente") @db.VarChar(50) // Status da notificação (pendente, visualizado, etc.)
+  mensagem           String?   @db.Text // Mensagem opcional com detalhes da notificação
+
+  // Relações
+  automobilista      automobilista  @relation(fields: [codAutomobilista], references: [codAutomobilista], onUpdate: Restrict, onDelete: Cascade)
+  multa              multa          @relation(fields: [codMulta], references: [codMulta], onUpdate: Restrict, onDelete: Cascade)
+
+  @@index([codAutomobilista], map: "codAutomobilista")
+  @@index([codMulta], map: "codMulta")
+}
+
+model notificacaoreclamacao {
+  codNotificacao      Int       @id @default(autoincrement())
+  codReclamacao   Int       // Chave estrangeira para o modelo automobilista
+  dataNotificacao    DateTime  @default(dbgenerated("(current_timestamp())")) @db.DateTime() // Data em que a notificação foi gerada
+  status             String    @default("pendente") @db.VarChar(50) // Status da notificação (pendente, visualizado, etc.)
+  mensagem           String?   @db.Text // Mensagem opcional com detalhes da notificação
+
+  // Relações
+  reclamacao      reclamacao  @relation(fields: [codReclamacao], references: [codReclamacao], onUpdate: Restrict, onDelete: Cascade)
+
+  @@index([codReclamacao], map: "codReclamacao")
+}
+
+
 enum ficheiro_estadoValidacao {
   Pendente
   Validado
@@ -367,6 +399,7 @@ enum pessoa_estadoCivil {
 
 enum usuario_tipoUsuario {
   Transito
+  Agente
   Automobilista
   Admin
 }

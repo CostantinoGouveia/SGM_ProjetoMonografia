@@ -49,7 +49,7 @@ export default function Automobilista() {
                     <TableRow>
                     <TableHead className="w-[200px]">Nome</TableHead>
                     <TableHead>Email</TableHead>
-                    <TableHead>Telefone</TableHead>
+                    <TableHead>Nº da carta</TableHead>
                     <TableHead>BI</TableHead>
                     <TableHead colSpan={3} className="text-right"></TableHead>
                     </TableRow>

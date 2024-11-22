@@ -23,7 +23,11 @@ export const getReclamacoes = async (req: Request, res: Response): Promise<void>
                             },
                         },
                         viatura: true,
-                        reclamacao: true,
+                        reclamacao: {
+                            include: {
+                                notificacaoreclamacao: true,
+                            },
+                        },
                         pagamentomulta: true,
                         funcionario: {
                             include: {
@@ -66,7 +70,11 @@ export const getReclamacaoById = async (req: Request, res: Response): Promise<vo
                             },
                         },
                         viatura: true,
-                        reclamacao: true,
+                        reclamacao: {
+                            include: {
+                                notificacaoreclamacao: true,
+                            },
+                        },
                         pagamentomulta: true,
                         funcionario: {
                             include: {
