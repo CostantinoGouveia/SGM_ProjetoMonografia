@@ -5,16 +5,44 @@ import SheetMobile from "./SheetMobile";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuShortcut, DropdownMenuSubTrigger, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { GET_NOTIFICACAO_RECLAMACAOES, GET_PESSOA_BY_ID, VERIFY_MULTAS } from "@/routes";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { GET_NOTIFICACAO_RECLAMACAOES, GET_PESSOA_BY_ID, PUT_NOTIFICACAO_RECLAMACAO, VERIFY_MULTAS } from "@/routes";
 import { useEffect, useState } from "react";
-import VerReclamacao1, { handUpdateNotify } from "@/app/(dashboard)/reclamacoes/[id]/page";
+import { toast } from "react-toastify";
 interface ISideBar {
   toogleSideBar: () => void,
 }
 export default function Header({ toogleSideBar }: ISideBar) {
   const idPessoa = localStorage.getItem('SGM_USER') || '';
   
+
+  const useClient = useQueryClient();
+
+const { mutateAsync: updateNotify } = useMutation({
+  onSuccess: (data) => {
+    useClient.invalidateQueries({
+      queryKey: ["pessoa_id"], // chave da consulta
+      exact: true, // opcional, dependendo do filtro
+  });
+     useClient.invalidateQueries({
+      queryKey: ["get-pessoa-notify-by-id"], // chave da consulta
+      exact: true, // opcional, dependendo do filtro
+    });
+  },
+  mutationFn: PUT_NOTIFICACAO_RECLAMACAO,
+  onError: (error) => {
+    toast.error('Não foi possível atualizar a notificação');
+    console.log(error)
+  }
+
+})
+function handUpdateNotify(id:any, status:any) {
+  if (status == "pendente") {
+    const dados: any = { status: "visto" }
+    updateNotify({ id: id, data: dados })
+  }    
+}
+
   const { data: ver, isSuccess: isSuccessVer } = useQuery({
     queryKey: ['verify-multas'],
     queryFn: VERIFY_MULTAS,

@@ -19,7 +19,7 @@ import { useRef } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { z } from "zod";
 
-const useClient = useQueryClient();
+
 
 export default function VerReclamacao1({ idMulta }: { idMulta: string }) {
   const { id } = useParams();
@@ -104,29 +104,4 @@ const buttonRef = useRef<HTMLButtonElement>(null);
 
     </div>
   )
-}
-
-const { mutateAsync: updateNotify } = useMutation({
-  onSuccess: (data) => {
-    useClient.invalidateQueries({
-      queryKey: ["pessoa_id"], // chave da consulta
-      exact: true, // opcional, dependendo do filtro
-  });
-     useClient.invalidateQueries({
-      queryKey: ["get-pessoa-notify-by-id"], // chave da consulta
-      exact: true, // opcional, dependendo do filtro
-    });
-  },
-  mutationFn: PUT_NOTIFICACAO_RECLAMACAO,
-  onError: (error) => {
-    toast.error('Não foi possível atualizar a notificação');
-    console.log(error)
-  }
-
-})
- export function handUpdateNotify(id:any, status:any) {
-  if (status == "pendente") {
-    const dados: any = { status: "visto" }
-    updateNotify({ id: id, data: dados })
-  }    
 }

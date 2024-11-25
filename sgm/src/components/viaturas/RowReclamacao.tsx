@@ -13,7 +13,7 @@ import ViewDataMultaLista, { VerReclamacao } from "./ViewDataMultaLista";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { GET_MULTA_BY_ID, PUT_RECLAMACAO } from "@/routes";
+import { GET_MULTA_BY_ID, PUT_NOTIFICACAO_RECLAMACAO, PUT_RECLAMACAO } from "@/routes";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
@@ -27,11 +27,37 @@ export default function RowReclamacao({ reclamacao }: { reclamacao: Reclamacao }
     function hancleClickViewAutomobilista() {
 
     }
+    const useClient = useQueryClient();
+
+const { mutateAsync: updateNotify } = useMutation({
+  onSuccess: (data) => {
+    useClient.invalidateQueries({
+      queryKey: ["pessoa_id"], // chave da consulta
+      exact: true, // opcional, dependendo do filtro
+  });
+     useClient.invalidateQueries({
+      queryKey: ["get-pessoa-notify-by-id"], // chave da consulta
+      exact: true, // opcional, dependendo do filtro
+    });
+  },
+  mutationFn: PUT_NOTIFICACAO_RECLAMACAO,
+  onError: (error) => {
+    toast.error('Não foi possível atualizar a notificação');
+    console.log(error)
+  }
+
+})
+ function handUpdateNotify(id:any, status:any) {
+  if (status == "pendente") {
+    const dados: any = { status: "visto" }
+    updateNotify({ id: id, data: dados })
+  }    
+}
     return (
         <TableRow key={reclamacao?.codReclamacao}>
             <TableCell className="font-medium">
                 <ContextMenu>
-                    <ContextMenuTrigger> {reclamacao?.multa.automobilista?.pessoa?.nome}</ContextMenuTrigger>
+                    <ContextMenuTrigger> {reclamacao?.multa?.automobilista?.pessoa?.nome}</ContextMenuTrigger>
                     <ContextMenuContent>
                         <ContextMenuItem>
                             <Button variant={"ghost"}>Visualizar</Button>
@@ -48,7 +74,7 @@ export default function RowReclamacao({ reclamacao }: { reclamacao: Reclamacao }
 
             <TableCell>
                 <ContextMenu>
-                    <ContextMenuTrigger>{format(reclamacao.dataReclamacao ?? "", "PPP", { locale: ptBR })}</ContextMenuTrigger>
+                    <ContextMenuTrigger>{reclamacao?.dataReclamacao == null? "": format(reclamacao?.dataReclamacao ?? "", "PPP", { locale: ptBR })}</ContextMenuTrigger>
                     <ContextMenuContent>
                         <ContextMenuItem>
                             <Button variant={"ghost"}>Visualizar</Button>
@@ -66,9 +92,9 @@ export default function RowReclamacao({ reclamacao }: { reclamacao: Reclamacao }
               {reclamacao?.multa?.statusTribunal == true ? "R/Tribunal" : ""}
             </TableCell>
             <TableCell >
-               <label className={` text-white p-1 rounded ${reclamacao.status === "Pendente" ? "bg-orange-500" : reclamacao.status === "Aceite" ? "bg-green-500" : "bg-red-500"}`}>{reclamacao?.status}</label>
+               <label className={` text-white p-1 rounded ${reclamacao?.status === "Pendente" ? "bg-orange-500" : reclamacao?.status === "Aceite" ? "bg-green-500" : "bg-red-500"}`}>{reclamacao?.status}</label>
                 </TableCell>
-            <TableCell><Button variant={"default"} onClick={()=>{router.push(`reclamacoes/${String(reclamacao.codMulta)}`)} }className=""><Eye className="w-5 h-5 " /> VER</Button>
+            <TableCell><Button variant={"default"} onClick={()=>{router.push(`reclamacoes/${String(reclamacao?.codMulta)}`), handUpdateNotify(reclamacao?.notificacaoreclamacao[0].codNotificacao, reclamacao?.notificacaoreclamacao[0].status)} }className=""><Eye className="w-5 h-5 " /> VER</Button>
                     
             </TableCell>
         </TableRow>
@@ -137,7 +163,7 @@ export function AtenderReclamacao({ idMulta }: { idMulta: string }) {
                 <DialogHeader className="relative">
                     <DialogTitle><span className="text-slate-700">Reclamação</span></DialogTitle>
                 </DialogHeader>
-                {isSuccess && data.reclamacao.length > 0 && (
+                {isSuccess && data.reclamacao.length > 0 ? (
 
                     <div>
                         <h1 className=" font-bold text-1xl text-blue-600">Detalhes da Reclamação</h1>
@@ -189,8 +215,8 @@ export function AtenderReclamacao({ idMulta }: { idMulta: string }) {
                             </div>
                         </div>
                     </div>
-                )}
-                <div className=""><span className="text-red-400">Sem reclamacao feita</span></div>
+                ):<div className=""><span className="text-red-400">Sem reclamacao feita</span></div>}
+                
                 <ToastContainer />
             </DialogContent>
         </Dialog>

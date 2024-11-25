@@ -38,6 +38,8 @@ import { z } from 'zod';
 import { db } from "../controllers/AutenticacaoController";
 import { createReclamacao, deleteReclamacao, getReclamacaoById, getReclamacoes, updateReclamacao } from '../controllers/ReclamacaoController';
 import { createNotificacaoReclamacao, deleteNotificacaoReclamacao, getNotificacaoReclamacaoById, getNotificacaoReclamacaoMulta, getNotificacoesReclamacao, updateNotificacaoReclamacao } from '../controllers/NotificacaoreclamacaoController';
+import { createNotificacao, deleteNotificacao, getNotificacaoById, getNotificacoes, updateNotificacao } from '../controllers/NotificacaoalertaController';
+import { createNotificacoesFuncionario, deleteNotificacaoFuncionario, getNotificacoesFuncionario, updateNotificacaoFuncionario } from '../controllers/NotificacaoalertafuncionarioController';
 const router = Router();
 
 export function tokenValidate(req: Request, res: Response, next: NextFunction) {
@@ -79,6 +81,20 @@ router.get('/alertaroubo/:id',  tokenValidate, getAlertaRouboById);
 router.post('/alertaroubo',  tokenValidate, createAlertaRoubo);
 router.put('/alertaroubo/:id',  tokenValidate, updateAlertaRoubo);
 router.delete('/alertaroubo/:id',  tokenValidate, deleteAlertaRoubo);
+
+// Rotas para notificacoes de alertas
+router.get("/notificacoesalertas", tokenValidate, getNotificacoes); // Obter todas as notificações de alertas
+router.get("/notificacaoalerta/:id", tokenValidate, getNotificacaoById); // Obter notificação de alerta por ID
+router.post("/notificacaoalerta", tokenValidate, createNotificacao); // Criar notificação de alerta
+router.put("/notificacaoalerta/:id", tokenValidate, updateNotificacao); // Atualizar notificação de alerta
+router.delete("/notificacaoalerta/:id", tokenValidate, deleteNotificacao); // Excluir notificação de alerta
+
+// Rotas para notificacoes de alertas por funcionario
+router.get("/notificacoesalertasfuncionarios/:id", tokenValidate, getNotificacoesFuncionario); // Obter todas as notificações de alertas para funcionários
+router.post("/notificacaoalertafuncionario", tokenValidate, createNotificacoesFuncionario); // Criar notificação de alerta para funcionário
+router.put("/notificacaoalertafuncionario/:id", tokenValidate, updateNotificacaoFuncionario); // Atualizar notificação de alerta para funcionário
+router.delete("/notificacaoalertafuncionario/:id", tokenValidate, deleteNotificacaoFuncionario); // Excluir notificação de alerta para funcionário
+
 
 // Rotas para notificacao de multa
 router.get("/notificacoes",tokenValidate, getNotificacoesMulta); // Obter todas as notificações

@@ -180,7 +180,18 @@ export interface Reclamacao {
   status: string;
   observacao?: string;
   multa: Multa;
+  notificacaoreclamacao: Notificacaoreclamacao[],
 }
+
+export interface Notificacaoreclamacao {
+        codNotificacao: number,
+        codReclamacao: number,
+        dataNotificacao: Date,
+        status: string,
+        mensagem: string,
+        reclamacao: Reclamacao
+}
+
 
 export interface Municipio {
   idMunicipio: number;

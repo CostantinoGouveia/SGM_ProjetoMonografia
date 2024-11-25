@@ -33,12 +33,12 @@ export default function Viaturas() {
             <Input placeholder="Nome do automobilistas" />
             <Input placeholder="Email do automobilistas" />
           </div>
-          <Button variant={"ghost"} className="text-muted-foreground flex gap-1"><Search className="w-4 h-4" /> Filtrar resultados</Button>
+          <Button variant={"ghost"} className="text-muted-foreground flex gap-1 "><Search className="w-4 h-4" /> Filtrar resultados</Button>
         </div>
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="flex gap-1 bg-foreground"><PlusCircle className="w-5 h-5" />Cadastrar</Button>
+            <Button className="flex gap-1 bg-foreground hidden"><PlusCircle className="w-5 h-5" />Cadastrar</Button>
           </DialogTrigger>
           <DialogContent className="">
             <DialogHeader className="relative">

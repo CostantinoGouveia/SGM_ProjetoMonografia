@@ -13,6 +13,19 @@ export const getAlertasRoubo = async (req: Request, res: Response): Promise<void
                 },
             },
             tiporoubo: true,
+            notificacaoalerta: {
+                include: {
+                    notificacaoalertafuncionario: {
+                        include: {
+                            funcionario: {
+                                include: {
+                                    pessoa: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
             endereco : {
                 include : {
                     municipio: {
@@ -54,6 +67,19 @@ export const getAlertaRouboById = async (req: Request, res: Response): Promise<v
                 },
             },
             tiporoubo: true,
+            notificacaoalerta: {
+                include: {
+                    notificacaoalertafuncionario: {
+                        include: {
+                            funcionario: {
+                                include: {
+                                    pessoa: true,
+                                },
+                            },
+                        },
+                    },
+                },
+            },
             endereco : {
                 include : {
                     municipio: {
@@ -102,6 +128,24 @@ export const createAlertaRoubo = async (req: Request, res: Response): Promise<vo
             idMunicipio,
         } = req.body;
 
+        const func = await prisma.funcionario.findMany({
+            where: {
+                pessoa: {
+                    usuario: {
+                        some: {
+                            tipoUsuario: 'Transito',
+                        },
+                    },
+                },
+            },
+            include: {
+            pessoa: {
+                include: {
+                    usuario: true,
+                },
+            },
+        },
+        });
         // Validando a entrada (você pode adicionar validações mais avançadas aqui)
         if (!codAutomobilista || !dataRoubo || !codTipoRoubo || !descRoubo || !Dendereco || !idMunicipio) {
             res.status(400).json({ error: "Campos obrigatórios estão faltando" });
@@ -122,10 +166,25 @@ export const createAlertaRoubo = async (req: Request, res: Response): Promise<vo
                 codTipoRoubo: Number(codTipoRoubo),
                 descRoubo: String(descRoubo),
                 codViatura: Number(codViatura),
-                codEndereco: newEndereco.idEndereco
+                codEndereco: newEndereco.idEndereco,
+                notificacaoalerta: {
+                    create: {
+                        mensagem: 'Novo alerta de roubo',
+                        notificacaoalertafuncionario: {
+                            create: func.map((f) => ({
+                                codFuncionario: f.codFuncionario,
+                            })),
+                        },
+                    }
+                },
             },
             include: {
                 endereco: true,
+                notificacaoalerta: {
+                    include: {
+                        notificacaoalertafuncionario: true,
+                    },
+                },
             }
         });
 

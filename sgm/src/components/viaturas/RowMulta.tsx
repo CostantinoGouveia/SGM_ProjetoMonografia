@@ -46,7 +46,7 @@ export default function RowMulta({ Multa }: { Multa: Multa }) {
 
             <TableCell>
                 <ContextMenu>
-                    <ContextMenuTrigger>{format(Multa.data ?? "", "PPP", { locale: ptBR })}</ContextMenuTrigger>
+                    <ContextMenuTrigger>{Multa?.data == null? "": format(Multa.data?? "", "PPP", { locale: ptBR })}</ContextMenuTrigger>
                     <ContextMenuContent>
                         <ContextMenuItem>
                             <Button variant={"ghost"}>Visualizar</Button>
@@ -60,11 +60,10 @@ export default function RowMulta({ Multa }: { Multa: Multa }) {
                     </ContextMenuContent>
                 </ContextMenu>
             </TableCell>
-            <TableCell>{Multa?.infracao.length}</TableCell>
+            <TableCell>{ Multa?.infracao?.length}</TableCell>
             <TableCell >{Multa?.statusTribunal == true ? "R/Tribunal" : ""}</TableCell>
-            <TableCell ><label className={` text-white p-1 rounded ${Multa?.pagamentomulta[0]?.status === "PENDENTE" ? "bg-orange-500" : Multa?.pagamentomulta[0]?.status === "PAGO" ? "bg-green-500" : "bg-red-500"}`}>{(Multa?.pagamentomulta[0]?.status === "Nao Pago") ? "N/PAGO" : Multa?.pagamentomulta[0]?.status}</label></TableCell>
+            <TableCell ><label className={` text-white p-1 rounded ${Array.isArray(Multa?.pagamentomulta) && Multa?.pagamentomulta[0]?.status === "PENDENTE" ? "bg-orange-500" : Array.isArray(Multa?.pagamentomulta) && Multa?.pagamentomulta[0]?.status === "PAGO" ? "bg-green-500" : "bg-red-500"}`}>{(Array.isArray(Multa?.pagamentomulta) && Multa?.pagamentomulta[0]?.status === "Nao Pago") ? "N/PAGO" : Array.isArray(Multa?.pagamentomulta) && Multa?.pagamentomulta[0]?.status}</label></TableCell>
             <TableCell><ButtonView Multa={Multa} handleClick={() => console.log("")}> <Button variant={"outline"} className=" hover:bg-muted"><Eye className="w-5 h-5 " /></Button></ButtonView> </TableCell>
-            <TableCell><ButtonEdit><AtenderReclamacao idMulta={Multa?.codMulta.toString()}></AtenderReclamacao></ButtonEdit></TableCell>
             <TableCell><AlertDeleteViatura id={Multa?.codMulta.toString()} handleClick={handleDeleteMulta}><Button variant={"outline"} className=" hover:bg-muted"><Trash2 className="w-5 h-5 text-red-700" /></Button></AlertDeleteViatura></TableCell>
         </TableRow>
         

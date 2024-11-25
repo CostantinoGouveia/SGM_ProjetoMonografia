@@ -88,7 +88,7 @@ export default function Viaturas() {
 
   return (
     <div className="p-4">
-      <h1 className="text-lg text-slate-700 font-bold mb-4">Multas</h1>
+      <h1 className="text-lg text-slate-700 font-bold mb-4">Reclamações</h1>
       <div className="flex justify-between items-start md:items-center">
         <div className="flex gap-1 flex-col md:flex-row">
           <div className="flex flex-col md:flex-row gap-1">
@@ -100,7 +100,7 @@ export default function Viaturas() {
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="flex gap-1 bg-foreground"><PlusCircle className="w-5 h-5" />Cadastrar</Button>
+            <Button className="flex gap-1 bg-foreground"><PlusCircle className="w-5 h-5 hidden" />Cadastrar</Button>
           </DialogTrigger>
           <DialogContent className="">
             <DialogHeader className="relative">

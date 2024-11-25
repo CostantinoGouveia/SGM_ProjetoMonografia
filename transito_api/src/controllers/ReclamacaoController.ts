@@ -8,6 +8,7 @@ export const getReclamacoes = async (req: Request, res: Response): Promise<void>
     try {
         const reclamacoes = await prisma.reclamacao.findMany({
             include: {
+                notificacaoreclamacao:true,
                 multa: {
                     include: {
                         automobilista: {
@@ -55,6 +56,7 @@ export const getReclamacaoById = async (req: Request, res: Response): Promise<vo
         const reclamacao = await prisma.reclamacao.findUnique({
             where: { codReclamacao: Number(id) },
             include: {
+                notificacaoreclamacao:true,
                 multa: {
                     include: {
                         automobilista: {
@@ -109,6 +111,11 @@ export const createReclamacao = async (req: Request, res: Response): Promise<voi
             data: {
                 codMulta: Number(codMulta),
                 motivo,
+                notificacaoreclamacao: {
+                    create: {
+                        mensagem: "Nova multa aplicada",
+                    }
+                }
             },
         });
         res.status(201).json(newReclamacao);

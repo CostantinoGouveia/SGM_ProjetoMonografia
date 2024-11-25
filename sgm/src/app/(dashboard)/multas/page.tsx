@@ -99,7 +99,7 @@ export default function Viaturas() {
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="flex gap-1 bg-foreground"><PlusCircle className="w-5 h-5" />Cadastrar</Button>
+            <Button className="flex gap-1 bg-foreground hidden"><PlusCircle className="w-5 h-5 " />Cadastrar</Button>
           </DialogTrigger>
           <DialogContent className="">
             <DialogHeader className="relative">

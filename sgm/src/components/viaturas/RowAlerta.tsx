@@ -2,7 +2,6 @@
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
 import { ReactNode } from "react";
-import { viaturaType } from "@/app/(dashboard)/viaturas/page";
 import { TableCell, TableRow } from "../ui/table";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "../ui/context-menu";
 import { Button } from "../ui/button";
@@ -59,9 +58,7 @@ function hancleClickViewAutomobilista() {
                         <TableCell >{alerta?.viatura.conbustivel}</TableCell>
                         <TableCell ><label className={` text-white p-1 rounded ${alerta?.status === "Ativo" ? "bg-green-500" : "bg-red-500"}`}>{alerta?.status}</label></TableCell>
                         <TableCell><ButtonView alerta={alerta} handleClick={()=>console.log("")}> <Button variant={"outline"} className=" hover:bg-muted"><Eye className="w-5 h-5 " /></Button></ButtonView> </TableCell>
-                        <TableCell><ButtonEdit><Button variant={"outline"} className=" hover:bg-muted"><Pencil className="w-5 h-5 " /></Button></ButtonEdit></TableCell>
-                        <TableCell><AlertDeleteViatura id={alerta.codViatura.toString()} handleClick={handleDeleteAlerta}><Button variant={"outline"} className=" hover:bg-muted"><Trash2 className="w-5 h-5 text-red-700" /></Button></AlertDeleteViatura></TableCell>
-                    </TableRow>
+                       </TableRow>
     )
 }
 

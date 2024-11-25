@@ -37,6 +37,7 @@ model alertaroubo {
   automobilista    automobilista @relation(fields: [codAutomobilista], references: [codAutomobilista], onUpdate: Restrict, map: "alertaroubo_ibfk_1")
   tiporoubo        tiporoubo     @relation(fields: [codTipoRoubo], references: [codTipoRoubo], onUpdate: Restrict, map: "alertaroubo_ibfk_2")
   viatura          viatura       @relation(fields: [codViatura], references: [codViatura], onUpdate: Restrict, map: "alertaroubo_ibfk_3")
+  notificacaoalerta notificacaoalerta[]
 
   @@index([codAutomobilista], map: "codAutomobilista")
   @@index([codTipoRoubo], map: "codTipoRoubo")
@@ -139,6 +140,7 @@ model funcionario {
   pessoa                  pessoa   @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "funcionario_ibfk_2")
   multa                   multa[] @relation()
   reclamacao      reclamacao[]
+  notificacaoalertafuncionario notificacaoalertafuncionario[]
   @@index([codPessoa], map: "codPessoa")
   @@index([codficheiroFotoPendente], map: "idficheiroFotoPendente")
   @@index([codficheiroFotoPerfil], map: "idficheiroFotoPerfil")
@@ -370,6 +372,33 @@ model notificacaoreclamacao {
   reclamacao      reclamacao  @relation(fields: [codReclamacao], references: [codReclamacao], onUpdate: Restrict, onDelete: Cascade)
 
   @@index([codReclamacao], map: "codReclamacao")
+}
+
+model notificacaoalerta {
+  codNotificacao      Int       @id @default(autoincrement())
+  codAlertaRoubo   Int       // Chave estrangeira para o modelo automobilista
+  dataNotificacao    DateTime  @default(dbgenerated("(current_timestamp())")) @db.DateTime() // Data em que a notificação foi gerada
+  status             String    @default("pendente") @db.VarChar(50) // Status da notificação (pendente, visualizado, etc.)
+  mensagem           String?   @db.Text // Mensagem opcional com detalhes da notificação
+
+  // Relações
+  alertaroubo      alertaroubo  @relation(fields: [codAlertaRoubo], references: [codAlertaRoubo], onUpdate: Restrict, onDelete: Cascade)
+  notificacaoalertafuncionario notificacaoalertafuncionario[]
+  @@index([codAlertaRoubo], map: "codAlertaRoubo")
+}
+
+model notificacaoalertafuncionario {
+  codNotificacaoFuncionario      Int       @id @default(autoincrement())
+  codNotificacao   Int       // Chave estrangeira para o modelo automobilista
+  codFuncionario   Int       // Chave estrangeira para o modelo automobilista
+  status             String    @default("pendente") @db.VarChar(50) // Status da notificação (pendente, visualizado, etc.)
+
+  // Relações
+  notificacaoalerta      notificacaoalerta  @relation(fields: [codNotificacao], references: [codNotificacao], onUpdate: Restrict, onDelete: Cascade)
+  funcionario      funcionario  @relation(fields: [codFuncionario], references: [codFuncionario], onUpdate: Restrict, onDelete: Cascade)
+
+  @@index([codNotificacao], map: "codNotificacao")
+  @@index([codFuncionario], map: "codFuncionario")
 }
 
 
