@@ -1,6 +1,6 @@
 // src/routes/index.ts
 import { NextFunction, Request, Response, Router } from 'express';
-import { getAlertasRoubo, getAlertaRouboById, createAlertaRoubo, updateAlertaRoubo, deleteAlertaRoubo } from '../controllers/AlertarouboController';
+import { getAlertasRoubo, getAlertaRouboById, createAlertaRoubo, updateAlertaRoubo, deleteAlertaRoubo, getAlertasRoubo1 } from '../controllers/AlertarouboController';
 import { getAutomobilistas, getAutomobilistaById, createAutomobilista, updateAutomobilista, deleteAutomobilista } from '../controllers/AutomobilistaController';
 import { getBis, getBiById, createBi, updateBi, deleteBi } from '../controllers/BiController';
 import { getCartasConducao, getCartaConducaoById, createCartaConducao, updateCartaConducao, deleteCartaConducao } from '../controllers/CartaconducaoController';
@@ -12,7 +12,7 @@ import { getFuncionarios, getFuncionarioById, createFuncionario, updateFuncionar
 import { getInfracoes, getInfracaoById, createInfracao, updateInfracao, deleteInfracao } from '../controllers/InfracaoController';
 import { getLivretes, getLivreteById, createLivrete, updateLivrete, deleteLivrete } from '../controllers/LivreteController';
 import { getMarcas, getMarcaById, createMarca, updateMarca, deleteMarca } from '../controllers/MarcaController';
-import { getMultas, getMultaById, createMulta, updateMulta, deleteMulta, verificarMultas } from '../controllers/MultaController';
+import { getMultas, getMultaById, createMulta, updateMulta, deleteMulta, verificarMultas, getMultas1 } from '../controllers/MultaController';
 import { getMunicipios, getMunicipioById, createMunicipio, updateMunicipio, deleteMunicipio } from '../controllers/MunicipioController';
 import { getPagamentosMulta, getPagamentoMultaById, createPagamentoMulta, updatePagamentoMulta, deletePagamentoMulta, getPagamentosMultaReferencia, multaAtulizado } from '../controllers/PagamentoMultaController';
 import { getPaises, getPaisById, createPais, updatePais, deletePais } from '../controllers/PaisController';
@@ -77,6 +77,7 @@ router.delete('/usuario/:id', tokenValidate, deleteUsuario);
 
 // Rotas para Alertaroubo
 router.get('/alertaroubos',  tokenValidate, getAlertasRoubo);
+router.get('/alertaroubosmes',  tokenValidate, getAlertasRoubo1);
 router.get('/alertaroubo/:id',  tokenValidate, getAlertaRouboById);
 router.post('/alertaroubo',  tokenValidate, createAlertaRoubo);
 router.put('/alertaroubo/:id',  tokenValidate, updateAlertaRoubo);
@@ -197,6 +198,7 @@ router.delete('/marca/:id', tokenValidate, deleteMarca);
 
 // Rotas para Multa
 router.get('/multas', tokenValidate, getMultas);
+router.get('/multasmes/', tokenValidate, getMultas1);
 router.get('/multa/:id', tokenValidate, getMultaById);
 router.post('/multa', tokenValidate, createMulta);
 router.put('/multa/:id', tokenValidate, updateMulta);

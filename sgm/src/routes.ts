@@ -128,6 +128,18 @@ export const GET_ALERTAS_ROUBO = async () => {
   });
   return await response.json();
 };
+// Funções correspondentes para Alertaroubo
+export const GET_ALERTAS_ROUBO_MES = async () => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/alertaroubosmes`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+  });
+  return await response.json();
+};
 
 
 
@@ -315,6 +327,17 @@ export const GET_VIATURAS = async () => {
     return await response.json();
   };
 
+  export const GET_MULTAS_MES = async () => {
+    const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+    const response = await fetch(`${BASE_URL}/multasmes`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${AUTH_TOKEN}`,
+      },
+    });
+    return await response.json();
+  };
   export const GET_MULTAS = async () => {
     const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
     const response = await fetch(`${BASE_URL}/multas`, {

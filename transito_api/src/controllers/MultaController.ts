@@ -4,6 +4,71 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+export const getMultas1 = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const dataAtual = new Date();
+        const mesAtual = dataAtual.getMonth(); // Mês atual (0 = janeiro, 11 = dezembro)
+        const anoAtual = dataAtual.getFullYear();
+
+        // Inicializar um array para armazenar as multas por mês
+        const multasPorMes: any[] = [];
+
+        // Iterar pelos meses até o mês atual
+        for (let mes = 0; mes <= mesAtual; mes++) {
+            // Calcular o primeiro dia e o último dia do mês atual
+            const dataInicio = new Date(anoAtual, mes, 1); // Primeiro dia do mês
+            const dataFim = new Date(anoAtual, mes + 1, 1); // Primeiro dia do próximo mês
+
+            // Buscar as multas do mês atual
+            const multas = await prisma.multa.findMany({
+                where: {
+                    data: {
+                        gte: dataInicio,
+                        lt: dataFim,
+                    },
+                },
+                include: {
+                    automobilista: {
+                        include: {
+                            pessoa: {
+                                include: {
+                                    endereco: true,
+                                    bi: true,
+                                    contacto: true,
+                                },
+                            },
+                            cartaconducao: true,
+                        },
+                    },
+                    viatura: true,
+                    pagamentomulta: true,
+                    reclamacao: true,
+                    notificacaomulta: true,
+                    funcionario: {
+                        include: {
+                            pessoa: true,
+                        },
+                    },
+                    infracao: {
+                        include: {
+                            tipoinfracao: true,
+                        },
+                    },
+                },
+            });
+
+            // Adicionar as multas do mês atual ao array
+            multasPorMes.push(multas);
+        }
+
+        // Retornar o array de multas por mês
+        res.status(200).json(multasPorMes);
+    } catch (error) {
+        res.status(500).json({ error: 'Não foi possível buscar as multas' });
+    }
+};
+
+
 export const getMultas = async (req: Request, res: Response): Promise<void> => {
     try {
         const multas = await prisma.multa.findMany({
