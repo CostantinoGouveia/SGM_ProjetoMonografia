@@ -181,6 +181,7 @@ export interface Reclamacao {
   observacao?: string;
   multa: Multa;
   notificacaoreclamacao: Notificacaoreclamacao[],
+  funcionario: Funcionario
 }
 
 export interface Notificacaoreclamacao {

@@ -55,7 +55,7 @@ function hancleClickViewAutomobilista() {
                         </ContextMenu>
                         </TableCell>
                         <TableCell>{alerta?.viatura?.modelo}</TableCell>
-                        <TableCell >{alerta?.viatura.conbustivel}</TableCell>
+                        <TableCell >{new Date(alerta?.dataRoubo).toLocaleDateString()}</TableCell>
                         <TableCell ><label className={` text-white p-1 rounded ${alerta?.status === "Ativo" ? "bg-green-500" : "bg-red-500"}`}>{alerta?.status}</label></TableCell>
                         <TableCell><ButtonView alerta={alerta} handleClick={()=>console.log("")}> <Button variant={"outline"} className=" hover:bg-muted"><Eye className="w-5 h-5 " /></Button></ButtonView> </TableCell>
                        </TableRow>

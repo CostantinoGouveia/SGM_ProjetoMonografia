@@ -9,6 +9,11 @@ export const getReclamacoes = async (req: Request, res: Response): Promise<void>
         const reclamacoes = await prisma.reclamacao.findMany({
             include: {
                 notificacaoreclamacao:true,
+                funcionario: {
+                    include: {
+                        pessoa: true,
+                    },
+                },
                 multa: {
                     include: {
                         automobilista: {
@@ -57,6 +62,11 @@ export const getReclamacaoById = async (req: Request, res: Response): Promise<vo
             where: { codReclamacao: Number(id) },
             include: {
                 notificacaoreclamacao:true,
+                funcionario: {
+                    include: {
+                        pessoa: true,
+                    },
+                },
                 multa: {
                     include: {
                         automobilista: {
@@ -127,7 +137,7 @@ export const createReclamacao = async (req: Request, res: Response): Promise<voi
 export const updateReclamacao = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     console.log("id: " + id);
-    const { codMulta, motivo, status, observacao } = req.body;
+    const { codMulta, motivo, status, observacao, codFuncionario } = req.body;
     console.log( req.body);
     try {
         const updatedReclamacao = await prisma.reclamacao.update({
@@ -137,6 +147,7 @@ export const updateReclamacao = async (req: Request, res: Response): Promise<voi
                 motivo,
                 status,
                 observacao,
+                codFuncionario,
             },
             include: {
                 multa: true, // Inclui o relacionamento com o modelo multa

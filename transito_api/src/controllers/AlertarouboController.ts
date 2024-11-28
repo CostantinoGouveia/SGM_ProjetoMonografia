@@ -94,6 +94,7 @@ export const getAlertasRoubo = async (req: Request, res: Response): Promise<void
             automobilista: {
                 include  : {
                     cartaconducao : true,
+                    pessoa: true,
                 },
             },
             tiporoubo: true,

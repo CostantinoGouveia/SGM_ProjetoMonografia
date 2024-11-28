@@ -24,6 +24,11 @@ export const getViaturas = async (req: Request, res: Response): Promise<void> =>
                 endereco: true,
                 pais: true,
                 bi: true,
+                automobilista: {
+                  include: {
+                    cartaconducao: true
+                  },
+                },
               },
             },
           },

@@ -13,7 +13,7 @@ import ViewDataMultaLista, { VerReclamacao } from "./ViewDataMultaLista";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { GET_MULTA_BY_ID, PUT_NOTIFICACAO_RECLAMACAO, PUT_RECLAMACAO } from "@/routes";
+import { GET_MULTA_BY_ID, GET_PESSOA_BY_ID, PUT_NOTIFICACAO_RECLAMACAO, PUT_RECLAMACAO } from "@/routes";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
@@ -92,6 +92,9 @@ const { mutateAsync: updateNotify } = useMutation({
               {reclamacao?.multa?.statusTribunal == true ? "R/Tribunal" : ""}
             </TableCell>
             <TableCell >
+              {reclamacao?.funcionario?.numeroAgente? reclamacao?.funcionario?.pessoa.nome.split(" ")[0] + " " + reclamacao?.funcionario?.pessoa.nome.split(" ")[reclamacao?.funcionario?.pessoa.nome.split(" ").length - 1] + " - " + reclamacao?.funcionario?.numeroAgente : ""}
+            </TableCell>
+            <TableCell >
                <label className={` text-white p-1 rounded ${reclamacao?.status === "Pendente" ? "bg-orange-500" : reclamacao?.status === "Aceite" ? "bg-green-500" : "bg-red-500"}`}>{reclamacao?.status}</label>
                 </TableCell>
             <TableCell><Button variant={"default"} onClick={()=>{router.push(`reclamacoes/${String(reclamacao?.codMulta)}`), handUpdateNotify(reclamacao?.notificacaoreclamacao[0].codNotificacao, reclamacao?.notificacaoreclamacao[0].status)} }className=""><Eye className="w-5 h-5 " /> VER</Button>
@@ -120,6 +123,12 @@ export function AtenderReclamacao({ idMulta }: { idMulta: string }) {
         queryKey: ["multa_id5", idMulta],
         queryFn: () => GET_MULTA_BY_ID(idMulta),
     })
+    const idPessoa = localStorage.getItem('SGM_USER') || '';
+    const { data: dataP, isSuccess:isSuP } = useQuery({
+        queryKey: ['get-pessoa-by-id', idPessoa],
+        queryFn: () => GET_PESSOA_BY_ID(idPessoa)
+      });
+
     const { mutateAsync: atenderReclam } = useMutation({
         mutationFn: PUT_RECLAMACAO,
         onSuccess(data) {
@@ -140,10 +149,10 @@ export function AtenderReclamacao({ idMulta }: { idMulta: string }) {
             toast.error("Descreva uma Observacao, é obrigatório")
         } else {
             if (level === 1) {
-                const dados: any = { observacao: motivo, status: "Negada" }
+                const dados: any = { observacao: motivo, status: "Negada", codFuncionario: dataP?.funcionario[0]?.codFuncionario}
                 atenderReclam({ id: data.reclamacao[0]?.codReclamacao, data: dados })
             } else {
-                const dados: any = { observacao: motivo, status: "Aceite" }
+                const dados: any = { observacao: motivo, status: "Aceite", codFuncionario: dataP?.funcionario[0]?.codFuncionario }
                 atenderReclam({ id: data.reclamacao[0]?.codReclamacao, data: dados })
             }
             setMotivo("")
