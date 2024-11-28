@@ -105,7 +105,7 @@ function handUpdateNotify(id:any, status:any) {
             <Button variant={"ghost"} className="flex gap-1 py-4">
               <small>{data?.nome.split(" ")[0]} {data?.nome.split(" ")[data?.nome.split(" ").length - 1]}</small>
               <Avatar>
-                <AvatarImage src="https://github.com/CostantinoGouveia.png" alt="@shadcn" />
+                <AvatarImage src="./images/policia.avif" alt="@shadcn" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </Button>
