@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="pt">
       <body className={cn("min-h-screen bg-slate-50 antialiased", inter.variable)}>{children}
-      <ToastContainer />
+      <ToastContainer/>
       </body>
     </html>
   );
