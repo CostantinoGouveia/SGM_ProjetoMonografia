@@ -33,6 +33,7 @@ export default function SheetMobile()
                     {isSuccess && data.usuario[0].tipoUsuario == "Admin" && (  <Link href="/reclamacoes" className="flex items-center gap-4 text-muted-foreground hover:text-foreground"><HelpCircle className="h-5 w-5 transition-all"/>Reclamações</Link>  )}  
                     <Link href="/alertas" className="flex items-center gap-4 text-muted-foreground hover:text-foreground"><TriangleAlert className="h-5 w-5 transition-all"/>Alertas</Link>
                     {isSuccess && data.usuario[0].tipoUsuario == "Admin" && ( <Link href="/agentes" className="flex items-center gap-4 text-muted-foreground hover:text-foreground"><UserPlus className="h-5 w-5 transition-all"/>Agentes</Link>    )}
+                    {isSuccess && data.usuario[0].tipoUsuario == "Admin" && ( <Link href="/infracao" className="flex items-center gap-4 text-muted-foreground hover:text-foreground"><UserPlus className="h-5 w-5 transition-all"/>Infrações</Link>    )}
                 </nav>
                 </SheetContent>
     </Sheet>

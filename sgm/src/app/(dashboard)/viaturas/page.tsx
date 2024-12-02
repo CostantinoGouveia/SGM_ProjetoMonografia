@@ -1,5 +1,6 @@
 "use client"
 import AutomobilistaForm, { AutomobilistaType } from "@/components/automobilstas/AutomobilistaForm";
+import RelatorioViatura from "@/components/relatorioViatura";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -11,8 +12,10 @@ import { Viatura } from "@/entities/interfaces";
 import { GET_MARCAS, GET_VIATURAS } from "@/routes";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
-import { PlusCircle, Search } from "lucide-react";
+import { FileText, PlusCircle, Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import generatePDF, { Margin } from "react-to-pdf";
+import { recuperarConteudoParaPDF } from "../multas/page";
 
 export default function Viaturas() {
 
@@ -96,7 +99,34 @@ export default function Viaturas() {
                 )}
               </select>
             </div>
-          <Button variant={"ghost"} className="text-muted-foreground flex gap-1"><Search className="w-4 h-4" /> Filtrar resultados</Button>
+            <Dialog>
+                        <DialogTrigger asChild>
+                        <Button variant={"ghost"} className="text-muted-foreground flex gap-1"><FileText className="w-4 h-4" /> Imprimir</Button>
+                        </DialogTrigger>
+                        <DialogContent className=" max-h-screen max-w-screen  overflow-y-auto ">
+                            <DialogHeader className="relative">
+                                <DialogTitle><span className="text-slate-700">Lista de Automobilistas</span></DialogTitle>
+                            </DialogHeader>
+                            <div className="flex justify-center">
+                                <Button className="flex max-w-96 align-center gap-1 bg-foreground" onClick={() => generatePDF(recuperarConteudoParaPDF, {
+                                    // Baixar/Salvar = save / Abrir no navegador = open
+                                    method: 'open',
+                                    page: {
+                                        // Definir a margem: SMALL ou MEDIUM 
+                                        margin: Margin.MEDIUM,
+                                        // Formato da página: A4 ou letter
+                                        format: 'A4',
+                                        // Orientação do arquivo: portrait ou landscape
+                                        orientation: 'portrait',
+                                    },
+                                })}>Gerar PDF</Button>
+                            </div>
+                            <div id="conteudo">
+                                <RelatorioViatura />
+                            </div>
+
+                        </DialogContent>
+                    </Dialog>
         </div>
 
         <Dialog>

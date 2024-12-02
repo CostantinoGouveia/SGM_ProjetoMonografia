@@ -4,7 +4,8 @@ import Sidebar from "@/components/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import UseQueryProvider from "@/components/UseQueryProvedor";
 import { ReactNode, useState } from "react";
-
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 export default function LayoutDashboard({ children }: { children: ReactNode }) {
     const [isSideBarOpen, setIsSideBarOpen] = useState(true)
     function toogleSideBar() {
@@ -19,7 +20,6 @@ export default function LayoutDashboard({ children }: { children: ReactNode }) {
                 <Header toogleSideBar={toogleSideBar} />
                 {children}
             </main>
-            <Toaster/>
         </div>
         </UseQueryProvider>
     )

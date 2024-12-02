@@ -38,13 +38,13 @@ export const getTipoInfracaoById = async (req: Request, res: Response): Promise<
 };
 
 export const createTipoInfracao = async (req: Request, res: Response): Promise<void> => {
-    const { descTipoInfracao, valorInfracao } = req.body;
+    const { descTipoInfracao, valorTipoInfracao } = req.body;
 
     try {
         const newTipoInfracao = await prisma.tipoinfracao.create({
             data: {
                 descTipoInfracao,
-                valorInfracao,
+                valorInfracao: valorTipoInfracao,
             },
             include: {
                 infracao: true,

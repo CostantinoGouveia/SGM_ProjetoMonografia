@@ -28,6 +28,7 @@ export default function Sidebar({isSideBarOpen} : {isSideBarOpen:boolean}) {
                        {isSuccess && data.usuario[0].tipoUsuario == "Admin" && ( <Link href="/reclamacoes" className=" p-2 text-slate-700 hover:bg-foreground/90 transition-all hover:text-muted rounded-md"><li className="flex items-center gap-1 "><HelpCircle className="w-4 h-4"/>Reclamações</li></Link>)}
                         <Link href="/alertas" className=" p-2 text-slate-700 hover:bg-foreground/90 transition-all hover:text-muted rounded-md"><li className="flex items-center gap-1 "><TriangleAlert className="w-4 h-4"/>Alertas</li></Link>
                         {isSuccess && data.usuario[0].tipoUsuario == "Admin" && ( <Link href="/agentes" className=" p-2 text-slate-700 hover:bg-foreground/90 transition-all hover:text-muted rounded-md"><li className="flex items-center gap-1 "><UserPlus className="w-4 h-4"/>Agentes</li></Link>)}
+                        {isSuccess && data.usuario[0].tipoUsuario == "Admin" && ( <Link href="/infracao" className=" p-2 text-slate-700 hover:bg-foreground/90 transition-all hover:text-muted rounded-md"><li className="flex items-center gap-1 "><UserPlus className="w-4 h-4"/>Infrações</li></Link>)}
                     </ul>
                 </div>
             </div>

@@ -7,9 +7,10 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import Cookies from 'js-cookie'
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Toast } from "@radix-ui/react-toast";
 
 
 export default function SignIn() {
@@ -72,7 +73,8 @@ export default function SignIn() {
                         <Button onClick={handleClick} className="w-full" type="button" >{onLoading && <Loader2 className="animate-spin w-4 h-4 mr-2" />}Iniciar sessão</Button>
                     </div>
                 </form>
-            </div>
+                </div>
+                
         </div>
     )
 }
