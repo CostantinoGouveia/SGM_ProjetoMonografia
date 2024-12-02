@@ -303,7 +303,7 @@ function ActionWithConfirmation({ alerta }: { alerta: any }) {
     const confirmAction = () => {
 
         setConfirmed(true);
-        PUT_ALERTA_ROUBO(alerta.codAlertaRoubo, { status: "Cancelado" });
+        PUT_ALERTA_ROUBO(alerta.codAlertaRoubo, { status: "Inativo" });
         useClient.invalidateQueries({
             queryKey: ["get-viaturaPessoa"], // chave da consulta
             exact: true, // opcional, dependendo do filtro

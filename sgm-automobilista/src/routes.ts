@@ -75,6 +75,19 @@ export const GET_USUARIO_BY_ID = async (id:string) => {
   return await response.json();
 };
 
+// Função para obter um usuário por ID
+export const GET_USUARIO_BY_PESSOA_ID = async (id:string) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/usuarioPessoa/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+  });
+  return await response.json();
+};
+
 // Função para criar um novo usuário
 export const POST_USUARIO = async (data:string) => {
   const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
@@ -90,15 +103,15 @@ export const POST_USUARIO = async (data:string) => {
 };
 
 // Função para atualizar um usuário existente
-export const PUT_USUARIO = async (id:string, data:any) => {
+export const PUT_USUARIO = async (dados:{id:string, data:any}) => {
   const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
-  const response = await fetch(`${BASE_URL}/usuario/${id}`, {
+  const response = await fetch(`${BASE_URL}/usuario/${dados.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${AUTH_TOKEN}`,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(dados.data),
   });
   return await response.json();
 };
@@ -182,6 +195,82 @@ export const DELETE_ALERTA_ROUBO = async (id:string) => {
   return await response.json();
 };
 
+// Funções correspondentes para notificacoes
+export const GET_NOTIFICACAO_MULTAS = async () => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/notificacoes`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+  });
+  return await response.json();
+};
+
+export const GET_NOTIFICACAO_AUTOMO_BY_ID = async (id:string) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/notificacaoAutomo/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+  });
+  return await response.json();
+};
+
+export const GET_NOTIFICACAO_MULTA_BY_ID = async (id:string) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/notificacao/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+  });
+  return await response.json();
+};
+
+// Função para criar um novo alerta de roubo
+export const POST_NOTIFICACAO_MULTA = async (data: any) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/notificacao`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return await response.json();
+};
+
+export const PUT_NOTIFICACAO_MULTA = async (dados :{id:string, data:any}) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/notificacao/${dados.id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+    body: JSON.stringify(dados.data),
+  });
+  return await response.json();
+};
+
+export const DELETE_NOTIFICACAO_MULTA = async (id:string) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/notificacao/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+  });
+  return await response.json();
+};
+
 // Funções correspondentes para Alertaroubo
 export const GET_RECLAMACOES = async () => {
   const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
@@ -194,7 +283,6 @@ export const GET_RECLAMACOES = async () => {
   });
   return await response.json();
 };
-
 
 
 export const GET_RECLAMACAO_BY_ID = async (id:string) => {
@@ -319,6 +407,18 @@ export const GET_VIATURAS = async () => {
     const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
     const response = await fetch(`${BASE_URL}/multas`, {
       method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${AUTH_TOKEN}`,
+      },
+    });
+    return await response.json();
+  };
+
+  export const VERIFY_MULTAS = async () => {
+    const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+    const response = await fetch(`${BASE_URL}/verificar-multas`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${AUTH_TOKEN}`,

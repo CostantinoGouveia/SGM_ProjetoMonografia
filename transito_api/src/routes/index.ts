@@ -1,6 +1,6 @@
 // src/routes/index.ts
 import { NextFunction, Request, Response, Router } from 'express';
-import { getAlertasRoubo, getAlertaRouboById, createAlertaRoubo, updateAlertaRoubo, deleteAlertaRoubo } from '../controllers/AlertarouboController';
+import { getAlertasRoubo, getAlertaRouboById, createAlertaRoubo, updateAlertaRoubo, deleteAlertaRoubo, getAlertasRoubo1 } from '../controllers/AlertarouboController';
 import { getAutomobilistas, getAutomobilistaById, createAutomobilista, updateAutomobilista, deleteAutomobilista } from '../controllers/AutomobilistaController';
 import { getBis, getBiById, createBi, updateBi, deleteBi } from '../controllers/BiController';
 import { getCartasConducao, getCartaConducaoById, createCartaConducao, updateCartaConducao, deleteCartaConducao } from '../controllers/CartaconducaoController';
@@ -12,7 +12,7 @@ import { getFuncionarios, getFuncionarioById, createFuncionario, updateFuncionar
 import { getInfracoes, getInfracaoById, createInfracao, updateInfracao, deleteInfracao } from '../controllers/InfracaoController';
 import { getLivretes, getLivreteById, createLivrete, updateLivrete, deleteLivrete } from '../controllers/LivreteController';
 import { getMarcas, getMarcaById, createMarca, updateMarca, deleteMarca } from '../controllers/MarcaController';
-import { getMultas, getMultaById, createMulta, updateMulta, deleteMulta, verificarMultas } from '../controllers/MultaController';
+import { getMultas, getMultaById, createMulta, updateMulta, deleteMulta, verificarMultas, getMultas1 } from '../controllers/MultaController';
 import { getMunicipios, getMunicipioById, createMunicipio, updateMunicipio, deleteMunicipio } from '../controllers/MunicipioController';
 import { getPagamentosMulta, getPagamentoMultaById, createPagamentoMulta, updatePagamentoMulta, deletePagamentoMulta, getPagamentosMultaReferencia, multaAtulizado } from '../controllers/PagamentoMultaController';
 import { getPaises, getPaisById, createPais, updatePais, deletePais } from '../controllers/PaisController';
@@ -23,12 +23,23 @@ import { getTiposInfracao, getTipoInfracaoById, createTipoInfracao, updateTipoIn
 import { getTiposRoubo, getTipoRouboById, createTipoRoubo, updateTipoRoubo, deleteTipoRoubo } from '../controllers/TiporouboController';
 import { getTitulosPropriedade, getTituloPropriedadeById, createTituloPropriedade, updateTituloPropriedade, deleteTituloPropriedade } from '../controllers/TitulopropriedadeController';
 import { getViaturas, getViaturaById, createViatura, updateViatura, deleteViatura } from '../controllers/ViaturaController';
-import { getUsuarios, getUsuarioById, createUsuario, updateUsuario, deleteUsuario } from '../controllers/UsuarioController';
+import { getUsuarios, getUsuarioById, createUsuario, updateUsuario, deleteUsuario, getUsuarioByPessoaId } from '../controllers/UsuarioController';
 import { login, login_automobilista, verifyToken } from '../controllers/AutenticacaoController';
+import {
+    createNotificacaoMulta,
+    getNotificacoesMulta,
+    getNotificacaoMultaById,
+    updateNotificacaoMulta,
+    deleteNotificacaoMulta,
+    getNotificacaoMultaAutomo,
+  } from "../controllers/NotificacaomultaController";
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { db } from "../controllers/AutenticacaoController";
 import { createReclamacao, deleteReclamacao, getReclamacaoById, getReclamacoes, updateReclamacao } from '../controllers/ReclamacaoController';
+import { createNotificacaoReclamacao, deleteNotificacaoReclamacao, getNotificacaoReclamacaoById, getNotificacaoReclamacaoMulta, getNotificacoesReclamacao, updateNotificacaoReclamacao } from '../controllers/NotificacaoreclamacaoController';
+import { createNotificacao, deleteNotificacao, getNotificacaoById, getNotificacoes, updateNotificacao } from '../controllers/NotificacaoalertaController';
+import { createNotificacoesFuncionario, deleteNotificacaoFuncionario, getNotificacoesFuncionario, updateNotificacaoFuncionario } from '../controllers/NotificacaoalertafuncionarioController';
 const router = Router();
 
 export function tokenValidate(req: Request, res: Response, next: NextFunction) {
@@ -58,6 +69,7 @@ router.post('/loginA', login_automobilista);
 // Rotas para Usuarios
 router.get('/usuarios',  tokenValidate, getUsuarios);
 router.get('/usuario/:id', tokenValidate, getUsuarioById);
+router.get('/usuarioPessoa/:id', tokenValidate, getUsuarioByPessoaId);
 router.post('/usuario',  tokenValidate, createUsuario);
 router.put('/usuario/:id', tokenValidate, updateUsuario);
 router.delete('/usuario/:id', tokenValidate, deleteUsuario);
@@ -65,10 +77,40 @@ router.delete('/usuario/:id', tokenValidate, deleteUsuario);
 
 // Rotas para Alertaroubo
 router.get('/alertaroubos',  tokenValidate, getAlertasRoubo);
+router.get('/alertaroubosmes',  tokenValidate, getAlertasRoubo1);
 router.get('/alertaroubo/:id',  tokenValidate, getAlertaRouboById);
 router.post('/alertaroubo',  tokenValidate, createAlertaRoubo);
 router.put('/alertaroubo/:id',  tokenValidate, updateAlertaRoubo);
 router.delete('/alertaroubo/:id',  tokenValidate, deleteAlertaRoubo);
+
+// Rotas para notificacoes de alertas
+router.get("/notificacoesalertas", tokenValidate, getNotificacoes); // Obter todas as notificações de alertas
+router.get("/notificacaoalerta/:id", tokenValidate, getNotificacaoById); // Obter notificação de alerta por ID
+router.post("/notificacaoalerta", tokenValidate, createNotificacao); // Criar notificação de alerta
+router.put("/notificacaoalerta/:id", tokenValidate, updateNotificacao); // Atualizar notificação de alerta
+router.delete("/notificacaoalerta/:id", tokenValidate, deleteNotificacao); // Excluir notificação de alerta
+
+// Rotas para notificacoes de alertas por funcionario
+router.get("/notificacoesalertasfuncionarios/:id", tokenValidate, getNotificacoesFuncionario); // Obter todas as notificações de alertas para funcionários
+router.post("/notificacaoalertafuncionario", tokenValidate, createNotificacoesFuncionario); // Criar notificação de alerta para funcionário
+router.put("/notificacaoalertafuncionario/:id", tokenValidate, updateNotificacaoFuncionario); // Atualizar notificação de alerta para funcionário
+router.delete("/notificacaoalertafuncionario/:id", tokenValidate, deleteNotificacaoFuncionario); // Excluir notificação de alerta para funcionário
+
+
+// Rotas para notificacao de multa
+router.get("/notificacoes",tokenValidate, getNotificacoesMulta); // Obter todas as notificações
+router.get("/notificacao/:id",tokenValidate, getNotificacaoMultaById); // Obter notificação por ID
+router.get("/notificacaoAutomo/:id",tokenValidate, getNotificacaoMultaAutomo); // Obter notificação por ID
+router.post("/notificacao",tokenValidate, createNotificacaoMulta); // Criar notificação
+router.put("/notificacao/:id",tokenValidate, updateNotificacaoMulta); // Atualizar notificação
+router.delete("/notificacao/:id",tokenValidate, deleteNotificacaoMulta); // Excluir notificação
+// rotas notificao de reclamacao
+router.get("/notificacoesRecl",tokenValidate, getNotificacoesReclamacao); // Obter todas as notificações
+router.get("/notificacaoRecl/:id",tokenValidate, getNotificacaoReclamacaoById); // Obter notificação por ID
+router.get("/notificacaoReclamacao/:id",tokenValidate, getNotificacaoReclamacaoMulta); // Obter notificação por ID
+router.post("/notificacaoRecl",tokenValidate, createNotificacaoReclamacao); // Criar notificação
+router.put("/notificacaoRecl/:id",tokenValidate, updateNotificacaoReclamacao); // Atualizar notificação
+router.delete("/notificacaoRecl/:id",tokenValidate, deleteNotificacaoReclamacao); // Excluir notificação
 
 // Rotas para reclamcao
 router.get('/reclamacoes',  tokenValidate, getReclamacoes);
@@ -156,6 +198,7 @@ router.delete('/marca/:id', tokenValidate, deleteMarca);
 
 // Rotas para Multa
 router.get('/multas', tokenValidate, getMultas);
+router.get('/multasmes/', tokenValidate, getMultas1);
 router.get('/multa/:id', tokenValidate, getMultaById);
 router.post('/multa', tokenValidate, createMulta);
 router.put('/multa/:id', tokenValidate, updateMulta);

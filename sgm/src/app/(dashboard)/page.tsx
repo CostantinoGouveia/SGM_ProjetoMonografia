@@ -1,12 +1,23 @@
 "use client"
 import ChartMultas from "@/components/ChartMultas";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GET_PESSOA_BY_ID } from "@/routes";
+import { GET_PESSOA_BY_ID, GET_VIATURAS, GET_AUTOMOBILISTAS, GET_FUNCIONARIOS } from "@/routes";
 import { useQuery } from "@tanstack/react-query";
 import { DollarSign } from "lucide-react";
 
 export default function Home() {
-
+    const { data: dataViaturas, isSuccess: isSuV} = useQuery({
+        queryKey: ['get-viat'],
+        queryFn: () => GET_VIATURAS()
+      });
+      const { data: dataAut, isSuccess: isSuA } = useQuery({
+        queryKey: ['get-aut'],
+        queryFn: () => GET_AUTOMOBILISTAS()
+      });
+      const { data: dataAg, isSuccess: isSuAg } = useQuery({
+        queryKey: ['get-ag'],
+        queryFn: () => GET_FUNCIONARIOS()
+      });
     return (
         <div className="p-4">
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -22,7 +33,7 @@ export default function Home() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p className="font-bold text-lg sm:text-4xl">250</p>
+                        <p className="font-bold text-lg sm:text-4xl">{isSuA && (dataAut.length)}</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -37,7 +48,7 @@ export default function Home() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p className="font-bold text-lg sm:text-4xl">302</p>
+                        <p className="font-bold text-lg sm:text-4xl">{isSuV && (dataViaturas.length)}</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -52,7 +63,7 @@ export default function Home() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p className="font-bold text-lg sm:text-4xl">400</p>
+                        <p className="font-bold text-lg sm:text-4xl">{isSuAg && (dataAg.length)}</p>
                     </CardContent>
                 </Card>
             </section>

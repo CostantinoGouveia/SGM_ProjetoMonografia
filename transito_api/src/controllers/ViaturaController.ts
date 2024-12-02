@@ -24,6 +24,11 @@ export const getViaturas = async (req: Request, res: Response): Promise<void> =>
                 endereco: true,
                 pais: true,
                 bi: true,
+                automobilista: {
+                  include: {
+                    cartaconducao: true
+                  },
+                },
               },
             },
           },
@@ -83,9 +88,6 @@ export const getViaturaById = async (req: Request, res: Response): Promise<void>
 // Create a new Viatura
 export const createViatura = async (req: Request, res: Response): Promise<void> => {
   const {
-    codMarca,
-    numeroQuadro,
-    corViatura,
     MedidasPneumaticos,
     lotacao,
     cilindrada,
@@ -97,12 +99,19 @@ export const createViatura = async (req: Request, res: Response): Promise<void> 
     distanciaEixo,
     modelo,
     numeroMatricula,
+    marca,
+    codPessoa,
+    dataEmissao,
+    dataPrimeiroRegistro,
+    numeroQuadro,
+    numeroEmissao,
+    corViatura
   } = req.body;
 
   try {
     const newViatura = await prisma.viatura.create({
       data: {
-        codMarca,
+        codMarca: Number(marca),
         numeroQuadro,
         corViatura,
         MedidasPneumaticos,
@@ -116,11 +125,20 @@ export const createViatura = async (req: Request, res: Response): Promise<void> 
         distanciaEixo,
         modelo,
         numeroMatricula,
+        titulopropriedade: {
+          create: {
+            codPessoa: codPessoa,
+            dataEmissao: dataEmissao,
+            dataPrimeiroRegistro : dataPrimeiroRegistro,
+            numeroEmissao: numeroEmissao,
+            codFicheiroTituloPropriedade: 1,
+          },
+        },
       },
     });
     res.status(201).json(newViatura);
   } catch (error) {
-    res.status(500).json({ error: 'An error occurred while creating the viatura' });
+    res.status(500).json({ error: 'Erro ao tentar criar a viatura' });
   }
 };
 

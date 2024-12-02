@@ -93,6 +93,9 @@ export default function ViewDataViaturaLista({ data, handleClick, handleClickCan
                     <TableCell >{data?.tipoCaixa?? ""}</TableCell>
                 </TableRow>
                 <TableRow>
+                    <TableCell className="font-bold"><span className="text-blue-600">Dados do Titular</span></TableCell>
+                </TableRow>
+                <TableRow>
                     <TableHead>Titular (nome)</TableHead>
                     <TableCell >{data?.titulopropriedade[0]?.pessoa.nome?? ""}</TableCell>
                 </TableRow>

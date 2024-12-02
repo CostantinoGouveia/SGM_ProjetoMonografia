@@ -15,7 +15,7 @@ export default function AlertDeleteViatura({ children, handleClick, id }: Delete
     const { mutateAsync: deleteViatura } = useMutation({
         mutationFn: DELETE_VIATURA,
         onSuccess: () => {
-            atualisa.invalidateQueries(["get-viaturas"])
+            atualisa.invalidateQueries({queryKey: ["get-viaturas"]})
             toast({description:"Eliminado com sucesso"})
         }
     });

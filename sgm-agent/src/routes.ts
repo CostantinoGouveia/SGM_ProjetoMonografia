@@ -75,6 +75,19 @@ export const GET_USUARIO_BY_ID = async (id:string) => {
   return await response.json();
 };
 
+// Função para obter um usuário por ID
+export const GET_USUARIO_BY_PESSOA_ID = async (id:string) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/usuarioPessoa/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+  });
+  return await response.json();
+};
+
 // Função para criar um novo usuário
 export const POST_USUARIO = async (data:string) => {
   const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
@@ -90,15 +103,15 @@ export const POST_USUARIO = async (data:string) => {
 };
 
 // Função para atualizar um usuário existente
-export const PUT_USUARIO = async (id:string, data:any) => {
+export const PUT_USUARIO = async (dados:{id:string, data:any}) => {
   const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
-  const response = await fetch(`${BASE_URL}/usuario/${id}`, {
+  const response = await fetch(`${BASE_URL}/usuario/${dados.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${AUTH_TOKEN}`,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(dados.data),
   });
   return await response.json();
 };
@@ -321,6 +334,18 @@ export const GET_VIATURAS = async () => {
     const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
     const response = await fetch(`${BASE_URL}/multas`, {
       method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${AUTH_TOKEN}`,
+      },
+    });
+    return await response.json();
+  };
+
+  export const VERIFY_MULTAS = async () => {
+    const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+    const response = await fetch(`${BASE_URL}/verificar-multas`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${AUTH_TOKEN}`,
@@ -1709,3 +1734,115 @@ export const GET_VIATURAS = async () => {
       return await response.json();
     };
   
+    export const GET_NOTIFICACOES_ALERTAS = async () => {
+      const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+      const response = await fetch(`${BASE_URL}/notificacoesalertas`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      });
+      return await response.json();
+    };
+    
+    export const GET_NOTIFICACAO_ALERTA_BY_ID = async (id: string) => {
+      const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+      const response = await fetch(`${BASE_URL}/notificacaoalerta/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      });
+      return await response.json();
+    };
+    
+    export const POST_NOTIFICACAO_ALERTA = async (data: any) => {
+      const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+      const response = await fetch(`${BASE_URL}/notificacaoalerta`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+        body: JSON.stringify(data),
+      });
+      return await response.json();
+    };
+    
+    export const PUT_NOTIFICACAO_ALERTA = async (id: string, data: any) => {
+      const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+      const response = await fetch(`${BASE_URL}/notificacaoalerta/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+        body: JSON.stringify(data),
+      });
+      return await response.json();
+    };
+    
+    export const DELETE_NOTIFICACAO_ALERTA = async (id: string) => {
+      const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+      const response = await fetch(`${BASE_URL}/notificacaoalerta/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      });
+      return await response.json();
+    };
+    
+    export const GET_NOTIFICACOES_ALERTAS_FUNCIONARIOS = async (id: string) => {
+      const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+      const response = await fetch(`${BASE_URL}/notificacoesalertasfuncionarios/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      });
+      return await response.json();
+    };
+    
+    export const POST_NOTIFICACAO_ALERTA_FUNCIONARIO = async (data: any) => {
+      const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+      const response = await fetch(`${BASE_URL}/notificacaoalertafuncionario`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+        body: JSON.stringify(data),
+      });
+      return await response.json();
+    };
+    
+    export const PUT_NOTIFICACAO_ALERTA_FUNCIONARIO = async (dados : {id: string, data: any}) => {
+      const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+      const response = await fetch(`${BASE_URL}/notificacaoalertafuncionario/${dados.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+        body: JSON.stringify(dados.data),
+      });
+      return await response.json();
+    };
+    
+    export const DELETE_NOTIFICACAO_ALERTA_FUNCIONARIO = async (id: string) => {
+      const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+      const response = await fetch(`${BASE_URL}/notificacaoalertafuncionario/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+      });
+      return await response.json();
+    };
+    

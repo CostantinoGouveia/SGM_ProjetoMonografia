@@ -15,7 +15,7 @@ export default function AlertDelete({ children, handleClick, id }: DeleteAutomob
     const { mutateAsync: deleteAutomo } = useMutation({
         mutationFn: DELETE_AUTOMOBILISTA,
         onSuccess: () => {
-            atualisa.invalidateQueries(["get-automobilista"])
+            atualisa.invalidateQueries({queryKey: ["get-automobilista"]})
             toast({description:"Eliminado com sucesso"})
         }
     });

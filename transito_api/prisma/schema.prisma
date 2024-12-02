@@ -10,9 +10,11 @@ datasource db {
 model usuario {
   codUsuario   Int                 @id @default(autoincrement())
   senha        String
-  bi           String              @unique
-  numeroAgente String              @unique
-  telefone     String              @unique
+  bi           String              @db.VarChar(150)
+  numeroCarta   String?              @db.VarChar(150)
+  numeroAgente String?              @db.VarChar(150)
+  telefone     String              @db.VarChar(150)
+  primeiroLogin Boolean             @default(true)
   codPessoa    Int
   tipoUsuario  usuario_tipoUsuario
   pessoa       pessoa              @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "usuario_ibfk_1")
@@ -35,6 +37,7 @@ model alertaroubo {
   automobilista    automobilista @relation(fields: [codAutomobilista], references: [codAutomobilista], onUpdate: Restrict, map: "alertaroubo_ibfk_1")
   tiporoubo        tiporoubo     @relation(fields: [codTipoRoubo], references: [codTipoRoubo], onUpdate: Restrict, map: "alertaroubo_ibfk_2")
   viatura          viatura       @relation(fields: [codViatura], references: [codViatura], onUpdate: Restrict, map: "alertaroubo_ibfk_3")
+  notificacaoalerta notificacaoalerta[]
 
   @@index([codAutomobilista], map: "codAutomobilista")
   @@index([codTipoRoubo], map: "codTipoRoubo")
@@ -50,6 +53,7 @@ model automobilista {
   cartaconducao    cartaconducao @relation(fields: [codCartaConducao], references: [codCartaConducao], onUpdate: Restrict, map: "automobilista_ibfk_1")
   pessoa           pessoa        @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "automobilista_ibfk_2")
   multa            multa[]
+  notificacaomulta            notificacaomulta[]
 
   @@index([codCartaConducao], map: "codCartaConducao")
   @@index([codPessoa], map: "codPessoa")
@@ -73,9 +77,9 @@ model cartaconducao {
   dataValidade             DateTime        @db.Date
   numeroVia                String          @db.VarChar(100)
   codCategoriaCarta        Int
-  numeroCarta              Int
+  numeroCarta              String          @db.VarChar(100)
   dataPrimeiraEmissao      DateTime        @db.Date
-  localEmissao             Int
+  localEmissao             String          @db.VarChar(200)
   codFicheiroCartaConducao Int
   automobilista            automobilista[]
   categoriacarta           categoriacarta  @relation(fields: [codCategoriaCarta], references: [codCategoriaCarta], onUpdate: Restrict, map: "cartaconducao_ibfk_1")
@@ -96,8 +100,8 @@ model contacto {
   idContacto Int      @id @default(autoincrement())
   contacto1  String   @db.VarChar(15)
   contacto2  String?  @db.VarChar(20)
-  email1     String?  @unique(map: "email1") @db.VarChar(50)
-  email2     String?  @unique(map: "email2") @db.VarChar(50)
+  email1     String?  @db.VarChar(50)
+  email2     String?  @db.VarChar(50)
   pessoa     pessoa[]
 }
 
@@ -135,7 +139,9 @@ model funcionario {
   ficheiro                ficheiro @relation(fields: [codficheiroFotoPerfil], references: [idFicheiro], onUpdate: Restrict, map: "funcionario_ibfk_1")
   pessoa                  pessoa   @relation(fields: [codPessoa], references: [codPessoa], onUpdate: Restrict, map: "funcionario_ibfk_2")
   multa                   multa[] @relation()
-  @@index([codPessoa], map: "idColaboradorPessoa")
+  reclamacao      reclamacao[]
+  notificacaoalertafuncionario notificacaoalertafuncionario[]
+  @@index([codPessoa], map: "codPessoa")
   @@index([codficheiroFotoPendente], map: "idficheiroFotoPendente")
   @@index([codficheiroFotoPerfil], map: "idficheiroFotoPerfil")
 }
@@ -197,6 +203,7 @@ model multa {
   statusTribunal     Boolean           @default(false)
   infracao         infracao[]
   reclamacao      reclamacao[]
+  notificacaomulta      notificacaomulta[]
   automobilista    automobilista?    @relation(fields: [codAutomobilista], references: [codAutomobilista], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_1")
   viatura          viatura?          @relation(fields: [CodViatura], references: [codViatura], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_3")
   funcionario      funcionario?      @relation(fields: [codFuncionario], references: [codFuncionario], onDelete: Restrict, onUpdate: Restrict, map: "multa_ibfk_2")
@@ -210,15 +217,18 @@ model multa {
 model reclamacao {
   codReclamacao    Int      @id @default(autoincrement())
   codMulta         Int
+  codFuncionario   Int?    // Funcionário que analisou a reclamação
   dataReclamacao   DateTime @default(now())
   motivo           String   @db.VarChar(255) // Descrição do motivo da reclamação
   status           String   @default("Pendente") @db.VarChar(50) // Status da reclamação, por exemplo: "Pendente", "Analise", "Aceite", "Rejeitada"
   observacao       String?  @db.Text           // Observações adicionais ou resposta da análise
-  
+   notificacaoreclamacao      notificacaoreclamacao[]
   // Relacionamento com o modelo `multa`
   multa            multa    @relation(fields: [codMulta], references: [codMulta], onDelete: Cascade, map: "reclamacao_ibfk_1")
+  funcionario      funcionario?   @relation(fields: [codFuncionario], references: [codFuncionario], onDelete: Cascade, map: "reclamacao_ibfk_2")
 
   @@index([codMulta], map: "idx_cod_multa")
+  @@index([codFuncionario], map: "idx_cod_funcionario")
 }
 
 model municipio {
@@ -335,6 +345,63 @@ model livrete {
   @@index([codViatura], map: "codViatura")
 }
 
+model notificacaomulta {
+  codNotificacao      Int       @id @default(autoincrement())
+  codAutomobilista   Int       // Chave estrangeira para o modelo automobilista
+  codMulta           Int       // Chave estrangeira para o modelo multa
+  dataNotificacao    DateTime  @default(dbgenerated("(current_timestamp())")) @db.DateTime() // Data em que a notificação foi gerada
+  status             String    @default("pendente") @db.VarChar(50) // Status da notificação (pendente, visualizado, etc.)
+  mensagem           String?   @db.Text // Mensagem opcional com detalhes da notificação
+
+  // Relações
+  automobilista      automobilista  @relation(fields: [codAutomobilista], references: [codAutomobilista], onUpdate: Restrict, onDelete: Cascade)
+  multa              multa          @relation(fields: [codMulta], references: [codMulta], onUpdate: Restrict, onDelete: Cascade)
+
+  @@index([codAutomobilista], map: "codAutomobilista")
+  @@index([codMulta], map: "codMulta")
+}
+
+model notificacaoreclamacao {
+  codNotificacao      Int       @id @default(autoincrement())
+  codReclamacao   Int       // Chave estrangeira para o modelo automobilista
+  dataNotificacao    DateTime  @default(dbgenerated("(current_timestamp())")) @db.DateTime() // Data em que a notificação foi gerada
+  status             String    @default("pendente") @db.VarChar(50) // Status da notificação (pendente, visualizado, etc.)
+  mensagem           String?   @db.Text // Mensagem opcional com detalhes da notificação
+
+  // Relações
+  reclamacao      reclamacao  @relation(fields: [codReclamacao], references: [codReclamacao], onUpdate: Restrict, onDelete: Cascade)
+
+  @@index([codReclamacao], map: "codReclamacao")
+}
+
+model notificacaoalerta {
+  codNotificacao      Int       @id @default(autoincrement())
+  codAlertaRoubo   Int       // Chave estrangeira para o modelo automobilista
+  dataNotificacao    DateTime  @default(dbgenerated("(current_timestamp())")) @db.DateTime() // Data em que a notificação foi gerada
+  status             String    @default("pendente") @db.VarChar(50) // Status da notificação (pendente, visualizado, etc.)
+  mensagem           String?   @db.Text // Mensagem opcional com detalhes da notificação
+
+  // Relações
+  alertaroubo      alertaroubo  @relation(fields: [codAlertaRoubo], references: [codAlertaRoubo], onUpdate: Restrict, onDelete: Cascade)
+  notificacaoalertafuncionario notificacaoalertafuncionario[]
+  @@index([codAlertaRoubo], map: "codAlertaRoubo")
+}
+
+model notificacaoalertafuncionario {
+  codNotificacaoFuncionario      Int       @id @default(autoincrement())
+  codNotificacao   Int       // Chave estrangeira para o modelo automobilista
+  codFuncionario   Int       // Chave estrangeira para o modelo automobilista
+  status             String    @default("pendente") @db.VarChar(50) // Status da notificação (pendente, visualizado, etc.)
+
+  // Relações
+  notificacaoalerta      notificacaoalerta  @relation(fields: [codNotificacao], references: [codNotificacao], onUpdate: Restrict, onDelete: Cascade)
+  funcionario      funcionario  @relation(fields: [codFuncionario], references: [codFuncionario], onUpdate: Restrict, onDelete: Cascade)
+
+  @@index([codNotificacao], map: "codNotificacao")
+  @@index([codFuncionario], map: "codFuncionario")
+}
+
+
 enum ficheiro_estadoValidacao {
   Pendente
   Validado
@@ -361,6 +428,7 @@ enum pessoa_estadoCivil {
 
 enum usuario_tipoUsuario {
   Transito
+  Agente
   Automobilista
   Admin
 }

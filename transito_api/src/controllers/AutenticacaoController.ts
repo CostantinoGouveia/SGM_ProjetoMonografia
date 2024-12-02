@@ -20,9 +20,6 @@ export async function login(req: Request, res: Response) {
                     bi: { equals: user.bi as string }
                 },
                 {
-                    telefone: { equals: user.bi as string }
-                },
-                {
                     numeroAgente: { equals: user.bi as string }
                 }
             ]
@@ -57,7 +54,7 @@ export async function login_automobilista(req: Request, res: Response) {
                     bi: { equals: user.bi as string }
                 },
                 {
-                    telefone: { equals: user.bi as string }
+                    numeroCarta: { equals: user.bi as string }
                 }
             ]
         },
@@ -91,4 +88,10 @@ export function verifyToken(req: Request, res: Response) {
         console.log(decoded); // Decodifica o payload do token e o coloca no objeto req
     });
 
+}
+
+export async function gerarHashSenha(senha: string): Promise<string> {
+    const saltRounds = 3; // Número de saltos
+    const hash = await bcrypt.hash(senha, saltRounds);
+    return hash;
 }

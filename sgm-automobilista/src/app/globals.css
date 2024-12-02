@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes blink {
+  0% {
+      background-color: #f3f4f6; /* Cor inicial */
+  }
+  50% {
+      background-color: #e5e7eb; /* Cor intermediária */
+  }
+  100% {
+      background-color: #f3f4f6; /* Cor final */
+  }
+}
+
+.bg-blink {
+  animation: blink 1s infinite; /* Animação com duração de 1 segundo e repetição infinita */
+}
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;

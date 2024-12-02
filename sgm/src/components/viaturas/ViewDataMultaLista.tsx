@@ -101,7 +101,7 @@ export default function ViewDataMultaLista({ data, handleClick, handleClickCance
                 </TableRow>
                 <TableRow>
                     <TableHead>Data do Pagamento</TableHead>
-                    <TableCell >{format(data?.pagamentomulta[0]?.dataCriacao?? "", "PPP", { locale: ptBR })}</TableCell>
+                    <TableCell >{(data?.dataPagamento == undefined)? "" : format( data?.dataPagamento?? "", "PPP", { locale: ptBR })}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Status</TableHead>
@@ -109,7 +109,7 @@ export default function ViewDataMultaLista({ data, handleClick, handleClickCance
                 </TableRow>
                 <TableRow>
                     <TableHead>Hora do Pagamento</TableHead>
-                    <TableCell >{format(data?.pagamentomulta[0]?.dataCriacao?? "", "pp", { locale: ptBR })}</TableCell>
+                    <TableCell >{(data?.dataPagamento == undefined)? "" :format(data?.dataPagamento?? "", "pp", { locale: ptBR })}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Numero de transação</TableHead>
@@ -183,7 +183,7 @@ function InfracaoLista({ tipoInfracao }: { tipoInfracao: any }) {
     )
   }
 
-  function VerReclamacao({ idMulta }: { idMulta: string }) {
+  export function VerReclamacao({ idMulta }: { idMulta: string }) {
     const { data, isSuccess } = useQuery({
       queryKey: ["multa_id2", idMulta],
       queryFn: () => GET_MULTA_BY_ID(idMulta),
@@ -194,7 +194,7 @@ function InfracaoLista({ tipoInfracao }: { tipoInfracao: any }) {
     return (
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant={"secondary"} className="flex gap-1">VER</Button>
+          <Button variant={"secondary"} className="flex gap-1">VER <Eye className="w-5 h-5 " /></Button>
         </DialogTrigger>
         <DialogContent id="cont-modal" className="max-h-96 overflow-y-auto">
           <DialogHeader className="relative">

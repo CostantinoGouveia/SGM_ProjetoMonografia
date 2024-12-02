@@ -8,6 +8,8 @@ import { IStep } from "./FirstForm"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale/pt-BR"
 import { DialogClose } from "../ui/dialog"
+import { useQuery } from "@tanstack/react-query"
+import { GET_CATEGORIASCARTA, GET_MUNICIPIOS, GET_PAISES, GET_PROVINCIAS } from "@/routes"
 
 interface IViewDataAutomobilista {
     handleClick: () => void,
@@ -20,7 +22,7 @@ export interface IAutomobilista {
     email: string,
     email_alternativo: string,
     telemovel: string,
-    telemovel_alternativo: string,
+    telemovel_alternativo?: string | undefined,
     bi: string,
     data_nascimento: Date,
     data_emissao_bi: Date,
@@ -40,6 +42,23 @@ export interface IAutomobilista {
 }
 export default function ViewDataAutomobilista({ data, handleClick, handleClickCancel }: IViewDataAutomobilista) {
     const form = useFormContext<AutomobilistaType>()
+    const { data:dataPais, isSuccess:isSuccessPais } = useQuery({
+        queryKey: ['get-pais'],
+        queryFn: () => GET_PAISES()
+    });
+    const { data: dataProv, isSuccess: isSuccessProv } = useQuery({
+        queryKey: ['get-provincias'],
+        queryFn: GET_PROVINCIAS
+    });
+    const { data: dataMuni, isSuccess: isSuccessMuni } = useQuery({
+        queryKey: ['get-municipios'],
+        queryFn: GET_MUNICIPIOS
+    });
+    const { data:dataCategoriaCarta, isSuccess:isSuccessCategCarta } = useQuery({
+        queryKey: ['get-caterias-carta'],
+        queryFn: () => GET_CATEGORIASCARTA()
+    });
+
     return (
         <div>
             <Table className="bg-white mt-8  rounded-md">
@@ -49,7 +68,7 @@ export default function ViewDataAutomobilista({ data, handleClick, handleClickCa
                 </TableRow>
                 <TableRow>
                     <TableHead>Nacionalidade</TableHead>
-                    <TableCell>{data?.pais?? ""}</TableCell>
+                    <TableCell>{isSuccessPais && data?.pais? dataPais.find((country: any) => country.idPais === Number(data?.pais))?.pais : "Selecione a nacionalidade"}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Data de Nascimento</TableHead>
@@ -85,11 +104,11 @@ export default function ViewDataAutomobilista({ data, handleClick, handleClickCa
                 </TableRow>
                 <TableRow>
                     <TableHead>Provincia</TableHead>
-                    <TableCell >{data?.province?? ""}</TableCell>
+                    <TableCell >{isSuccessProv && data?.province? dataProv.find((country: any) => country.idProvincia === Number(data?.province))?.provincia : ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Municipio</TableHead>
-                    <TableCell >{data?.municipio?? ""}</TableCell>
+                    <TableCell >{isSuccessMuni && data?.municipio? dataMuni.find((country: any) => country.idMunicipio === Number(data?.municipio))?.municipio : ""}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableHead>Endereco</TableHead>
@@ -118,7 +137,7 @@ export default function ViewDataAutomobilista({ data, handleClick, handleClickCa
                 </TableRow>
                 <TableRow>
                     <TableHead>Categoria</TableHead>
-                    <TableCell >{data?.categoria?? ""}</TableCell>
+                    <TableCell >{isSuccessCategCarta && data?.categoria? dataCategoriaCarta.find((country: any) => country.codCategoriaCarta === Number(data?.categoria))?.descCategoriaCarta : ""}</TableCell>
                 </TableRow>
             </Table>
 

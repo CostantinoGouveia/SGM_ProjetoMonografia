@@ -9,6 +9,7 @@ export const getPessoas = async (req: Request, res: Response): Promise<void> => 
         const pessoas = await prisma.pessoa.findMany({
             include: {
                 automobilista: true,
+                usuario:true,
                 funcionario: true,
                 contacto: true,
                 endereco: true,
@@ -30,12 +31,14 @@ export const getPessoaById = async (req: Request, res: Response): Promise<void> 
         const pessoa = await prisma.pessoa.findUnique({
             where: { codPessoa: Number(id) },
             include: {
+                usuario:true,
                 automobilista: {
                     include: {
                         cartaconducao: true,
                         multa: {
                             include: {
                                 pagamentomulta: true,
+                                notificacaomulta: true,
                                 infracao: {
                                     include: {
                                         tipoinfracao: true,
@@ -43,6 +46,7 @@ export const getPessoaById = async (req: Request, res: Response): Promise<void> 
                                 },
                             },
                         },
+                        notificacaomulta: true,
                     },
                 },
                 funcionario: {

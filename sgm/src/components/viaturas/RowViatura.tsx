@@ -2,7 +2,6 @@
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
 import { ReactNode } from "react";
-import { viaturaType } from "@/app/(dashboard)/viaturas/page";
 import { TableCell, TableRow } from "../ui/table";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "../ui/context-menu";
 import { Button } from "../ui/button";

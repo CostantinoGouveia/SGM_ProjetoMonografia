@@ -2,29 +2,57 @@
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
-const chartData = [
-    { month: "January", desktop: 186, mobile: 80 },
-    { month: "February", desktop: 305, mobile: 200 },
-    { month: "March", desktop: 237, mobile: 120 },
-    { month: "April", desktop: 73, mobile: 190 },
-    { month: "May", desktop: 209, mobile: 130 },
-    { month: "June", desktop: 214, mobile: 140 },
+import { useQuery } from "@tanstack/react-query";
+import { GET_ALERTAS_ROUBO, GET_ALERTAS_ROUBO_MES, GET_MULTAS, GET_MULTAS_MES } from "@/routes";
+
+
+let chartData = [
+    { month: "Janeiro", desktop: 0, mobile: 0 },
+    { month: "Fevereiro", desktop: 0, mobile: 0 },
+    { month: "Março", desktop: 0, mobile: 0 },
+    { month: "Abril", desktop: 0, mobile: 0 },
+    { month: "Maio", desktop: 0, mobile: 0 },
+    { month: "Junho", desktop: 0, mobile: 0 },
+    { month: "Julho", desktop: 0, mobile: 0 },
+    { month: "Agosto", desktop: 0, mobile: 0 },
+    { month: "Setembro", desktop: 0, mobile: 0 },
+    { month: "Outubro", desktop: 0, mobile: 0 },
+    { month: "Novembro", desktop: 0, mobile: 0 },
+    { month: "Dezembro", desktop: 0, mobile: 0 },
   ]
   const chartConfig = {
     desktop: {
-      label: "Desktop",
+      label: "Multas",
       color: "#2563eb",
     },
     mobile: {
-      label: "Mobile",
+      label: "Alertas",
       color: "#60a5fa",
     },
   } satisfies ChartConfig
 export default function ChartMultas() {
+  const { data, isSuccess } = useQuery({
+    queryKey: ['get-alertas'],
+    queryFn: () => GET_ALERTAS_ROUBO_MES()
+  });
+
+  const { data:dataMultas, isSuccess:isSusMultas } = useQuery({
+    queryKey: ['get-MULTAS'],
+    queryFn: () => GET_MULTAS_MES()
+  });
+  console.log(data, "alertas")
+  
+  console.log(dataMultas, "Multas")
+ isSusMultas && dataMultas.map(
+  (item: any, index: number) => {chartData[index].desktop = item.length}
+ );
+ isSuccess && data.map(
+  (item: any, index: number) => {chartData[index].mobile = item.length}
+ );
     return (
         <Card className="w-full md:w-1/2 md:max-w-[600px]">
             <CardHeader>
-                <CardTitle>Totas de multa nesse ano</CardTitle>
+                <CardTitle>Total de multas e alertas neste ano</CardTitle>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig} className="w-full min-h-[200px]">

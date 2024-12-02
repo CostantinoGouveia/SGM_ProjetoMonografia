@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { GET_MULTA_BY_ID, GET_PESSOA_BY_ID, GET_RECLAMACAO_BY_ID, POST_RECLAMACAO } from "@/routes";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { GET_MULTA_BY_ID, GET_PESSOA_BY_ID, GET_RECLAMACAO_BY_ID, POST_RECLAMACAO, PUT_NOTIFICACAO_MULTA } from "@/routes";
+import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PlusCircle } from "lucide-react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -94,13 +94,13 @@ export default function Aplicar() {
           </TableHeader>
           <TableBody>
             {Array.isArray(search) && search.length > 0 ? search.slice().reverse().map((multa: any, index: number) => (
-              <TableRow key={index}>
+              <TableRow key={index} className={multa.notificacaomulta[0]?.status == "pendente"? "bg-gray-100":""}>
                 <TableCell>{new Date(multa.data).toISOString().split("T")[0]}</TableCell>
                 <TableCell>{new Date(multa.dataPagamento).toISOString().split("T")[0]}</TableCell>
                 <TableCell>{multa.statusTribunal == true ? "R/Tribunal" : ""}</TableCell>
                 <TableCell>{multa.valorMulta}kz</TableCell>
                 <TableCell><Badge className={`font-semibold text-white ${multa.pagamentomulta[0]?.status === "PENDENTE" ? "bg-orange-500" : multa.pagamentomulta[0]?.status === "PAGO" ? "bg-green-500" : "bg-red-500"}`}>{(multa.pagamentomulta[0]?.status === "Nao Pago") ? "N/Pago" : multa.pagamentomulta[0]?.status}</Badge></TableCell>
-                <TableCell><PagamentoMulta idMulta={multa.codMulta} /></TableCell>
+                <TableCell><PagamentoMulta idMulta={multa.codMulta} visual={multa.notificacaomulta[0]?.status} /></TableCell>
                 <TableCell ><HandleDownload id={multa.codMulta}></HandleDownload> </TableCell>
               </TableRow>
             )) :
@@ -118,18 +118,44 @@ export default function Aplicar() {
   )
 }
 
-function PagamentoMulta({ idMulta }: { idMulta: string }) {
+export function PagamentoMulta({ idMulta , visual}: { idMulta: string, visual: string }) {
+  const useClient = useQueryClient();
   const { data, isSuccess } = useQuery({
     queryKey: ["multa_id", idMulta],
     queryFn: () => GET_MULTA_BY_ID(idMulta),
   })
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
+  const { mutateAsync: updateNotify } = useMutation({
+    onSuccess: (data) => {
+      useClient.invalidateQueries({
+        queryKey: ["pessoa_id"], // chave da consulta
+        exact: true, // opcional, dependendo do filtro
+    });
+       useClient.invalidateQueries({
+        queryKey: ["get-pessoa-notify-by-id"], // chave da consulta
+        exact: true, // opcional, dependendo do filtro
+      });
+    },
+    mutationFn: PUT_NOTIFICACAO_MULTA,
+    onError: (error) => {
+      toast.error('Não foi possível atualizar a notificação');
+      console.log(error)
+    }
+
+  })
+  function handUpdateNotify(id:any) {
+    if (visual == "pendente") {
+      const dados: any = { status: "visto" }
+      updateNotify({ id: id, data: dados })
+    }    
+  }
   console.log("ewewd", data);
   console.log(data?.viatura === null ? "N/A" : "asdasd");
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"secondary"} className="flex gap-1">VER</Button>
+        <Button variant={"secondary"} ref={buttonRef} className={`flex gap-1`} onClick={()=>{handUpdateNotify(data?.notificacaomulta[0]?.codNotificacao)}}>VER</Button>
       </DialogTrigger>
       <DialogContent id="cont-modal" className="max-h-96 overflow-y-auto">
         <DialogHeader className="relative">
@@ -315,7 +341,7 @@ function PagamentoMulta({ idMulta }: { idMulta: string }) {
   )
 }
 
-function InfracaoLista({ tipoInfracao }: { tipoInfracao: any }) {
+export function InfracaoLista({ tipoInfracao }: { tipoInfracao: any }) {
   console.log("tipoInfracao", tipoInfracao);
 
   return (
@@ -357,7 +383,7 @@ function InfracaoLista({ tipoInfracao }: { tipoInfracao: any }) {
   )
 }
 
-function VerReclamacao({ idMulta }: { idMulta: string }) {
+export function VerReclamacao({ idMulta }: { idMulta: string }) {
   const { data, isSuccess } = useQuery({
     queryKey: ["multa_id2", idMulta],
     queryFn: () => GET_MULTA_BY_ID(idMulta),
@@ -428,7 +454,7 @@ function VerReclamacao({ idMulta }: { idMulta: string }) {
   )
 }
 
-function CriarReclama({ multa }: { multa: any }) {
+export function CriarReclama({ multa }: { multa: any }) {
   console.log(multa);
   return (
     <Dialog>
