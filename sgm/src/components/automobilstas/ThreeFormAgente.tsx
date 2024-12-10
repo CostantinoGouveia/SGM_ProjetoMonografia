@@ -17,26 +17,30 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { CATE, cn } from "@/lib/utils"
 import { Button } from "../ui/button"
 import { useQuery } from "@tanstack/react-query"
-import { GET_CATEGORIASCARTA } from "@/routes"
+import { GET_CATEGORIASCARTA, GET_FUNCIONARIOS } from "@/routes"
 import { AgenteType } from "./AgenteForm"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { toast } from "react-toastify"
 
 export default function ThreeFormAgente({ setNextStep, setPreviusStep }: IStep) {
-    async function getCountrys() {
-        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,flag")
-        const json = await response.json() as ICountry[]
-        setCountry(json.reverse())
-    }
-    const [countrys, setCountry] = useState<ICountry[]>()
-    useEffect(() => {
-        getCountrys()
-    }, [])
+    
     const { formState: { errors }, ...form } = useFormContext<AgenteType>()
     //const form = useFormContext<AutomobilistaType>()
-
+    const { data:dataFunc, isSuccess:isSuccessFunc } = useQuery({
+        queryKey: ['get-funciona'],
+        queryFn: () => GET_FUNCIONARIOS()
+    });
     async function handleClickNext() {
         const erros = await form.trigger(["numeroAgente", "tipoUsuario"])
-        if (erros)
+        let numeroAgente = false;
+        isSuccessFunc && dataFunc.map((item:any)=>{
+            if(item.numeroAgente === form.getValues("numeroAgente")) {
+                numeroAgente = true
+                toast.warning("Este numero de Agente já exite!")
+                }
+        })
+        console.log(erros);
+        if (erros && !numeroAgente)
             setNextStep()
     }
     return (

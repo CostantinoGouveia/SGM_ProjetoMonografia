@@ -54,10 +54,10 @@ export default function SignIn() {
             <div className="flex flex-col w-full mt-4">
                 <form action="" className="flex items-center flex-col gap-4 w-full" >
                     <div className="w-full flex flex-col gap-2">
-                        <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder={place} type="text" />
+                        <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="BI ou Nº Agente" type="text" />
                         <Input value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Password" type="password" />
                     </div>
-                    <div className="w-full flex justify-end">
+                    <div className="w-full  hidden justify-end">
                         <RadioGroup defaultValue="2" onValueChange={(value) =>setDec(value)}>
                             <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="1" id="option-one" />

@@ -1,6 +1,7 @@
 "use client"
 import useAuthentication from "@/app/hooks/useAuthtication";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
+import { UpdateSenha } from "@/components/updateSenha";
 import { GET_PESSOA_BY_ID } from "@/routes";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -36,7 +37,7 @@ console.log(data)
                     )}
                 </div>
             </div>
-
+            <UpdateSenha usuario={data?.usuario[0]}/>
         </div>
     )
 }

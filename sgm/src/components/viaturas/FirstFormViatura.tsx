@@ -15,7 +15,8 @@ import { IStep } from "../automobilstas/FirstForm"
 import { cn, COLORS } from "@/lib/utils"
 import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { GET_MARCAS } from "@/routes"
+import { GET_MARCAS, GET_VIATURAS } from "@/routes"
+import { toast } from "react-toastify"
 
 export default function FirstFormViatura({ setNextStep, setPreviusStep }: IStep) {
     const { formState: { errors }, ...form } = useFormContext<viaturaType>()
@@ -26,13 +27,25 @@ export default function FirstFormViatura({ setNextStep, setPreviusStep }: IStep)
     const { data: dataMarca, isSuccess: isSuccessMarca } = useQuery({
         queryKey: ['get-marcas'],
         queryFn: GET_MARCAS
+    });
 
+    const { data: dataViat, isSuccess: isSuccessViat } = useQuery({
+        queryKey: ['get-viat'],
+        queryFn: GET_VIATURAS
     });
 
     async function handleClickNext() {
         const erros = await form.trigger(["numeroQuadro", "numeroMatricula", "conbustivel", "tipoCaixa", "corViatura", "MedidasPneumaticos", "lotacao", "peso", "numeroCilindro", "tara", "cilindrada", "distanciaEixo", "marca", "modelo"])
         console.log("etapa 1",form.getValues())
-        if (erros)
+        let nMatricula = false;
+        isSuccessViat && dataViat.map((item:any)=>{
+            if(item.numeroMatricula === form.getValues("numeroMatricula")) {
+                nMatricula = true
+                 toast.warning("Este numero de Matricula já exite!")
+                }
+        })
+        console.log(erros);
+        if (erros && !nMatricula)
             setNextStep()
     }
     return (
@@ -57,7 +70,7 @@ export default function FirstFormViatura({ setNextStep, setPreviusStep }: IStep)
                                                     role="combobox"
                                                     aria-expanded={openMarca}
                                                     className="w-fu justify-between">
-                                                    {isSuccessMarca && field.value ? dataMarca.find((country: any) => country.codMarca === Number(field.value))?.descMarca : "Selecione a categoria"}
+                                                    {isSuccessMarca && field.value ? dataMarca.find((country: any) => country.codMarca === Number(field.value))?.descMarca : "Selecione a Marca"}
                                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                                 </Button>
                                             </PopoverTrigger>

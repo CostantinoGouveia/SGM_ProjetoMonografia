@@ -231,8 +231,8 @@ export default function Viaturas() {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={3}><Button>Anterior</Button></TableCell>
-              <TableCell colSpan={6} className="text-right"><Button>Proximo</Button></TableCell>
+              <TableCell colSpan={3}></TableCell>
+              <TableCell colSpan={6} className="text-right"></TableCell>
             </TableRow>
           </TableFooter>
         </Table>

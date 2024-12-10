@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogHeader, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow, Table } from "@/components/ui/table";
-import { GET_AUTOMOBILISTAS } from "@/routes";
+import { GET_AUTOMOBILISTAS, GET_PESSOA_BY_ID } from "@/routes";
 import { useQuery } from "@tanstack/react-query";
 import { isWithinInterval } from "date-fns";
 
@@ -16,7 +16,12 @@ import { recuperarConteudoParaPDF } from "../multas/page";
 import RelatorioAtomobobilista from "@/components/relatorioAutomobilista";
 
 export default function Automobilista() {
-
+    const idPessoa = localStorage.getItem('SGM_USER') || '';
+    const { data:dataPessoa, isSuccess:isSus } = useQuery({
+        queryKey: ['get-pessoa-by-id', idPessoa],
+        queryFn: () => GET_PESSOA_BY_ID(idPessoa)
+      });
+      console.log("datapssoa", dataPessoa);
     const { data, isSuccess } = useQuery({
         queryKey: ['get-automobilista'],
         queryFn: () => GET_AUTOMOBILISTAS()
@@ -76,7 +81,7 @@ export default function Automobilista() {
                     
                     <Dialog>
                         <DialogTrigger asChild>
-                        <Button variant={"ghost"} className="text-muted-foreground flex gap-1"><FileText className="w-4 h-4" /> Imprimir</Button>
+                       { isSus && dataPessoa.usuario[0].tipoUsuario == "Admin" && ( <Button variant={"ghost"} className="text-muted-foreground flex gap-1"><FileText className="w-4 h-4" /> Imprimir</Button>)}
                         </DialogTrigger>
                         <DialogContent className=" max-h-screen max-w-screen  overflow-y-auto ">
                             <DialogHeader className="relative">
@@ -137,8 +142,8 @@ export default function Automobilista() {
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={3}><Button>Anterior</Button></TableCell>
-                            <TableCell colSpan={6} className="text-right"><Button>Proximo</Button></TableCell>
+                            <TableCell colSpan={3}></TableCell>
+                            <TableCell colSpan={6} className="text-right"></TableCell>
                         </TableRow>
                     </TableFooter>
                 </Table>

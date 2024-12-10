@@ -8,7 +8,7 @@ import { getCategoriasCarta, getCategoriaCartaById, createCategoriaCarta, update
 import { getContactos, getContactoById, createContacto, updateContacto, deleteContacto } from '../controllers/ContactoController';
 import { getEnderecos, getEnderecoById, createEndereco, updateEndereco, deleteEndereco } from '../controllers/EnderecoController';
 import { getFicheiros, getFicheiroById, createFicheiro, updateFicheiro, deleteFicheiro } from '../controllers/FicheiroController';
-import { getFuncionarios, getFuncionarioById, createFuncionario, updateFuncionario, deleteFuncionario } from '../controllers/FuncionarioController';
+import { getFuncionarios, getFuncionarioById, createFuncionario, updateFuncionario, deleteFuncionario, createFuncionario1 } from '../controllers/FuncionarioController';
 import { getInfracoes, getInfracaoById, createInfracao, updateInfracao, deleteInfracao } from '../controllers/InfracaoController';
 import { getLivretes, getLivreteById, createLivrete, updateLivrete, deleteLivrete } from '../controllers/LivreteController';
 import { getMarcas, getMarcaById, createMarca, updateMarca, deleteMarca } from '../controllers/MarcaController';
@@ -24,7 +24,7 @@ import { getTiposRoubo, getTipoRouboById, createTipoRoubo, updateTipoRoubo, dele
 import { getTitulosPropriedade, getTituloPropriedadeById, createTituloPropriedade, updateTituloPropriedade, deleteTituloPropriedade } from '../controllers/TitulopropriedadeController';
 import { getViaturas, getViaturaById, createViatura, updateViatura, deleteViatura } from '../controllers/ViaturaController';
 import { getUsuarios, getUsuarioById, createUsuario, updateUsuario, deleteUsuario, getUsuarioByPessoaId } from '../controllers/UsuarioController';
-import { login, login_automobilista, verifyToken } from '../controllers/AutenticacaoController';
+import { compararSenha, login, login_automobilista, verifyToken } from '../controllers/AutenticacaoController';
 import {
     createNotificacaoMulta,
     getNotificacoesMulta,
@@ -63,8 +63,10 @@ export function tokenValidate(req: Request, res: Response, next: NextFunction) {
 
 //Rota autenticacao
 router.get('/verifyToken', verifyToken);
+router.post('/verifyToken1', verifyToken);
 router.post('/login', login);
 router.post('/loginA', login_automobilista);
+router.post('/senhacomparar',  tokenValidate, compararSenha);
 
 // Rotas para Usuarios
 router.get('/usuarios',  tokenValidate, getUsuarios);
@@ -172,6 +174,7 @@ router.delete('/ficheiro/:id', tokenValidate, deleteFicheiro);
 router.get('/funcionarios', tokenValidate, getFuncionarios);
 router.get('/funcionario/:id', tokenValidate, getFuncionarioById);
 router.post('/funcionario', tokenValidate, createFuncionario);
+router.post('/funcionario1', tokenValidate, createFuncionario1);
 router.put('/funcionario/:id', tokenValidate, updateFuncionario);
 router.delete('/funcionario/:id', tokenValidate, deleteFuncionario);
 

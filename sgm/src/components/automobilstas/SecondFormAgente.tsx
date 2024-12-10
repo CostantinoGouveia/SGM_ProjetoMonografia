@@ -15,11 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AgenteType } from "./AgenteForm";
 
 export default function SecondFormAgente({ setNextStep, setPreviusStep }: IStep) {
-    async function getCountrys() {
-        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,flag")
-        const json = await response.json() as ICountry[]
-        setCountry(json.reverse())
-    }
+
     const { register } = useFormContext<AgenteType>()
     const { formState: { errors }, ...form } = useFormContext<AgenteType>()
    // const form = useFormContext<AutomobilistaType>()
@@ -49,10 +45,6 @@ export default function SecondFormAgente({ setNextStep, setPreviusStep }: IStep)
             setSelectMuni([])
         }
     }
-
-    useEffect(() => {
-        getCountrys()
-    }, [])
     //console.log(countrys)
 
     async function handleClickNext() {

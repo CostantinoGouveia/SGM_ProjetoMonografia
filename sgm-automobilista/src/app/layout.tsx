@@ -9,8 +9,8 @@ import { ToastContainer } from "react-toastify";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans",});
 
 export const metadata: Metadata = {
-  title: "SGM - Agentes",
-  description: "Sistema para gestao de multas - Agentes",
+  title: "SGM - Automobilista",
+  description: "Sistema para gestao de multas - Automobilistas",
 };
 
 export default function RootLayout({

@@ -67,6 +67,7 @@ export default function ChartMultas() {
                     <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4}/>
                     <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4}/>
                 </BarChart>
+                
                 </ChartContainer>
             </CardContent>
         </Card>

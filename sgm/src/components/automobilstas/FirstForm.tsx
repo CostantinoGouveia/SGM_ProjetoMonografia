@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
@@ -16,7 +16,8 @@ import { cn } from "@/lib/utils";
 import { FormControl, FormDescription, FormField, FormItem } from "../ui/form";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { useQuery } from "@tanstack/react-query";
-import { GET_PAISES } from "@/routes";
+import { GET_AUTOMOBILISTAS, GET_PAISES } from "@/routes";
+import { toast } from "react-toastify";
 
 
 export interface IStep {
@@ -40,11 +41,7 @@ export interface ICountry {
 
 export default function FirstForm({ setNextStep, setPreviusStep }: IStep) {
 
-    async function getCountrys() {
-        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,flag")
-        const json = await response.json() as ICountry[]
-        setCountry(json.reverse())
-    }
+   
 
     const { data:dataPais, isSuccess:isSuccessPais } = useQuery({
         queryKey: ['get-pais'],
@@ -55,16 +52,29 @@ export default function FirstForm({ setNextStep, setPreviusStep }: IStep) {
     const [open, setOpen] = useState(false)
     const [countrys, setCountry] = useState<ICountry[]>()
     useEffect(() => {
-        getCountrys()
     }, [])
 
+    const { data:dataAutomobilistas, isSuccess:isSuccessAutomo } = useQuery({
+        queryKey: ['get-Aut'],
+        queryFn: () => GET_AUTOMOBILISTAS()
+    });  
 
     async function handleClickNext() {
         const erros = await form.trigger(["name", "pais", "sexo", "estado", "bi", "data_emissao_bi", "data_validade_bi", "data_nascimento"])
         console.log(form.trigger(["name", "pais", "sexo", "estado", "bi", "data_emissao_bi", "data_validade_bi", "data_nascimento"]));
+        let Bi = false;
+        isSuccessAutomo && dataAutomobilistas.map((item)=>{
+            if(item.pessoa.bi.numeroBI === form.getValues("bi")) {
+                Bi = true
+                toast.warning("Este bi já exite!")
+                }
+        })
+        if(isBefore(form.getValues("data_validade_bi"), form.getValues("data_emissao_bi")))
+            toast.warning("A data de validade não pode ser antes da data de Emissão!")
         console.log(erros);
-        if (erros)
+        if (erros && !Bi && !isBefore(form.getValues("data_validade_bi"), form.getValues("data_emissao_bi")))
             setNextStep()
+        
     }
     return (
         <div className="flex flex-col gap-3">
@@ -225,7 +235,7 @@ export default function FirstForm({ setNextStep, setPreviusStep }: IStep) {
                             <FormItem>
                                 <Label>Informe o numero de bilhete de identidade</Label>
                                 <FormControl>
-                                    <Input className={`${errors.bi && "focus-visible:ring-red-600 border-red-600"}`} placeholder="Numero de BI ou Passaporte" {...field} />
+                                    <Input className={`${errors.bi && "focus-visible:ring-red-600 border-red-600"}`} placeholder="Numero de BI" {...field} />
                                 </FormControl>
                                 <FormDescription className="text-red-600">{errors.bi && errors.bi.message}</FormDescription>
                             </FormItem>

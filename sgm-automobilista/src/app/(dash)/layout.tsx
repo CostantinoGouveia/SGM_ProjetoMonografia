@@ -9,6 +9,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuShortc
 import { GET_NOTIFICACAO_AUTOMO_BY_ID, GET_NOTIFICACAO_MULTAS, GET_PESSOA_BY_ID, GET_USUARIO_BY_PESSOA_ID, PUT_NOTIFICACAO_MULTA } from "@/routes";
 import { PagamentoMulta } from "./multas/page";
 import { toast } from "react-toastify";
+import AlertLogout from "@/components/log";
+import { UpdateSenha } from "@/components/updateSenha";
 export default function Layout({ children }: { children: ReactNode }) {
 
   const { verifyToken } = useAuthentication();
@@ -41,6 +43,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className="flex gap-2">
           <Link href="/multas" className="bg-black/10 p-2 rounded-lg text-sm">Multas</Link>
           <Link href="/alertas" className="bg-black/10 p-2 rounded-lg text-sm">Alertas de roubos</Link>
+          <UpdateSenha usuario={dataPessoa?.usuario[0]}/>
           <DropdownMenu>
             <DropdownMenuTrigger className="px-2">
               <div className="relative">
@@ -69,7 +72,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </DropdownMenu>
         </div>
       </div>
-      <Link href="/auth/entrar"><Button variant={"ghost"} className="hover:bg-black/10 hover:text-muted"><LogOut /></Button></Link>
+      <AlertLogout />
     </header>
     <div className="flex-1 overflow-y-auto">
       {children}

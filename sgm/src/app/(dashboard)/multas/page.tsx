@@ -10,7 +10,7 @@ import RowMulta from "@/components/viaturas/RowMulta";
 import RowViatura from "@/components/viaturas/RowViatura";
 import ViaturaForm, { viaturaType } from "@/components/viaturas/ViaruraForm";
 import { Multa, Viatura } from "@/entities/interfaces";
-import { GET_MULTAS, GET_VIATURAS } from "@/routes";
+import { GET_MULTAS, GET_PESSOA_BY_ID, GET_VIATURAS } from "@/routes";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { File, FileArchive, FileCheck, FilePen, FileTerminal, FileText, PlusCircle, Search } from "lucide-react";
@@ -24,6 +24,12 @@ export const recuperarConteudoParaPDF = () => document.getElementById('conteudo'
 
 
 export default function Viaturas() {
+  const idPessoa = localStorage.getItem('SGM_USER') || '';
+  const { data: dataPessoa, isSuccess: isSus } = useQuery({
+    queryKey: ['get-pessoa-by-id', idPessoa],
+    queryFn: () => GET_PESSOA_BY_ID(idPessoa)
+  });
+  console.log("datapssoa", dataPessoa);
 
   const { data, isSuccess } = useQuery({
     queryKey: ['get-MULTAS'],
@@ -179,7 +185,7 @@ export default function Viaturas() {
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="flex gap-1 bg-foreground"><FileText className="w-5 h-5 " />Relatório</Button>
+            {isSus && dataPessoa.usuario[0].tipoUsuario == "Admin" && (<Button className="flex gap-1 bg-foreground"><FileText className="w-5 h-5 " />Relatório</Button>)}
           </DialogTrigger>
           <DialogContent className=" max-h-[900px] max-w-[1000px] overflow-y-auto ">
             <DialogHeader className="relative">
@@ -229,8 +235,8 @@ export default function Viaturas() {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={3}><Button>Anterior</Button></TableCell>
-              <TableCell colSpan={6} className="text-right"><Button>Proximo</Button></TableCell>
+              <TableCell colSpan={3}></TableCell>
+              <TableCell colSpan={6} className="text-right"></TableCell>
             </TableRow>
           </TableFooter>
         </Table>

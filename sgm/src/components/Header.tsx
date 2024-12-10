@@ -9,6 +9,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GET_NOTIFICACAO_RECLAMACAOES, GET_PESSOA_BY_ID, PUT_NOTIFICACAO_RECLAMACAO, VERIFY_MULTAS } from "@/routes";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import AlertLogout from "./log";
+import { UpdateSenha } from "./updateSenha";
 interface ISideBar {
   toogleSideBar: () => void,
 }
@@ -111,8 +113,8 @@ function handUpdateNotify(id:any, status:any) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem><Link className="px-2" href={"/"}>Definicoes</Link></DropdownMenuItem>
-            <DropdownMenuItem><Link className="px-2" href={"/auth/iniciar-sessao"}>Sair</Link></DropdownMenuItem>
+            <UpdateSenha usuario={data?.usuario[0]}></UpdateSenha>
+            <AlertLogout/>
           </DropdownMenuContent>
         </DropdownMenu>
 

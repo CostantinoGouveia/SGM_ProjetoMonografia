@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import RowViatura from "@/components/viaturas/RowViatura";
 import ViaturaForm, { viaturaType } from "@/components/viaturas/ViaruraForm";
 import { Viatura } from "@/entities/interfaces";
-import { GET_MARCAS, GET_VIATURAS } from "@/routes";
+import { GET_MARCAS, GET_PESSOA_BY_ID, GET_VIATURAS } from "@/routes";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { FileText, PlusCircle, Search } from "lucide-react";
@@ -18,6 +18,12 @@ import generatePDF, { Margin } from "react-to-pdf";
 import { recuperarConteudoParaPDF } from "../multas/page";
 
 export default function Viaturas() {
+  const idPessoa = localStorage.getItem('SGM_USER') || '';
+  const { data: dataPessoa, isSuccess: isSus } = useQuery({
+    queryKey: ['get-pessoa-by-id', idPessoa],
+    queryFn: () => GET_PESSOA_BY_ID(idPessoa)
+  });
+  console.log("datapssoa", dataPessoa);
 
   const { data, isSuccess } = useQuery({
     queryKey: ['get-viaturas'],
@@ -81,52 +87,52 @@ export default function Viaturas() {
               onChange={handleFiltroChange}
             />
           </div>
-            <div className="flex items-center gap-2">
-              <label htmlFor="status" className="text-sm font-medium text-slate-600">
-                Marcas:
-              </label>
-              <select
-                id="marca"
-                name="marca"
-                value={filtros.marca}
-                onChange={handleFiltroChange}
-                className="border border-slate-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">Todos</option>
-                {isM && dataM.map((item: any, index: number) => (
-                  <option value={item.descMarca}>{item.descMarca}</option>
-                )
-                )}
-              </select>
-            </div>
-            <Dialog>
-                        <DialogTrigger asChild>
-                        <Button variant={"ghost"} className="text-muted-foreground flex gap-1"><FileText className="w-4 h-4" /> Imprimir</Button>
-                        </DialogTrigger>
-                        <DialogContent className=" max-h-screen max-w-screen  overflow-y-auto ">
-                            <DialogHeader className="relative">
-                                <DialogTitle><span className="text-slate-700">Lista de Automobilistas</span></DialogTitle>
-                            </DialogHeader>
-                            <div className="flex justify-center">
-                                <Button className="flex max-w-96 align-center gap-1 bg-foreground" onClick={() => generatePDF(recuperarConteudoParaPDF, {
-                                    // Baixar/Salvar = save / Abrir no navegador = open
-                                    method: 'open',
-                                    page: {
-                                        // Definir a margem: SMALL ou MEDIUM 
-                                        margin: Margin.MEDIUM,
-                                        // Formato da página: A4 ou letter
-                                        format: 'A4',
-                                        // Orientação do arquivo: portrait ou landscape
-                                        orientation: 'portrait',
-                                    },
-                                })}>Gerar PDF</Button>
-                            </div>
-                            <div id="conteudo">
-                                <RelatorioViatura />
-                            </div>
+          <div className="flex items-center gap-2">
+            <label htmlFor="status" className="text-sm font-medium text-slate-600">
+              Marcas:
+            </label>
+            <select
+              id="marca"
+              name="marca"
+              value={filtros.marca}
+              onChange={handleFiltroChange}
+              className="border border-slate-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Todos</option>
+              {isM && dataM.map((item: any, index: number) => (
+                <option value={item.descMarca}>{item.descMarca}</option>
+              )
+              )}
+            </select>
+          </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              {isSus && dataPessoa.usuario[0].tipoUsuario == "Admin" && (<Button variant={"ghost"} className="text-muted-foreground flex gap-1"><FileText className="w-4 h-4" /> Imprimir</Button>)}
+            </DialogTrigger>
+            <DialogContent className=" max-h-screen max-w-screen  overflow-y-auto ">
+              <DialogHeader className="relative">
+                <DialogTitle><span className="text-slate-700">Lista de Automobilistas</span></DialogTitle>
+              </DialogHeader>
+              <div className="flex justify-center">
+                <Button className="flex max-w-96 align-center gap-1 bg-foreground" onClick={() => generatePDF(recuperarConteudoParaPDF, {
+                  // Baixar/Salvar = save / Abrir no navegador = open
+                  method: 'open',
+                  page: {
+                    // Definir a margem: SMALL ou MEDIUM 
+                    margin: Margin.MEDIUM,
+                    // Formato da página: A4 ou letter
+                    format: 'A4',
+                    // Orientação do arquivo: portrait ou landscape
+                    orientation: 'portrait',
+                  },
+                })}>Gerar PDF</Button>
+              </div>
+              <div id="conteudo">
+                <RelatorioViatura />
+              </div>
 
-                        </DialogContent>
-                    </Dialog>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <Dialog>
@@ -162,8 +168,8 @@ export default function Viaturas() {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={3}><Button>Anterior</Button></TableCell>
-              <TableCell colSpan={6} className="text-right"><Button>Proximo</Button></TableCell>
+              <TableCell colSpan={3}></TableCell>
+              <TableCell colSpan={6} className="text-right"></TableCell>
             </TableRow>
           </TableFooter>
         </Table>

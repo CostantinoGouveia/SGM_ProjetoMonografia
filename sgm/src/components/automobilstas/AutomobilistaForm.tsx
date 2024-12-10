@@ -8,11 +8,10 @@ import FirstForm from "./FirstForm"
 import { use, useEffect, useState } from "react"
 import SecondForm from "./SecondForm"
 import ThreeForm from "./ThreeForm"
-import { Progress } from "../ui/progress"
 import ViewDataAutomobilista from "./ViewDataAutomobilista"
-import { useToast } from "../ui/use-toast"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { POST_AUTOMOBILISTA } from "@/routes"
+import { toast } from 'react-toastify'
 
 
 const scheemaAutomobilista = z.object({
@@ -46,7 +45,6 @@ export default function AutomobilistaForm() {
     const form = useForm<AutomobilistaType>({
         resolver: zodResolver(scheemaAutomobilista)
     })
-    const { toast } = useToast()
     function handleSubmitAutomobilista(data: any) {
         console.log(data)
     }
@@ -74,17 +72,16 @@ export default function AutomobilistaForm() {
         onSuccess: (data) => {
             queryClient.invalidateQueries({queryKey: ["get-automobilista"]});
             console.log(data)
+            toast.success("Automobilista Adicionado com sucesso")
         },
         onError: (error) => {
             console.log(error)
+            toast.error("Erro ao adicionar Automobilista ")
         }
     })
     function handleSaveAutomobilista() {
         console.log({...form.getValues(), idMunicipio : 1})
         createAuto(form.getValues())
-        toast({
-            description: "Automobista salvo com sucesso",
-        })
     }
     return (
         <FormProvider {...form}>

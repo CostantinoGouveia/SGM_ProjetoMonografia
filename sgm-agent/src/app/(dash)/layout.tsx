@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import useAuthentication from "../hooks/useAuthtication";
 import { useQuery } from "@tanstack/react-query";
 import { GET_NOTIFICACOES_ALERTAS_FUNCIONARIOS, GET_PESSOA_BY_ID } from "@/routes";
+import AlertLogout from "@/components/log";
 export default function Layout({ children }: { children: ReactNode }) {
     const router = useRouter();
     const { verifyToken } = useAuthentication();
@@ -42,7 +43,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <main className="flex flex-col h-screen">
             <header className="bg-blue-950 h-16 text-white p-4 flex justify-between items-center">
                 <span className="font-medium text-sm">Seja Bem vindo Agente {isSuccess && (data.nome)}</span>
-                <Link href="/auth/entrar"><Button variant={"ghost"} className="hover:bg-black/10 hover:text-muted"><LogOut /></Button></Link>
+                <AlertLogout></AlertLogout>
             </header>
             <div className="flex-1 overflow-y-auto">
                 {children}

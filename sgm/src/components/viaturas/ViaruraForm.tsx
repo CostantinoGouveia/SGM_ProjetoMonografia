@@ -8,17 +8,17 @@ import { Button } from "../ui/button"
 import { use, useEffect, useState } from "react"
 
 import { Progress } from "../ui/progress"
-import { useToast } from "../ui/use-toast"
 import FirstFormViatura from "./FirstFormViatura"
 import SecondFormViatura from "./SecondFormViatura"
 import ViewDataViatura from "./ViewDataViatura"
 import { POST_VIATURA } from "@/routes"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { toast } from 'react-toastify'
 
 
 const schema = z.object({
     MedidasPneumaticos: z.string({ required_error: "Campo obrigatorio" }).max(100, "O campo MedidasPneumaticos deve ter no máximo 100 caracteres"),
-    lotacao: z.string({ required_error: "Campo obrigatorio" }).max(100, "O campo lotacao deve ter no máximo 100 caracteres"),
+    lotacao: z.string({ required_error: "Campo obrigatorio" }).max(100, "O campo lotacao deve ter no máximo 100 caracteres").regex(/^\d{1,4}$/, "A penas numero"),
     cilindrada: z.string({ required_error: "Campo obrigatorio" }).max(100, "O campo cilindrada deve ter no máximo 100 caracteres"),
     numeroCilindro: z.string({ required_error: "Campo obrigatorio" }).max(100, "O campo numeroCilindro deve ter no máximo 100 caracteres").regex(/^\d{1,4}$/, "A penas numero"),
     conbustivel: z.string({ required_error: "Campo obrigatorio" }).max(100, "O campo conbustivel deve ter no máximo 100 caracteres"),
@@ -47,7 +47,6 @@ export default function ViaturaForm() {
     const form = useForm<viaturaType>({
         resolver: zodResolver(schema)
     })
-    const { toast } = useToast()
     function handleSubmitAutomobilista(data: any) {
         console.log(data)
     }
@@ -75,17 +74,17 @@ export default function ViaturaForm() {
         onSuccess: (data) => {
             queryClient.invalidateQueries({queryKey: ["get-viaturas"]});
             console.log(data)
+            toast.success("Viatura Adicionada com sucesso")
         },
         onError: (error) => {
             console.log(error)
+            toast.error("Erro ao adicionar Viatura ")
         }
     })
     function handleSaveViatura() {
         console.log(form.getValues())
         createViatura(form.getValues())
-        toast({
-            description: "Viatura salvo com sucesso",
-        })
+       
     }
     return (
         <FormProvider {...form}>

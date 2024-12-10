@@ -5,7 +5,7 @@ import { Label } from "../ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react"
 
-import { format } from "date-fns"
+import { format, isBefore } from "date-fns"
 import { Calendar } from "../ui/calendar"
 import { Input } from "../ui/input"
 import { useFormContext } from "react-hook-form"
@@ -17,30 +17,38 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { CATE, cn } from "@/lib/utils"
 import { Button } from "../ui/button"
 import { useQuery } from "@tanstack/react-query"
-import { GET_CATEGORIASCARTA } from "@/routes"
+import { GET_AUTOMOBILISTAS, GET_CATEGORIASCARTA } from "@/routes"
+import { toast } from "react-toastify"
 
 export default function ThreeForm({setNextStep,setPreviusStep}: IStep) {
-    async function getCountrys() {
-        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,flag")
-        const json = await response.json() as ICountry[]
-        setCountry(json.reverse())
-    }
 
     const { data:dataCategoriaCarta, isSuccess:isSuccessCategCarta } = useQuery({
         queryKey: ['get-caterias-carta'],
         queryFn: () => GET_CATEGORIASCARTA()
     });
-    const [countrys, setCountry] = useState<ICountry[]>()
     useEffect(()=>{
-        getCountrys()
     },[])
     const { formState: { errors }, ...form } = useFormContext<AutomobilistaType>()
-    //const form = useFormContext<AutomobilistaType>()
     const [openCartaCategoria, setCartaCategoria] = useState(false)
+
+    const { data:dataAutomobilistas, isSuccess:isSuccessAutomo } = useQuery({
+        queryKey: ['get-Aut'],
+        queryFn: () => GET_AUTOMOBILISTAS()
+    });  
 
     async function handleClickNext() {
         const erros = await form.trigger(["numero_carta", "numero_via", "local_emissao", "data_emissao_carta_conducao", "data_validade_carta", "data_primeira_emissao_carta", "categoria"])
-        if (erros)
+        let nCarta = false;
+        isSuccessAutomo && dataAutomobilistas.map((item)=>{
+            if(item.cartaconducao.numeroCarta === form.getValues("numero_carta")) {
+                nCarta = true
+                 toast.warning("Este numero de Carta já exite!")
+                }
+        })
+        if(isBefore(form.getValues("data_validade_carta"), form.getValues("data_emissao_carta_conducao")))
+            toast.warning("A data de validade não pode ser antes da data de Emissão!")
+        console.log(erros);
+        if (erros && !nCarta && !isBefore(form.getValues("data_validade_carta"), form.getValues("data_emissao_carta_conducao")))
             setNextStep()
     }
    return (

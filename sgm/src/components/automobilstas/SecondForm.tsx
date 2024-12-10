@@ -14,11 +14,6 @@ import { GET_MUNICIPIOS, GET_PROVINCIAS } from "@/routes";
 import { useQuery } from "@tanstack/react-query";
 
 export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
-    async function getCountrys() {
-        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,flag")
-        const json = await response.json() as ICountry[]
-        setCountry(json.reverse())
-    }
     const { register } = useFormContext<AutomobilistaType>()
     const { formState: { errors }, ...form } = useFormContext<AutomobilistaType>()
    // const form = useFormContext<AutomobilistaType>()
@@ -26,7 +21,6 @@ export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
     const [openProvince, setOpenProvince] = useState(false)
     const [open, setOpen] = useState(false)
     const [openMunicipe, setOpenMunicipe] = useState(false)
-    const [countrys, setCountry] = useState<ICountry[]>()
 
     const { data: dataProv, isSuccess: isSuccessProv } = useQuery({
         queryKey: ['get-provincias'],
@@ -50,9 +44,7 @@ export default function SecondForm({ setNextStep, setPreviusStep }: IStep) {
     }
 
     useEffect(() => {
-        getCountrys()
     }, [])
-    //console.log(countrys)
 
     async function handleClickNext() {
         const erros = await form.trigger(["telemovel", "email", "province", "municipio", "endereco"])

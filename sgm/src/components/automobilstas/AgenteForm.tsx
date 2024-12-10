@@ -3,20 +3,18 @@ import { FormProvider, useForm } from "react-hook-form"
 import { Input } from "../ui/input"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button } from "../ui/button"
-import FirstForm from "./FirstForm"
 import { use, useEffect, useState } from "react"
-import SecondForm from "./SecondForm"
-import ThreeForm from "./ThreeForm"
-import { Progress } from "../ui/progress"
-import ViewDataAutomobilista from "./ViewDataAutomobilista"
-import { useToast } from "../ui/use-toast"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { POST_AUTOMOBILISTA, POST_FUNCIONARIO } from "@/routes"
+import { POST_FUNCIONARIO, POST_FUNCIONARIO1 } from "@/routes"
 import FirstFormAgente from "./FirstFormAgente"
 import ThreeFormAgente from "./ThreeFormAgente"
 import SecondFormAgente from "./SecondFormAgente"
 import ViewDataAgente from "./ViewDataAgente"
+import { FormControl, FormItem } from "../ui/form"
+import { Label } from "../ui/label"
+import FormAgenteAlter from "./FormAgenteAlter"
+import ViewDataAgenteAlter from "./ViewDataAgenteAlter"
+import { toast } from 'react-toastify';
 
 
 const scheemaAgente = z.object({
@@ -35,23 +33,34 @@ const scheemaAgente = z.object({
     data_validade_bi: z.date({ required_error: "A data de validade nao é válida" }),
     municipio: z.string({ required_error: "Campo municipio é obrigatório" }),
     province: z.string({ required_error: "Campo provincia é obrigatório" }),
-    sexo: z.string({required_error:"Campo sexo é obrigatório"}),
-    estado: z.string({required_error:"Campo estado civil é obrigatório"}),
+    sexo: z.string({ required_error: "Campo sexo é obrigatório" }),
+    estado: z.string({ required_error: "Campo estado civil é obrigatório" }),
+})
+const scheemaAgente1 = z.object({
+    tipoUsuario: z.string({ required_error: "Campo tipo de usuario é obrigatório" }),
+    numeroAgente: z.string({ required_error: "Campo numero de agente é obrigatório" }),
+    idPessoa: z.string({ required_error: "Campo pessoa é obrigatório" }),
 })
 export type AgenteType = z.infer<typeof scheemaAgente>
+export type AgenteType1 = z.infer<typeof scheemaAgente1>
 
 export default function AgenteForm() {
     const queryClient = useQueryClient();
     const form = useForm<AgenteType>({
         resolver: zodResolver(scheemaAgente)
     })
-    const { toast } = useToast()
+    const form1 = useForm<AgenteType1>({
+        resolver: zodResolver(scheemaAgente1)
+    })
     function handleSubmitAgente(data: any) {
         console.log(data)
     }
 
     const [step, setStep] = useState(1)
+    const [step1, setStep1] = useState(1)
+    const [chek, setChek] = useState(Boolean)
 
+    const [aux, setAux] = useState<any>()
     const [progressBar, setProgressBar] = useState(0)
 
     function setPreviusStep() {
@@ -68,32 +77,75 @@ export default function AgenteForm() {
             return 0
         })
     }
-    const {mutateAsync: createAgente} = useMutation({
-        mutationFn:POST_FUNCIONARIO,
+    function setPreviusStep1() {
+        setStep1((state) => {
+            if (state > 1)
+                return state - 1;
+            return 0
+        })
+    }
+    function setNextStep1() {
+        setStep1((state) => {
+            if (state < 4)
+                return state + 1;
+            return 0
+        })
+    }
+    const { mutateAsync: createAgente } = useMutation({
+        mutationFn: POST_FUNCIONARIO,
         onSuccess: (data) => {
-            queryClient.invalidateQueries({queryKey: ["get-funcionario"]});
+            queryClient.invalidateQueries({ queryKey: ["get-funcionario"] });
             console.log(data)
+            toast.success("Funcionario Adicionado com sucesso")
         },
         onError: (error) => {
             console.log(error)
+            toast.error("Erro ao adicionar funcionario ")
+        }
+    })
+    const { mutateAsync: createAgente1 } = useMutation({
+        mutationFn: POST_FUNCIONARIO1,
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ["get-funcionario"] });
+            console.log(data)
+            toast.success("Funcionario Adicionado com sucesso")
+        },
+        onError: (error) => {
+            console.log(error)
+            toast.error("Erro ao adicionar funcionario ")
         }
     })
     function handleSaveAutomobilista() {
-        console.log({...form.getValues(), idMunicipio : 1})
+        console.log({ ...form.getValues(), idMunicipio: 1 })
         createAgente(form.getValues())
-        toast({
-            description: "Agente salvo com sucesso",
-        })
     }
+    function handleSaveAutomobilista1() {
+        console.log({ ...form1.getValues() })
+        createAgente1(form1.getValues())
+    }
+   
     return (
-        <FormProvider {...form}>
+        <>
+            <FormItem className="flex justify-end items-center gap-1">
+                <Label className="text-cyan-700">É uma pessoa já Cadastrada?</Label>
+                <Input type="checkbox" className="w-8" onChangeCapture={(e) => setChek(e.target.checked)} />
+            </FormItem>
 
-            <form onSubmit={form.handleSubmit(handleSubmitAgente)}>
-                {step == 1 && <FirstFormAgente setNextStep={setNextStep} setPreviusStep={setPreviusStep} />}
-                {step == 2 && <SecondFormAgente setNextStep={setNextStep} setPreviusStep={setPreviusStep} />}
-                {step == 3 && <ThreeFormAgente setNextStep={setNextStep} setPreviusStep={setPreviusStep} />}
-                {step == 4 && <ViewDataAgente handleClick={handleSaveAutomobilista} data={form.getValues()} handleClickCancel={setPreviusStep} />}
-            </form>
-        </FormProvider>
+            {!chek ? <FormProvider {...form}>
+
+                <form onSubmit={form.handleSubmit(handleSubmitAgente)}>
+                    {step == 1 && <FirstFormAgente setNextStep={setNextStep} setPreviusStep={setPreviusStep} />}
+                    {step == 2 && <SecondFormAgente setNextStep={setNextStep} setPreviusStep={setPreviusStep} />}
+                    {step == 3 && <ThreeFormAgente setNextStep={setNextStep} setPreviusStep={setPreviusStep} />}
+                    {step == 4 && <ViewDataAgente handleClick={handleSaveAutomobilista} data={form.getValues()} handleClickCancel={setPreviusStep} />}
+                </form>
+            </FormProvider> :
+                <FormProvider {...form1}>
+                    <form onSubmit={form1.handleSubmit(handleSubmitAgente)}>
+                        {step1 == 1 && <FormAgenteAlter setNextStep={setNextStep1} setPreviusStep={setPreviusStep1} />}
+                        {step1 == 2 && <ViewDataAgenteAlter handleClick={handleSaveAutomobilista1} data={form1.getValues()} handleClickCancel={setPreviusStep1} />}
+                    </form>
+                </FormProvider>}
+        </>
     )
 }

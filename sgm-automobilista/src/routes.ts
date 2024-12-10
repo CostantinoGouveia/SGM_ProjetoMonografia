@@ -116,6 +116,19 @@ export const PUT_USUARIO = async (dados:{id:string, data:any}) => {
   return await response.json();
 };
 
+export const cmpSenha = async (data:any) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/senhacomparar`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return await response.json();
+};
+
 // Função para deletar um usuário
 export const DELETE_USUARIO = async (id:string) => {
   const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);

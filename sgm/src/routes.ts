@@ -38,6 +38,19 @@ export const login = async (email:string, password:string) => {
   });
   return await response.json();
 };
+
+export const cmpSenha = async (data:any) => {
+  const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+  const response = await fetch(`${BASE_URL}/senhacomparar`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${AUTH_TOKEN}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return await response.json();
+};
  
 export const saveLocalStorageToken = (token:string) => {
   window.localStorage.setItem(`${APP_NAME}_`, token);
@@ -90,15 +103,15 @@ export const POST_USUARIO = async (data:string) => {
 };
 
 // Função para atualizar um usuário existente
-export const PUT_USUARIO = async (id:string, data:any) => {
+export const PUT_USUARIO = async (dados:{id:string, data:any}) => {
   const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
-  const response = await fetch(`${BASE_URL}/usuario/${id}`, {
+  const response = await fetch(`${BASE_URL}/usuario/${dados.id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${AUTH_TOKEN}`,
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(dados.data),
   });
   return await response.json();
 };
@@ -906,6 +919,20 @@ export const GET_VIATURAS = async () => {
     export const POST_FUNCIONARIO = async (data: Funcionario) => {
       const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
       const response = await fetch(`${BASE_URL}/funcionario`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+        },
+        body: JSON.stringify(data),
+      });
+      return await response.json();
+    };
+    
+    // Função para criar uma nova viatura
+    export const POST_FUNCIONARIO1 = async (data:any) => {
+      const AUTH_TOKEN = window.localStorage.getItem(`${APP_NAME}_`);
+      const response = await fetch(`${BASE_URL}/funcionario1`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

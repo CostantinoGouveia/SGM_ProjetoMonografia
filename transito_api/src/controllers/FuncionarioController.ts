@@ -180,6 +180,59 @@ export const createFuncionario = async (req: Request, res: Response): Promise<vo
     }
 };
 
+export const createFuncionario1 = async (req: Request, res: Response): Promise<void> => {
+    const dados = req.body;
+    console.log(dados);
+    try {
+        // Criar o funcinario e sua Pessoa
+        const newFuncionario = await prisma.funcionario.create({
+            data: {
+                codPessoa: dados.idPessoa,
+                numeroAgente: dados.numeroAgente,
+                senha: 1,
+                codficheiroFotoPerfil: 1,
+            },
+            include: {
+                pessoa: {
+                    include: {
+                        contacto: true,
+                        endereco: {
+                            include: {
+                                municipio: {
+                                    include: {
+                                        provincia: true
+                                    }
+                                }
+                            }
+                        },
+                        bi: true
+                    }
+                }
+            },
+        })
+        const senha1 = await gerarHashSenha(dados.numeroAgente);
+        const newUsuario = await prisma.usuario.create({
+            data: {
+                senha: senha1,
+                bi: newFuncionario.pessoa.bi.numeroBI,
+                telefone: newFuncionario.pessoa.contacto!.contacto1,
+                numeroAgente: newFuncionario.numeroAgente,
+                numeroCarta: "",
+                codPessoa: Number(newFuncionario.pessoa.codPessoa),
+                tipoUsuario: dados.tipoUsuario,
+            }
+        });
+
+        res.status(201).json({
+            newFuncionario,
+        });
+
+    } catch (error) {
+        console.error("Erro ao criar o Agente:", error);
+        res.status(500).json({ error: "Erro ao criar o Agente e suas dependências." });
+    }
+};
+
 export const updateFuncionario = async (req: Request, res: Response): Promise<void> => {
     const { codPessoa, codficheiroFotoPerfil, codficheiroFotoPendente, numeroAgente, senha } = req.body;
     const updatedFuncionario = await prisma.funcionario.update({

@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { Select, SelectContent, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
 import { Calendar } from "../ui/calendar"
 import { DialogClose } from "../ui/dialog"
-import { format } from "date-fns"
+import { format, isBefore } from "date-fns"
 import { useForm, useFormContext } from "react-hook-form"
 import { viaturaType } from "./ViaruraForm"
 import { IStep } from "../automobilstas/FirstForm"
@@ -17,6 +17,7 @@ import { useState } from "react"
 import { GET_AUTOMOBILISTAS } from "@/routes"
 import { useQuery } from "@tanstack/react-query"
 import { cn } from "@/lib/utils"
+import { toast } from "react-toastify"
 
 export default function SecondFormViatura({ setNextStep, setPreviusStep }: IStep) {
     const { formState: { errors }, ...form } = useFormContext<viaturaType>()
@@ -30,7 +31,9 @@ export default function SecondFormViatura({ setNextStep, setPreviusStep }: IStep
     async function handleClickNext() {
         const erros = await form.trigger(["codPessoa", "dataEmissao", "dataPrimeiroRegistro", "numeroEmissao"])
         console.log("etapa 2",form.getValues())
-        if (erros)
+        if(isBefore(form.getValues("dataEmissao"), form.getValues("dataPrimeiroRegistro")))
+            toast.warning("A data de Emissão não pode ser antes da data do primeiro registro!")
+        if (erros && !isBefore(form.getValues("dataEmissao"), form.getValues("dataPrimeiroRegistro")))
             setNextStep()        
     }
     return (

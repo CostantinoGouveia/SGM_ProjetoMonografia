@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { GET_MULTA_BY_ID, GET_PESSOA_BY_ID, GET_RECLAMACAO_BY_ID, POST_RECLAMACAO, PUT_NOTIFICACAO_MULTA } from "@/routes";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { PlusCircle } from "lucide-react";
+import { Landmark, PlusCircle } from "lucide-react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
@@ -19,10 +19,10 @@ export default function Aplicar() {
   const idPessoa = localStorage.getItem('SGM_USER') || '';
 
   const { verifyToken } = useAuthentication();
-    
+
   useEffect(() => {
-      verifyToken();
-    }, [verifyToken]);
+    verifyToken();
+  }, [verifyToken]);
 
   const { data, isSuccess } = useQuery({
     queryKey: ["pessoa_id", idPessoa],
@@ -63,6 +63,9 @@ export default function Aplicar() {
             </SelectContent>
           </SelectTrigger>
         </Select>
+        <div>
+          <Button className="flex gap-1 bg-foreground"><Landmark className="w-5 h-5" />Fazer Pagamentos</Button>
+        </div>
       </div>
       <div>
         <Table>
@@ -94,7 +97,7 @@ export default function Aplicar() {
           </TableHeader>
           <TableBody>
             {Array.isArray(search) && search.length > 0 ? search.slice().reverse().map((multa: any, index: number) => (
-              <TableRow key={index} className={multa.notificacaomulta[0]?.status == "pendente"? "bg-gray-100":""}>
+              <TableRow key={index} className={multa.notificacaomulta[0]?.status == "pendente" ? "bg-gray-100" : ""}>
                 <TableCell>{new Date(multa.data).toISOString().split("T")[0]}</TableCell>
                 <TableCell>{new Date(multa.dataPagamento).toISOString().split("T")[0]}</TableCell>
                 <TableCell>{multa.statusTribunal == true ? "R/Tribunal" : ""}</TableCell>
@@ -118,7 +121,7 @@ export default function Aplicar() {
   )
 }
 
-export function PagamentoMulta({ idMulta , visual}: { idMulta: string, visual: string }) {
+export function PagamentoMulta({ idMulta, visual }: { idMulta: string, visual: string }) {
   const useClient = useQueryClient();
   const { data, isSuccess } = useQuery({
     queryKey: ["multa_id", idMulta],
@@ -131,8 +134,8 @@ export function PagamentoMulta({ idMulta , visual}: { idMulta: string, visual: s
       useClient.invalidateQueries({
         queryKey: ["pessoa_id"], // chave da consulta
         exact: true, // opcional, dependendo do filtro
-    });
-       useClient.invalidateQueries({
+      });
+      useClient.invalidateQueries({
         queryKey: ["get-pessoa-notify-by-id"], // chave da consulta
         exact: true, // opcional, dependendo do filtro
       });
@@ -144,18 +147,18 @@ export function PagamentoMulta({ idMulta , visual}: { idMulta: string, visual: s
     }
 
   })
-  function handUpdateNotify(id:any) {
+  function handUpdateNotify(id: any) {
     if (visual == "pendente") {
       const dados: any = { status: "visto" }
       updateNotify({ id: id, data: dados })
-    }    
+    }
   }
   console.log("ewewd", data);
   console.log(data?.viatura === null ? "N/A" : "asdasd");
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"secondary"} ref={buttonRef} className={`flex gap-1`} onClick={()=>{handUpdateNotify(data?.notificacaomulta[0]?.codNotificacao)}}>VER</Button>
+        <Button variant={"secondary"} ref={buttonRef} className={`flex gap-1`} onClick={() => { handUpdateNotify(data?.notificacaomulta[0]?.codNotificacao) }}>VER</Button>
       </DialogTrigger>
       <DialogContent id="cont-modal" className="max-h-96 overflow-y-auto">
         <DialogHeader className="relative">
@@ -222,7 +225,7 @@ export function PagamentoMulta({ idMulta , visual}: { idMulta: string, visual: s
                       </>
                     ) : data.pagamentomulta[0].status != "PAGO" && data.reclamacao.length == 0 ? (
                       (
-                        <CriarReclama multa={data}/>)
+                        <CriarReclama multa={data} />)
                     ) : (
                       <Badge className="font-semibold text-white bg-red-200">Sem Reclamação</Badge>
                     )
@@ -597,7 +600,7 @@ export function CadastroReclamacao({ multa }: { multa: any }) {
       <button type="submit" className="bg-blue-500 text-white p-2 rounded">
         Enviar Reclamação
       </button>
-      < ToastContainer/>
+      < ToastContainer />
     </form>
   );
 }

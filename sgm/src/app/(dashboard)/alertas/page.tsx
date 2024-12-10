@@ -10,7 +10,7 @@ import RowAlerta from "@/components/viaturas/RowAlerta";
 import RowViatura from "@/components/viaturas/RowViatura";
 import ViaturaForm, { viaturaType } from "@/components/viaturas/ViaruraForm";
 import { Alertaroubo, Viatura } from "@/entities/interfaces";
-import { GET_ALERTAS_ROUBO, GET_VIATURAS } from "@/routes";
+import { GET_ALERTAS_ROUBO, GET_PESSOA_BY_ID, GET_VIATURAS } from "@/routes";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { isWithinInterval } from "date-fns";
@@ -36,6 +36,12 @@ const personalizacao = {
 const recuperarConteudoParaPDF = () => document.getElementById('conteudo');
 
 export default function Viaturas() {
+  const idPessoa = localStorage.getItem('SGM_USER') || '';
+  const { data: dataPessoa, isSuccess: isSus } = useQuery({
+    queryKey: ['get-pessoa-by-id', idPessoa],
+    queryFn: () => GET_PESSOA_BY_ID(idPessoa)
+  });
+  console.log("datapssoa", dataPessoa);
 
   const { data, isSuccess } = useQuery({
     queryKey: ['get-alertas'],
@@ -84,7 +90,7 @@ export default function Viaturas() {
       <div className="flex justify-between items-start md:items-center">
         <div className="flex gap-1 flex-col md:flex-row">
           <div className="flex flex-col md:flex-row gap-1">
-          <Input placeholder="Nome do automobilistas"
+            <Input placeholder="Nome do automobilistas"
               id="nome"
               name="nome"
               value={filtros.nome}
@@ -174,7 +180,7 @@ export default function Viaturas() {
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="flex gap-1 bg-foreground"><FileText className="w-5 h-5 " />Relatório</Button>
+            {isSus && dataPessoa.usuario[0].tipoUsuario == "Admin" && (<Button className="flex gap-1 bg-foreground"><FileText className="w-5 h-5 " />Relatório</Button>)}
           </DialogTrigger>
           <DialogContent className=" max-h-[900px] max-w-[1000px] overflow-y-auto ">
             <DialogHeader className="relative">
@@ -223,8 +229,8 @@ export default function Viaturas() {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={3}><Button>Anterior</Button></TableCell>
-              <TableCell colSpan={6} className="text-right"><Button>Proximo</Button></TableCell>
+              <TableCell colSpan={3}></TableCell>
+              <TableCell colSpan={6} className="text-right"></TableCell>
             </TableRow>
           </TableFooter>
         </Table>

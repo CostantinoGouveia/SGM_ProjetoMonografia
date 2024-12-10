@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
@@ -16,8 +16,9 @@ import { cn } from "@/lib/utils";
 import { FormControl, FormDescription, FormField, FormItem } from "../ui/form";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
 import { useQuery } from "@tanstack/react-query";
-import { GET_PAISES } from "@/routes";
+import { GET_FUNCIONARIOS, GET_PAISES } from "@/routes";
 import { AgenteType } from "./AgenteForm";
+import { toast } from "react-toastify";
 
 
 export interface IStep {
@@ -41,30 +42,34 @@ export interface ICountry {
 
 export default function FirstFormAgente({ setNextStep, setPreviusStep }: IStep) {
 
-    async function getCountrys() {
-        const response = await fetch("https://restcountries.com/v3.1/all?fields=name,flag")
-        const json = await response.json() as ICountry[]
-        setCountry(json.reverse())
-    }
-
     const { data:dataPais, isSuccess:isSuccessPais } = useQuery({
         queryKey: ['get-pais'],
         queryFn: () => GET_PAISES()
     });
+    const { data:dataFunc, isSuccess:isSuccessFunc } = useQuery({
+        queryKey: ['get-funciona'],
+        queryFn: () => GET_FUNCIONARIOS()
+    });
 
     const { formState: { errors }, ...form } = useFormContext<AgenteType>()
     const [open, setOpen] = useState(false)
-    const [countrys, setCountry] = useState<ICountry[]>()
-    useEffect(() => {
-        getCountrys()
-    }, [])
+  
 
 
     async function handleClickNext() {
         const erros = await form.trigger(["name", "pais", "sexo", "estado", "bi", "data_emissao_bi", "data_validade_bi", "data_nascimento"])
         console.log(form.trigger(["name", "pais", "sexo", "estado", "bi", "data_emissao_bi", "data_validade_bi", "data_nascimento"]));
+        let Bi = false;
+        isSuccessFunc && dataFunc.map((item:any)=>{
+            if(item.pessoa.bi.numeroBI === form.getValues("bi")) {
+                Bi = true
+                toast.warning("Este bi já exite!")
+                }
+        })
+        if(isBefore(form.getValues("data_validade_bi"), form.getValues("data_emissao_bi")))
+            toast.warning("A data de validade não pode ser antes da data de Emissão!")
         console.log(erros);
-        if (erros)
+        if (erros && !Bi && !isBefore(form.getValues("data_validade_bi"), form.getValues("data_emissao_bi")))
             setNextStep()
     }
     return (

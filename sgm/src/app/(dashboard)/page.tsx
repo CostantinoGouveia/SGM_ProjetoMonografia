@@ -67,7 +67,7 @@ export default function Home() {
                     </CardContent>
                 </Card>
             </section>
-            <section className="mt-4">
+            <section className="mt-4 flex">
                 <ChartMultas/>
             </section>
         </div>

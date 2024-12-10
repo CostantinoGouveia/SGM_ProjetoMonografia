@@ -46,7 +46,7 @@ export default function RowMulta({ Multa }: { Multa: Multa }) {
 
             <TableCell>
                 <ContextMenu>
-                    <ContextMenuTrigger>{Multa?.data == null? "": format(Multa.data?? "", "PPP", { locale: ptBR })}</ContextMenuTrigger>
+                    <ContextMenuTrigger>{Multa?.data == null ? "" : format(Multa.data ?? "", "PPP", { locale: ptBR })}</ContextMenuTrigger>
                     <ContextMenuContent>
                         <ContextMenuItem>
                             <Button variant={"ghost"}>Visualizar</Button>
@@ -60,13 +60,13 @@ export default function RowMulta({ Multa }: { Multa: Multa }) {
                     </ContextMenuContent>
                 </ContextMenu>
             </TableCell>
-            <TableCell>{ Multa?.infracao?.length}</TableCell>
+            <TableCell>{Multa?.infracao?.length}</TableCell>
             <TableCell >{Multa?.statusTribunal == true ? "R/Tribunal" : ""}</TableCell>
             <TableCell ><label className={` text-white p-1 rounded ${Array.isArray(Multa?.pagamentomulta) && Multa?.pagamentomulta[0]?.status === "PENDENTE" ? "bg-orange-500" : Array.isArray(Multa?.pagamentomulta) && Multa?.pagamentomulta[0]?.status === "PAGO" ? "bg-green-500" : "bg-red-500"}`}>{(Array.isArray(Multa?.pagamentomulta) && Multa?.pagamentomulta[0]?.status === "Nao Pago") ? "N/PAGO" : Array.isArray(Multa?.pagamentomulta) && Multa?.pagamentomulta[0]?.status}</label></TableCell>
             <TableCell><ButtonView Multa={Multa} handleClick={() => console.log("")}> <Button variant={"outline"} className=" hover:bg-muted"><Eye className="w-5 h-5 " /></Button></ButtonView> </TableCell>
-            <TableCell><AlertDeleteViatura id={String(Multa?.codMulta)} handleClick={handleDeleteMulta}><Button variant={"outline"} className=" hover:bg-muted"><Trash2 className="w-5 h-5 text-red-700" /></Button></AlertDeleteViatura></TableCell>
+            <TableCell className="hidden"><AlertDeleteViatura id={String(Multa?.codMulta)} handleClick={handleDeleteMulta}><Button variant={"outline"} className=" hover:bg-muted"><Trash2 className="w-5 h-5 text-red-700" /></Button></AlertDeleteViatura></TableCell>
         </TableRow>
-        
+
     )
 }
 
@@ -83,7 +83,7 @@ function ButtonView({ Multa, handleClick, children }: { children: ReactNode, Mul
     )
 }
 function AtenderReclamacao({ idMulta }: { idMulta: string }) {
-const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
     const { data, isSuccess } = useQuery({
         queryKey: ["multa_id5", idMulta],
         queryFn: () => GET_MULTA_BY_ID(idMulta),
@@ -91,31 +91,28 @@ const queryClient = useQueryClient();
     const { mutateAsync: atenderReclam } = useMutation({
         mutationFn: PUT_RECLAMACAO,
         onSuccess(data) {
-          toast.success('Reclamacao Atendida com sucesso')
-          queryClient.invalidateQueries({ queryKey: ["multa_id5"] });
-          queryClient.invalidateQueries({ queryKey: ["multa_id2"] });
+            toast.success('Reclamacao Atendida com sucesso')
+            queryClient.invalidateQueries({ queryKey: ["multa_id5"] });
+            queryClient.invalidateQueries({ queryKey: ["multa_id2"] });
         },
         onError(error) {
-          toast.error('Não foi possível Atender a reclamacao')
-          console.log(error)
+            toast.error('Não foi possível Atender a reclamacao')
+            console.log(error)
         }
-    
-      })
+
+    })
     const [motivo, setMotivo] = useState<string>("");
 
     function handleClick(level: number) {
         if (motivo === "") {
             toast.error("Descreva uma Observacao, é obrigatório")
-        }else
-        {
-            if(level === 1)
-            {
-                const dados : any = {observacao: motivo, status: "Negada"}
-                atenderReclam({id: data.reclamacao[0]?.codReclamacao, data: dados})
-            }else
-            {
-                const dados: any = {observacao: motivo, status: "Aceite"}
-                atenderReclam({id: data.reclamacao[0]?.codReclamacao, data: dados})
+        } else {
+            if (level === 1) {
+                const dados: any = { observacao: motivo, status: "Negada" }
+                atenderReclam({ id: data.reclamacao[0]?.codReclamacao, data: dados })
+            } else {
+                const dados: any = { observacao: motivo, status: "Aceite" }
+                atenderReclam({ id: data.reclamacao[0]?.codReclamacao, data: dados })
             }
             setMotivo("")
             document.getElementById("motivo")?.setAttribute("value", "")
@@ -128,7 +125,7 @@ const queryClient = useQueryClient();
     return (
         <Dialog>
             <DialogTrigger asChild>
-            <Button variant={"outline"} className=" hover:bg-muted"><Pencil className="w-5 h-5 " /></Button>
+                <Button variant={"outline"} className=" hover:bg-muted"><Pencil className="w-5 h-5 " /></Button>
             </DialogTrigger>
             <DialogContent id="cont-modal" className="max-h-100 overflow-y-auto">
                 <DialogHeader className="relative">
@@ -156,8 +153,8 @@ const queryClient = useQueryClient();
                             </div>
                         </div>
                         <div className="grid grid-cols-12">
-                            <div className="my-2 col-span-6"><Button onClick={()=>handleClick(1)} variant={"destructive"} className="flex gap-1">Negar Reclamação</Button></div>
-                            <div className="my-2 col-span-6"><Button onClick={()=>handleClick(2)} variant={"outline"} className="flex gap-1 bg-green-500 text-white">Aceitar Reclamação</Button></div>
+                            <div className="my-2 col-span-6"><Button onClick={() => handleClick(1)} variant={"destructive"} className="flex gap-1">Negar Reclamação</Button></div>
+                            <div className="my-2 col-span-6"><Button onClick={() => handleClick(2)} variant={"outline"} className="flex gap-1 bg-green-500 text-white">Aceitar Reclamação</Button></div>
                         </div>
 
                         <div className="grid grid-cols-12">
