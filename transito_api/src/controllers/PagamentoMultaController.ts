@@ -16,7 +16,7 @@ export const getPagamentosMultaReferencia = async (req: Request, res: Response):
     if (pagamento) {
         res.status(200).json(pagamento);
     } else {
-        res.status(404).json({ message: 'Pagamento de multa não encontrado' });
+        res.status(404).json({ error: 'Pagamento de multa não encontrado' });
     }
     } catch (error) {
         res.status(500).json({ error: 'Não foi possível buscar os pagamento' });
@@ -43,20 +43,16 @@ export const multaAtulizado = async (req: Request, res: Response): Promise<void>
   
     if (pagamentoAtualizado) {
         res.status(200).json({
-            mensagem: 'Pagamento confirmado com sucesso',
-            pagamento: pagamentoAtualizado,
+            pagamento: pagamentoAtualizado
           });
     } else {
-        res.status(404).json({ message: 'Pagamento de multa não encontrado' });
+        res.status(404).json({ error: 'Pagamento de multa não encontrado' });
     }
     } catch (error) {
         res.status(500).json({ error: 'Não foi possível buscar os pagamento' });
     }
 };
-  
-  
-    
-  
+
 
 export const getPagamentosMulta = async (req: Request, res: Response): Promise<void> => {
     try {

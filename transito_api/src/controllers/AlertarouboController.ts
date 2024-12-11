@@ -292,7 +292,7 @@ export const updateAlertaRoubo = async (req: Request, res: Response): Promise<vo
             codEndereco,
             codTipoRoubo,
             descRoubo,
-            status: 'Cancelado',
+            status: 'Inativo',
         }
     });
     res.status(200).json(updatedAlertaRoubo);
