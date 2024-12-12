@@ -8,8 +8,8 @@ import { Select, SelectContent, SelectItem, SelectValue, SelectTrigger } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { GET_MULTA_BY_ID, GET_PESSOA_BY_ID, GET_RECLAMACAO_BY_ID, POST_RECLAMACAO, PUT_NOTIFICACAO_MULTA } from "@/routes";
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Landmark, PlusCircle } from "lucide-react";
-import { useRouter } from "next/router";
+import { Landmark, Link, PlusCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,7 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function Aplicar() {
   const idPessoa = localStorage.getItem('SGM_USER') || '';
-
+  const router = useRouter();
   const { verifyToken } = useAuthentication();
 
   useEffect(() => {
@@ -49,6 +49,10 @@ export default function Aplicar() {
     }
   }, [items, data]);
 
+  const handleOpenInNewTab = (path:any) => {
+    window.open(path, '_blank');
+  };
+
   return (
     <div className="flex flex-col p-8 gap-2 text-[12px]">
       <div className="grid grid-cols-2 gap-4">
@@ -64,7 +68,7 @@ export default function Aplicar() {
           </SelectTrigger>
         </Select>
         <div>
-          <Button className="flex gap-1 bg-foreground"><Landmark className="w-5 h-5" />Fazer Pagamentos</Button>
+          <Button className="flex gap-1 bg-foreground" onClick={()=>handleOpenInNewTab('http://localhost:3533/')}><Landmark className="w-5 h-5"  />Fazer Pagamentos</Button>
         </div>
       </div>
       <div>
