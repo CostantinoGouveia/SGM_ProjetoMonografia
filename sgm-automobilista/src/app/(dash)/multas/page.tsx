@@ -75,7 +75,6 @@ export default function Aplicar() {
         <Table>
           <TableHeader>
             <TableRow>
-
               <TableHead>
                 Data de emissao
               </TableHead>
@@ -158,7 +157,6 @@ export function PagamentoMulta({ idMulta, visual }: { idMulta: string, visual: s
     }
   }
   console.log("ewewd", data);
-  console.log(data?.viatura === null ? "N/A" : "asdasd");
   return (
     <Dialog>
       <DialogTrigger asChild>
